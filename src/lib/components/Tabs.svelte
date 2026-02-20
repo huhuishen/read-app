@@ -21,7 +21,7 @@
         class="home"
         onclick={() => {
             goto("/");
-        }}><Icon name="home" size={20} /></button
+        }}><Icon name="chevron-left" size={20} /></button
     >
     <div class="tabs-center">
         {#each tabs as tab}

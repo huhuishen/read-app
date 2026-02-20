@@ -10,8 +10,8 @@
     }: { name: string; active: string; children: Snippet } = $props();
 
     const tabs = [
-        { key: "articles", label: "作品列表" },
-        { key: "votes", label: "投票结果" },
+        { key: "articles", label: "作品" },
+        { key: "votes", label: "投票" },
     ];
 </script>
 
