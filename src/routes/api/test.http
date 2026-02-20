@@ -1,0 +1,116 @@
+@host = http://localhost:5173/api
+
+
+###
+POST {{host}}/users/login
+Content-Type: application/json
+
+{
+    "email": "1",
+    "password": "1"
+}
+
+
+###
+POST {{host}}/users/login
+Content-Type: application/json
+
+{
+    "email": "admin",
+    "password": "admin"
+}
+
+
+###
+GET {{host}}/articles
+
+###
+GET {{host}}/articles?q=天
+
+
+###
+GET {{host}}/article/trdro3ejj95f
+
+###
+GET {{host}}/article/trdro3ejj95f/comments
+
+
+###
+POST {{host}}/article/trdro3ejj95f
+Content-Type: application/json
+
+{
+    "title": "2",
+    "content": "2",
+    "coverImage": "3"
+}
+
+###
+POST {{host}}/article/
+Content-Type: application/json
+
+{
+    "title": "2",
+    "content": "2",
+    "coverImage": null
+}
+
+
+###
+GET {{host}}/category
+
+
+### 创建或更新分类
+POST {{host}}/categories
+Content-Type: application/json
+
+{
+    "name": "五十五届零重力杯",
+    "size": 10
+}
+
+
+
+
+###
+POST {{host}}/monthly-task
+
+###
+GET {{host}}/user/xa0cff0gf8gy
+
+
+
+
+###
+GET {{host}}/users
+
+###
+GET {{host}}/users/zk4tarrg1mdi
+
+###
+GET {{host}}/users/3rksd5cwbqy7
+
+###
+GET {{host}}/users/zk4tarrg1mdi/articles?page=1&limit=10
+
+
+###
+GET {{host}}/users/zk4tarrg1mdi/read?page=1&limit=10
+
+###
+GET {{host}}/users/3rksd5cwbqy7/read?page=2&limit=2
+
+###
+GET {{host}}/users/zk4tarrg1mdi/comments?page=1&limit=20
+
+
+###
+GET {{host}}/users/3rksd5cwbqy7/activity
+
+
+
+###
+GET {{host}}/categories/五十五届零重力杯/articles?page=1&limit=20
+
+###
+GET {{host}}/categories/五十五届零重力杯/votes

@@ -1,0 +1,39 @@
+
+@host = http://127.0.0.1:5174/api
+
+###
+POST {{host}}/users/auth
+Content-Type: application/json
+
+{
+    "email": "1",
+    "password": "1"
+}
+
+###
+GET {{host}}/users/3rksd5cwbqy7
+
+
+###
+GET {{host}}/api/auth/me
+
+
+###
+POST {{host}}/api/register
+Content-Type: application/json
+
+{
+    "email": "vectra@126.com",
+    "password": "1",
+    "name": "vectra"
+}
+
+###
+POST {{host}}/api/register
+Content-Type: application/json
+
+{
+    "email": "1",
+    "password": "1",
+    "name": "11111"
+}

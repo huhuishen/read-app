@@ -1,0 +1,107 @@
+<script lang="ts">
+    // import { t } from "$lib/infer";
+
+    // const RoleSchema = t.union(
+    //     t.literal("admin"),
+    //     t.literal("user"),
+    //     t.literal("guest"),
+    // );
+
+    // type Role = typeof RoleSchema._type;
+    // // 正确推断为: 'admin' | 'user' | 'guest'
+
+    // const ProblemSchema = t.object({
+    //     role: t.union(
+    //         t.literal("admin"),
+    //         t.literal("user"),
+    //         t.literal("guest"),
+    //     ),
+    // });
+
+    // type ProblemSchemaType = typeof ProblemSchema._type;
+
+    // const DebugSchema = t.object({
+    //     level1: t.string(),
+    //     nested: t.object({
+    //         level2: t.number(),
+    //         deepNested: t.object({
+    //             level3: t.union(
+    //                 t.literal("admin"),
+    //                 t.literal("user"),
+    //                 t.literal("guest"),
+    //             ),
+    //         }),
+    //         array: t.optional(t.array(t.string())),
+    //     }),
+    // });
+
+    // // 检查类型推断
+    // type DebugType = typeof DebugSchema._type;
+
+    // // 1. 定义 schema
+    // const UserSchema = t.object({
+    //     id: t.string(),
+    //     name: t.string(),
+    //     age: t.number(),
+    //     email: t.string(),
+    //     isActive: t.boolean(),
+    //     tags: t.array(t.string()),
+    //     metadata: t.object({
+    //         role: t.union(
+    //             t.literal("admin"),
+    //             t.literal("user"),
+    //             t.literal("guest"),
+    //         ),
+    //     }),
+    // });
+
+    // // 4. 实际使用时的类型提示
+    // const user: User = {
+    //     id: "123",
+    //     name: "John",
+    //     age: 30,
+    //     email: "john@example.com",
+    //     isActive: true,
+    //     tags: ["developer", "typescript"],
+    //     metadata: {
+    //         role: "admin", // 只能为 'admin' | 'user' | 'guest'
+    //     },
+    // };
+    // console.log(typeof UserSchema);
+    // // 2. 获取 TypeScript 类型
+    // type User = typeof UserSchema._type;
+    // // try {
+    // //     const validatedUser = UserSchema.parse({
+    // //         id: "123",
+    // //         name: "John",
+    // //         age: 30,
+    // //         email: "john@example.com",
+    // //         isActive: true,
+    // //         tags: ["dev"],
+    // //         metadata: { role: "invalid" }, // 这里会抛出错误
+    // //     });
+    // // } catch (error) {
+    // //     const message = error instanceof Error ? error.message : String(error);
+    // //     console.error("Validation failed:", message);
+    // // }
+
+    // // 6. 链式方法使用
+    // const EmailSchema = t.string().min(5);
+
+    // EmailSchema.validate = (value: string) => {
+    //     if (!value.includes("@")) {
+    //         throw new Error("Invalid email format");
+    //     }
+    //     return value;
+    // };
+
+    // const email = EmailSchema.validate("test@example.com"); // OK
+    // console.log(email);
+    // // EmailSchema.parse("test"); // 抛出错误
+
+    let { data } = $props();
+</script>
+
+<pre>
+{JSON.stringify(data, null, 2)}
+</pre>

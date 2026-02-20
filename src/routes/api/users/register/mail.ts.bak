@@ -1,0 +1,27 @@
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: false,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+    }
+});
+
+export async function sendActivateMail(email: string, token: string) {
+    const url = `${process.env.PUBLIC_BASE_URL}/activate/${token}`;
+
+    await transporter.sendMail({
+        from: `"Your App" <${process.env.SMTP_USER}>`,
+        to: email,
+        subject: "账号激活",
+        html: `
+            <h2>欢迎注册</h2>
+            <p>请点击下面链接激活账号：</p>
+            <a href="${url}">${url}</a>
+            <p>24小时内有效</p>
+        `
+    });
+}
