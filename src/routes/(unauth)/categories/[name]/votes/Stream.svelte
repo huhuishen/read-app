@@ -1,16 +1,6 @@
 <script lang="ts">
-    type Article = {
-        id: string;
-        title: string;
-        author: string;
-        coverImage?: string;
-        voteCount?: number;
-        viewCount?: number;
-        commentCount?: number;
-        ratingCount?: number;
-        ratingSum?: number;
-        categories?: string[];
-    };
+    import type { Article } from "$lib/models";
+    import Card from "./Card.svelte";
 
     const { items }: { items: Partial<Article>[] } = $props();
 
@@ -32,10 +22,12 @@
     }
 </script>
 
-<div class="flex center ranking">
+<div class="flex center g-3 mb-3 ranking">
     <!-- 冠军 -->
     {#if champion}
-        <section class="champion">
+        <Card article={champion} number={1} size="xl"></Card>
+
+        <!-- <section class="champion">
             <div class="bg">
                 {#if champion.coverImage}
                     <img src={champion.coverImage} alt="" />
@@ -76,74 +68,22 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
     {/if}
 
     <!-- 第二第三 -->
-    <section class="runnerups">
-        {#each runnerUps as article, i}
-            <article class="card">
-                <div class="cover">
-                    {#if article.coverImage}
-                        <img
-                            src={article.coverImage}
-                            alt={article.title ?? "封面图"}
-                        />
-                    {:else}
-                        <div class="placeholder"></div>
-                    {/if}
-                </div>
-
-                <div class="info">
-                    <div class="rank">
-                        #{i + 2}
-                    </div>
-
-                    <div class="title">
-                        {article.title}
-                    </div>
-
-                    <div class="meta">
-                        {article.author}
-                    </div>
-
-                    <div class="stats">
-                        👍 {article.voteCount ?? 0}
-                    </div>
-                </div>
-            </article>
-        {/each}
-    </section>
+    {#each runnerUps as article, i}
+        <Card {article} number={i + 2} size="lg"></Card>
+    {/each}
 
     <!-- 其余 -->
-    <section class="list">
-        {#each others as article, i}
-            <article class="row">
-                <div class="rank">
-                    #{i + 4}
-                </div>
-
-                <div class="title">
-                    {article.title}
-                </div>
-
-                <div class="author">
-                    {article.author}
-                </div>
-
-                <div class="votes">
-                    👍 {article.voteCount ?? 0}
-                </div>
-            </article>
-        {/each}
-    </section>
+    {#each others as article, i}
+        <Card {article} number={i + 4}></Card>
+    {/each}
 </div>
 
 <style>
     .ranking {
-        max-width: 1100px;
-        margin: auto;
-        padding: 20px;
     }
 
     /* 冠军 Hero */
@@ -186,7 +126,6 @@
         color: white;
     }
 
-
     .overlay h1 {
         font-size: 36px;
         margin: 0 0 10px;
@@ -221,32 +160,12 @@
         margin-bottom: 20px;
     }
 
-    .card {
-        display: flex;
-        background: #1b1b1b;
-        color: white;
-        /* border-radius: 12px; */
-        overflow: hidden;
-    }
-
-    .cover {
-        width: 120px;
-        height: 100px;
-    }
-
-    .cover img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
     .info {
         padding: 10px;
     }
 
     .rank {
         font-size: 24px;
-        /* opacity: 0.7; */
     }
 
     .title {
@@ -258,53 +177,9 @@
         opacity: 0.7;
     }
 
-    /* 其余 */
-
-    .list {
-        /* background: #161616; */
-
-        /* border-radius: 12px; */
-
-        overflow: hidden;
-    }
-
-    .row {
-        display: grid;
-
-        grid-template-columns: 60px 1fr 160px 100px;
-
-        padding: 12px 16px;
-
-        color: #ddd;
-
-        border-bottom: 1px solid #2a2a2a;
-    }
-
-    .row:last-child {
-        border-bottom: none;
-    }
-
-    .author {
-        opacity: 0.7;
-    }
-
-    .votes {
-        text-align: right;
-    }
-
-    /* 响应式 */
-
     @media (max-width: 700px) {
         .runnerups {
             grid-template-columns: 1fr;
-        }
-
-        .row {
-            grid-template-columns: 50px 1fr 80px;
-        }
-
-        .author {
-            display: none;
         }
     }
 </style>
