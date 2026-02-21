@@ -114,3 +114,6 @@ GET {{host}}/categories/五十五届零重力杯/articles?page=1&limit=20
 
 ###
 GET {{host}}/categories/五十五届零重力杯/votes
+
+###
+GET {{host}}/categories

@@ -1,48 +1,66 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { tick } from "svelte";
 
     let {
-        styles = "",
+        className = "",
         value = $bindable(),
-        id = null,
+        id,
         placeholder = "",
         label,
         type = "text",
-        children = null,
+        // 新增
+        autofocus = false,
+        focusTrigger = 0, // 用于手动重新触发focus
+    }: {
+        className?: string;
+        value: string;
+        id?: string;
+        placeholder?: string;
+        label?: string;
+        type?: string;
+        autofocus?: boolean;
+        focusTrigger?: number;
     } = $props();
 
-    let el: HTMLTextAreaElement | null = $state(null);
+    let inputEl: HTMLInputElement | null = null;
 
-    function resize() {
-        if (!el) return;
+    async function applyFocus() {
+        if (!inputEl) return;
 
-        el.style.height = "auto";
-        el.style.height = el.scrollHeight + "px";
+        await tick();
+
+        inputEl.focus({
+            preventScroll: true,
+        });
     }
 
-    onMount(() => {
-        if (type === "textarea") {
-            resize();
-        }
+    // 初始 autofocus
+    $effect(() => {
+        if (!autofocus) return;
+        applyFocus();
     });
+
+    // 外部重新触发 focus
+    $effect(() => {
+        focusTrigger;
+        if (!autofocus) return;
+        applyFocus();
+    });
+
+    // 暴露方法给父组件
+    export function focus() {
+        applyFocus();
+    }
+
+    export function blur() {
+        inputEl?.blur();
+    }
 </script>
 
-<label class={styles}
-    >{label}
-    {#if type === "textarea"}
-        <textarea
-            bind:this={el}
-            {id}
-            bind:value
-            required
-            {placeholder}
-            oninput={resize}
-        ></textarea>
-    {:else if type === "select"}
-        <select {id} bind:value required>
-            {@render children?.()}
-        </select>
-    {:else}
-        <input {id} {type} bind:value required {placeholder} />
+<label class={className}>
+    {#if label}
+        <div class="label">{label}</div>
     {/if}
+
+    <input bind:this={inputEl} {id} {type} bind:value required {placeholder} />
 </label>

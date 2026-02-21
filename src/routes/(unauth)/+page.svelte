@@ -38,15 +38,6 @@
     </div>
     <div class="flex">
         {#if user}
-            {#if data.user?.roles?.includes("administrator")}
-                <a class="link" href="/dashboard">管理</a>
-            {:else}
-                <a class="link" href="/articles/write">发表</a>
-            {/if}
-            <span class="seperator"></span>
-            <!-- <a class="flex link" href="/profile/{user.id}"
-                ><Avatar name={user.name!}></Avatar>
-            </a> -->
             <Menu {user} />
         {:else}
             <a class="link" href="/login">登录</a>

@@ -1,6 +1,7 @@
 import { type Entity } from "$lib/mongolite";
 import { SafeError } from "$lib/util/safe";
 import { ArticleUserStats } from "./articleStats";
+import { Categories } from "./categories";
 import { Comments } from "./comments";
 import { Collection } from "./db";
 import { Underlines } from "./underline";
@@ -144,6 +145,68 @@ export class ArticleService extends Collection<Article> {
         };
     }
 
+    async syncArticleCategories(
+        articleId: string,
+        oldCategories: string[],
+        newCategories: string[]
+    ) {
+        const added = newCategories.filter(c => !oldCategories.includes(c));
+        const removed = oldCategories.filter(c => !newCategories.includes(c));
+
+        if (added.length > 0) {
+            await Categories.updateMany(
+                { name: { $in: added } },
+                { $inc: { articleCount: 1 } }
+            );
+        }
+
+        if (removed.length > 0) {
+            await Categories.updateMany(
+                { slug: { $in: removed } },
+                { $inc: { articleCount: -1 } }
+            );
+        }
+
+        await this.updatePreviewArticles([...added, ...removed]);
+    }
+
+    async updatePreviewArticles(names: string[]) {
+        for (const name of names) {
+            const category = await Categories.findOne({ name });
+
+            if (!category) continue;
+
+            const articles = await Articles.find(
+                { categories: name },
+                {
+                    projection: {
+                        title: 1,
+                        author: 1,
+                        coverImage: 1
+                    }
+                }
+            )
+                .sort({ createdAt: -1 })
+                .limit(category.previewSize ?? 8)
+                .toArray();
+
+            if (category.size == "lg") {
+                await Categories.updateOne(
+                    { name },
+                    {
+                        $set: {
+                            previewArticles: articles.map(a => ({
+                                id: a.id,
+                                title: a.title,
+                                author: a.author,
+                                coverImage: a.coverImage
+                            }))
+                        }
+                    }
+                )
+            };
+        }
+    }
 }
 
 export const Articles = new ArticleService();

@@ -123,4 +123,9 @@
     .dropdown-menu button:hover:not(:disabled) {
         background-color: #f3f4f6;
     }
+
+    hr {
+        border: none;
+        border-bottom: solid 1px #ddd;
+    }
 </style>

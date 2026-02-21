@@ -1,26 +1,40 @@
 import { type Entity } from "$lib/mongolite";
 import { t, type Infer } from "$lib/schema";
 import { Collection } from "./db";
-
-
 import { Articles } from "./articles";
 import { Comments } from "./comments";
 
 
-export const CategorySchema = t.object({
-    name: t.string(),
-    show: t.boolean(),
-    articleCount: t.number(),
-    previewSize: t.number(),
-    previewArticles: t.array(t.object({
-        id: t.string(),
-        title: t.string(),
-        author: t.string(),
-        coverImage: t.string(),
-    })),
-});
+// export const CategorySchema = t.object({
+//     name: t.string(),
+//     show: t.boolean(),
+//     articleCount: t.number(),
+//     previewSize: t.number(),
+//     previewArticles: t.array(t.object({
+//         id: t.string(),
+//         title: t.string(),
+//         author: t.string(),
+//         coverImage: t.string(),
+//     })),
+// });
 
-export type Category = Infer<typeof CategorySchema> & Entity
+// export type Category = Infer<typeof CategorySchema> & Entity
+export type Category = {
+    name: string;
+    description?: string;
+    show: boolean; // 是否首页显示
+    size: "sm" | "md" | "lg";
+    order: number; // 首页排序
+    articleCount: number;
+    previewSize?: number;
+    previewArticles?: {
+        id: string;
+        title: string;
+        author: string;
+        coverImage?: string;
+    }[];
+} & Entity
+
 
 export class CategoryService extends Collection<Category> {
     constructor() {

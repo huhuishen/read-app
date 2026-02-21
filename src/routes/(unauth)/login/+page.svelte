@@ -46,10 +46,14 @@
 
 <div class="flex main">
     <div class="flex g-3">
-        <TextBox styles="col-12" label="邮箱" bind:value={userState.email}
+        <TextBox
+            className="col-12"
+            label="邮箱"
+            bind:value={userState.email}
+            autofocus
         ></TextBox>
         <TextBox
-            styles="col-12"
+            className="col-12"
             label="密码"
             type="password"
             bind:value={userState.password}
