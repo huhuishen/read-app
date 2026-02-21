@@ -1,8 +1,7 @@
 import { type Entity } from "$lib/mongolite";
-import { t, type Infer } from "$lib/schema";
-import { Collection } from "./db";
 import { Articles } from "./articles";
 import { Comments } from "./comments";
+import { Collection } from "./db";
 
 
 // export const CategorySchema = t.object({
@@ -23,7 +22,7 @@ export type Category = {
     name: string;
     description?: string;
     show: boolean; // 是否首页显示
-    size: "sm" | "md" | "lg";
+    level: 0 | 1 | 2;
     order: number; // 首页排序
     articleCount: number;
     previewSize?: number;

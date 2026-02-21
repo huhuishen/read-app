@@ -1,12 +1,9 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import Card from "$lib/components/article/Card.svelte";
-    import Avatar from "$lib/components/Avatar.svelte";
-    import Dropdown from "$lib/components/Dropdown.svelte";
     import Pagination from "$lib/components/Pagination.svelte";
     import Search from "$lib/components/Search.svelte";
     import Menu from "$lib/components/user/Menu.svelte";
-    import { logout } from "$lib/util/client";
     import type { PageProps } from "./$types";
     import ArticleCard from "./ArticleCard.svelte";
     import Category from "./CategoryTitle.svelte";
@@ -69,30 +66,30 @@
         {/if}
     {:else}
         <div class="flex">
-            {#each data.hasPreview as category}
-                <Category name={category.name} laurel={true} />
+            {#each data.categories as category}
+                {#if category.level == 2}
+                    <Category name={category.name} laurel={true} />
 
-                <div class="flex articles">
-                    {#each category.previewArticles as article}
-                        <ArticleCard {article}></ArticleCard>
-                    {/each}
-                </div>
+                    <div class="flex articles">
+                        {#each category.previewArticles as article}
+                            <ArticleCard {article}></ArticleCard>
+                        {/each}
+                    </div>
+                {:else if category.level == 1}{:else}
+                    <Category name="其它标签" laurel={false} />
+                    <div class="flex g-2">
+                        <a
+                            class="category-title"
+                            href="/categories/{encodeURI(category.name!)}/articles"
+                        >
+                            <div class="flex card-small">
+                                <span> {category.name}</span>
+                                <span>{category.articleCount}</span>
+                            </div>
+                        </a>
+                    </div>
+                {/if}
             {/each}
-
-            <Category name="其它标签" laurel={false} />
-            <div class="flex g-2">
-                {#each data.noPreview as category}
-                    <a
-                        class="category-title"
-                        href="/categories/{encodeURI(category.name!)}"
-                    >
-                        <div class="flex card-small">
-                            <span> {category.name}</span>
-                            <span>{category.articleCount}</span>
-                        </div>
-                    </a>
-                {/each}
-            </div>
         </div>
     {/if}
 </div>

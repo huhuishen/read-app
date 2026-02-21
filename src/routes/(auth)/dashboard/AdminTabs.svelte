@@ -11,6 +11,7 @@
     tabs={[
         { key: "articles", label: "作品" },
         { key: "users", label: "用户" },
+        { key: "categories", label: "标签" },
         { key: "stats", label: "统计" },
     ]}
     {active}

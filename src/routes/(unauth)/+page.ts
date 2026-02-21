@@ -10,16 +10,8 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
     const q = url.searchParams.get('q') || '';
 
     if (q.trim() === "") {
-        const res = await api.get<{
-            hasPreview: Category[],
-            noPreview: Category[]
-        }>(`/api/categories`);
-
-        // return {
-        //     hasPreview: data.hasPreview as Category[],
-        //     noPreview: data.noPreview as Category[],
-        // };
-        return res;
+        const categories = await api.get<Category[]>(`/api/categories/home`);
+        return { categories };
     } else {
         const res = await api.get<DataPage<Article>>(
             `/api/articles?q=${encodeURIComponent(q)}&page=${page}&limit=${limit}`,

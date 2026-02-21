@@ -1,7 +1,6 @@
 import { Users } from '$lib/models';
 import type { Cookies } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
-import { SafeError } from './safe';
 
 export function getUser(cookies: Cookies) {
     const token = cookies.get('token') || '';

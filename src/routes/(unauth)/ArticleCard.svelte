@@ -1,14 +1,14 @@
 <script lang="ts">
-    interface Props {
+    let {
+        article,
+    }: {
         article: {
             title: string;
             author: string;
             id: string;
-            coverImage: string;
+            coverImage?: string;
         };
-    }
-
-    let { article }: Props = $props();
+    } = $props();
     //TODO：  href="/articles/{article.articleId}
 </script>
 

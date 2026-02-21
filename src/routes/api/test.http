@@ -117,3 +117,9 @@ GET {{host}}/categories/五十五届零重力杯/votes
 
 ###
 GET {{host}}/categories
+
+###
+GET {{host}}/categories?q=机
+
+###
+GET {{host}}/categories/home
