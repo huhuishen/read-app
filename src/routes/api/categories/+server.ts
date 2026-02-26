@@ -32,16 +32,9 @@ export const PATCH: RequestHandler = withApi(async ({ request }) => {
 
     return json(res);
 })
-// export async function POST({ request }) {
-//     return await safe(async () => {
-//         const req = await request.json();
 
-//         if (!req.name) {
-//             throw new SafeError(404, 'name not specfied');
-//         }
+export const POST: RequestHandler = withApi(async ({ request }) => {
+    const res = await Categories.createAward(2026, 2);
 
-//         const res = await Categories.build(req.name, req.size);
-
-//         return new Response(JSON.stringify(res));
-//     });
-// }
+    return json(res);
+})

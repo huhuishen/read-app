@@ -7,7 +7,7 @@
     import { toast } from "$lib/stores/toast.svelte.js";
     import { underlineManager } from "$lib/stores/underlines.svelte";
     import { createApi, safeCall } from "$lib/util/apiRequest";
-    import { stringSegment } from "$lib/util/client";
+    import { stringSegment, toLocalDateString } from "$lib/util/client";
     import { onMount } from "svelte";
     import type { PageProps } from "./$types";
     import ArticleSegment from "./ArticleSegment.svelte";
@@ -21,7 +21,11 @@
     const { data }: PageProps = $props();
 
     // svelte-ignore state_referenced_locally
-    const article = $state(data.article);
+    const article = $derived(data.article);
+    const userStats = $state(data.userStats);
+    const now = new Date();
+    const voteEnd = now > new Date(data.contest.voteEnd);
+
     const segments = $derived(stringSegment(article.content));
 
     let underlines = $state<Record<number, UnderlineRange[]>>({});
@@ -171,7 +175,7 @@
     }
 
     // svelte-ignore state_referenced_locally
-    let maxScrollPercent = $state(data.article.completion ?? 0);
+    let maxScrollPercent = $state(data.userStats.completion ?? 0);
     let maxScrollableSeen = 0;
 
     function updateScrollProgress() {
@@ -310,20 +314,24 @@
 
 <div class="flex footer">
     <CheckButton
-        selected={article.bookmarked}
+        selected={userStats.bookmarked}
         onclick={async () => {
             await safeCall(
                 api.post(`/api/articles/${article.id}/stats`, {
                     action: "bookmark",
-                    value: !article.bookmarked,
+                    value: !userStats.bookmarked,
                 }),
                 toast,
             );
-            article.bookmarked = !article.bookmarked;
+            userStats.bookmarked = !userStats.bookmarked;
         }}><Icon name="bookmark2"></Icon>关注</CheckButton
     >
     <CheckButton
-        selected={article.voted}
+        selected={userStats.voted}
+        disabled={voteEnd}
+        title={voteEnd
+            ? `投票已于 ${toLocalDateString(data.contest.voteEnd)} 截止`
+            : ""}
         onclick={async () => {
             const r = await safeCall(
                 // api.post(`/api/articles/${article.id}/stats`, {
@@ -331,13 +339,13 @@
                 //     value: !article.voted,
                 // }),
                 api.post(`/api/articles/${article.id}/vote`, {
-                    value: !article.voted,
+                    value: !userStats.voted,
                 }),
                 toast,
             );
 
             if (r) {
-                article.voted = !article.voted;
+                userStats.voted = !userStats.voted;
                 toast.show(`本期征文剩余投票 ${r.remain}`);
             }
         }}><Icon name="vote"></Icon>为本作品投票</CheckButton

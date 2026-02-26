@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { toLocalDateString } from "$lib/util/client";
     import CategoryTabs from "../CategoryTabs.svelte";
     import { getTabs } from "../tabDef";
     import type { PageProps } from "./$types";
@@ -11,7 +12,12 @@
 
 <CategoryTabs name={data.params.name} {tabs} active="votes">
     <!-- <VotePage items={data.items} /> -->
-    <Stream items={data.items} />
+
+    {#if data.items === null}
+        <p>投票结果将于 {toLocalDateString(data.category.voteEnd)} 显示</p>
+    {:else}
+        <Stream items={data.items} />
+    {/if}
 </CategoryTabs>
 
 <style>

@@ -125,3 +125,7 @@ GET {{host}}/categories?q=机
 
 ###
 GET {{host}}/categories/home
+
+
+###
+POST {{host}}/categories

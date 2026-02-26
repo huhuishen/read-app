@@ -7,7 +7,7 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async ({ fetch, params, url }) => {
     const api = createApi(fetch);
 
-    const data = await api.get<Article[]>(
+    const data = await api.get<Article[] | null>(
         `/api/categories/${params.name}/votes`,
     );
 

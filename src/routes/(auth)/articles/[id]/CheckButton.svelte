@@ -15,8 +15,6 @@
         children?: Snippet;
         onclick?: () => void;
     } = $props();
-
-   
 </script>
 
 <button
@@ -54,6 +52,10 @@
             background-color 0.15s ease,
             color 0.15s ease,
             box-shadow 0.15s ease; */
+    }
+
+    .control:disabled {
+        cursor: not-allowed;
     }
 
     .control:hover:not(.disabled) {

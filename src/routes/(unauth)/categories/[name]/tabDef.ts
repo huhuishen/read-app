@@ -1,4 +1,4 @@
-export function getTabs(award: boolean) {
+export function getTabs(award: boolean | undefined) {
     if (award) {
         return [
             { key: "articles", label: "作品" },
