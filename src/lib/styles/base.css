@@ -1,0 +1,566 @@
+/* mini-ui.css */
+:root {
+    /* --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    --color-text: #212529;
+    --color-border: #ced4da;
+    --color-bg: #fff;
+    --color-primary: #0d6efd;
+    --color-primary-enhance: #0b5ed7;
+    --color-focus: rgba(13, 110, 253, .25);
+    --color-disabled: #e9ecef;
+
+    --color-primary: #3b82f6;
+    --color-danger: #dc3545;
+    --color-light: #f8f9fa;
+    --color-border-light: #ced4da;
+    --color-text-dark: #212529;
+
+
+    --font-size: 16px;
+    --line-height: 1.5; */
+}
+
+:root {
+    --bg-color: #f1f1f1;
+    --reader-bg-color: #fff;
+    --modal-bg-color: #f4f5f7;
+    --control-bg-color: #fff;
+    --control-disabled: #ebecee;
+    --button-primary: #1e80ff;
+    --button-primary-hover: #0066ff;
+    --button-primary-text: #fff;
+    --text-color: #000;
+    --header-color: #411f00;
+    --link-color: #777;
+    --link-disabled: #cacaca;
+    --highlight-color: #000;
+    color-scheme: light dark;
+
+    --radius-none: 0;
+    --radius-sm: 3px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
+    --radius: var(--radius-none);
+    /* --radius: var(--radius-sm); */
+}
+
+[data-theme="dark"] {
+    --bg-color: #262628;
+    --reader-bg-color: #1e1e1e;
+    --modal-bg-color: #262628;
+    --control-bg-color: #4e4e4f;
+    --control-disabled: #3a3a3d;
+    --button-primary: #1755a5;
+    --button-primary-hover: #0059df;
+    --button-primary-text: #eee;
+    --text-color: #ccc;
+    --header-color: #bda48b;
+    --link-color: #777;
+    --link-disabled: #3b3b3b;
+    --highlight-color: #fff;
+}
+
+/* =========================
+   基础 reset
+   ========================= */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body,
+p {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-base);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    color: var(--color-text);
+}
+
+pre {
+    font-family: Cascadia Mono, Fixedsys, Consolas;
+    color: var(--color-text);
+    font-size: 14px;
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+
+input,
+textarea,
+select,
+button,
+a {
+    font: inherit;
+    color: inherit;
+}
+
+/* =========================
+   文本输入控件
+   ========================= */
+
+input:not([type]),
+input[type="text"],
+input[type="file"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: var(--radius);
+    background: var(--control-bg-color);
+    /* transition: border-color .15s, box-shadow .15s; */
+}
+
+input:not([type]):disabled,
+input[type="text"]:disabled,
+input[type="password"]:disabled,
+input[type="email"]:disabled,
+input[type="number"]:disabled,
+input[type="checkbox"]:disabled,
+input[type="checkbox"][role="switch"]:disabled,
+input[type="radio"]:disabled,
+textarea:disabled,
+select:disabled {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    cursor: not-allowed;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #0d6efd;
+    /* box-shadow: 0 0 0 3px rgba(13, 110, 253, .25); */
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* =========================
+   checkbox / radio
+   ========================= */
+
+input[type="checkbox"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin: 0px 3px 3px 3px;
+    border: 1px solid #ced4da;
+    border-radius: var(--radius);
+    background-color: #fff;
+    cursor: pointer;
+    vertical-align: middle;
+    position: relative;
+    /* transition: background-color .15s, border-color .15s, box-shadow .15s; */
+}
+
+/* checked */
+input[type="checkbox"]:checked {
+    border-color: #0d6efd;
+    background-color: #0d6efd;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px 12px;
+}
+
+
+/* disabled */
+
+input[type="checkbox"]:disabled:checked,
+input[type="checkbox"][role="switch"]:disabled:checked,
+input[type="radio"]:disabled:checked {
+    background-color: #86b6fe;
+    border-color: #86b6fe;
+}
+
+/* switch 样式 */
+
+input[type="checkbox"][role="switch"] {
+    appearance: none;
+    width: 34px;
+    height: 18px;
+    margin: 0px 3px 3px 3px;
+    border-radius: 999px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    /* transition: background-color .2s, border-color .2s; */
+}
+
+/* switch 滑块 */
+
+input[type="checkbox"][role="switch"]::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #ced4da;
+    /* transition: transform .2s; */
+}
+
+input[type="checkbox"][role="switch"]:checked {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+
+input[type="checkbox"][role="switch"]:checked::after {
+    background: white;
+    transform: translateX(16px);
+}
+
+
+
+input[type="radio"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin: 1px 3px 3px 3px;
+    border: 1px solid #ced4da;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    vertical-align: middle;
+    position: relative;
+}
+
+input[type="radio"]:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background: white;
+    border-radius: 50%;
+}
+
+
+/* =========================
+   select
+   ========================= */
+
+select {
+    appearance: none;
+    width: 100%;
+    padding: 6px 36px 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: var(--radius);
+    ;
+    background-color: #fff;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4 6l4 4 4-4' fill='none' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px 16px;
+
+    /* transition: border-color .15s, box-shadow .15s; */
+}
+
+/* =========================
+   button
+   ========================= */
+
+.button,
+button {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 12px;
+    border-radius: var(--radius);
+
+    border: 1px solid #ced4da;
+    background: var(--control-bg-color);
+    font: inherit;
+    line-height: 1.5;
+
+    cursor: pointer;
+    user-select: none;
+
+    /* transition:
+        background-color .15s,
+        border-color .15s,
+        box-shadow .15s; */
+}
+
+.button:hover:not(:disabled),
+button:hover:not(:disabled) {
+    border-color: #0b5ed7;
+    background-color: #e2eeff;
+    /* color: #0b5ed7; */
+}
+
+.button:focus,
+button:focus,
+a:focus {
+    /* outline: none; */
+    /* box-shadow: 0 0 0 3px rgba(13, 110, 253, .25); */
+}
+
+.button:disabled,
+button:disabled {
+    /* color: #adb5bd;
+    border-color: #adb5bd; */
+    background-color: transparent;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+button[data-variant="primary"] {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+button[data-variant="primary"]:hover:not(:disabled) {
+    background-color: #0b5ed7;
+    border-color: #0b5ed7;
+    color: #fff;
+}
+
+/* button[data-variant="primary"]:active {
+    background-color: #0a58ca;
+    border-color: #0a58ca;
+} */
+
+button[data-variant="danger"] {
+    background-color: #dc3545;
+    color: #fff;
+    border-color: #dc3545;
+}
+
+button[data-variant="danger"]:hover:not(:disabled) {
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
+    color: #fff;
+}
+
+button[data-variant="light"] {
+    background-color: inherit;
+    border: none;
+    color: #212529;
+}
+
+button[data-variant="light"]:hover:not(:disabled) {}
+
+button[data-variant="link"] {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+}
+
+button[data-variant="link"]:hover:not(:disabled) {
+    background-color: transparent;
+}
+
+a {
+    text-decoration: none;
+}
+
+/*
+a:hover {
+    text-decoration: underline;
+} */
+
+
+.sb {
+    justify-content: space-between;
+}
+
+.mt-1 {
+    margin-top: 1em;
+}
+
+.mt-2 {
+    margin-top: 2em;
+}
+
+.mt-3 {
+    margin-top: 3em;
+}
+
+.mb-1 {
+    margin-bottom: 1em;
+}
+
+.mb-2 {
+    margin-bottom: 2em;
+}
+
+.mb-3 {
+    margin-bottom: 3em;
+}
+
+.mr-1 {
+    margin-right: 1em;
+}
+
+.mr-2 {
+    margin-right: 2em;
+}
+
+.mr-3 {
+    margin-right: 3em;
+}
+
+/* =========================
+   layout
+   ========================= */
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    width: 100%;
+}
+
+.g-0 {
+    gap: 0;
+}
+
+.g-1 {
+    gap: 4px;
+}
+
+.g-2 {
+    gap: 8px;
+}
+
+.g-3 {
+    gap: 16px;
+}
+
+.g-4 {
+    gap: 24px;
+}
+
+.g-5 {
+    gap: 32px;
+}
+
+
+
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.center {
+    justify-content: center;
+}
+
+.start {
+    align-items: start;
+}
+
+.sb {
+    justify-content: space-between;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.row {
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.col {
+    flex: 0 0 100%;
+    min-width: 0;
+    max-width: 100%;
+    /* 必须加 */
+}
+
+.col-1 {
+    flex: 0 0 8.3333%;
+    max-width: 8.3333%;
+}
+
+.col-2 {
+    flex: 0 0 16.6667%;
+    max-width: 16.6667%;
+}
+
+.col-3 {
+    flex: 0 0 25%;
+}
+
+.col-4 {
+    flex: 0 0 33.3333%;
+}
+
+.col-5 {
+    flex: 0 0 41.6667%;
+}
+
+.col-6 {
+    flex: 0 0 50%;
+}
+
+.col-7 {
+    flex: 0 0 58.3333%;
+}
+
+.col-8 {
+    flex: 0 0 66.6667%;
+}
+
+.col-9 {
+    flex: 0 0 75%;
+}
+
+.col-10 {
+    flex: 0 0 83.3333%;
+}
+
+.col-11 {
+    flex: 0 0 91.6667%;
+}
+
+.col-12 {
+    flex: 0 0 100%;
+}
+
+.p-1 {
+    padding: 0.25em;
+}
+
+.p-2 {
+    padding: 0.5em;
+}
+
+.p-3 {
+    padding: 1em;
+}
+
+.p-4 {
+    padding: 2em;
+}
+
+.p-5 {
+    padding: 3em;
+}

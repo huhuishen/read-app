@@ -1,0 +1,52 @@
+@host = http://localhost:5173
+# @host = http://192.168.31.3:3000
+
+###
+POST {{host}}/api/users/login
+Content-Type: application/json
+
+{
+    "email": "1",
+    "password": "1"
+}
+
+
+###
+POST {{host}}/api/users/login
+Content-Type: application/json
+
+{
+    "email": "admin",
+    "password": "admin"
+}
+
+
+
+###
+GET {{host}}/api/articles
+
+###
+GET {{host}}/api/articles/8q917sqo19k8
+
+###
+GET {{host}}/api/articles/g25uz6p8qmk1/comments
+
+###
+POST {{host}}/api/articles/g25uz6p8qmk1/comments
+
+
+###
+GET {{host}}/api/articles/g25uz6p8qmk1/underlines?segment=1
+
+###
+GET {{host}}/api/articles/g25uz6p8qmk1/underlines?segment=2&start=0&end=30
+
+
+
+
+###
+GET {{host}}/api/users
+
+
+###
+GET {{host}}/api/users/rug21somz8bn
