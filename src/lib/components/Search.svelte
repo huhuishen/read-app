@@ -27,17 +27,20 @@
                 }
             }}
         />
-
         <svg
             class="cross-icon"
+            color="#aaa"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
             aria-hidden="true"
             onclick={() => {
                 search = "";
                 onSearch?.(search);
-            }}
+            }}><use href="#cross"></use></svg
         >
-            <use href="#cross" />
-        </svg>
     </div>
 </label>
 
