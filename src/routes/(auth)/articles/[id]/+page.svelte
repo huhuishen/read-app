@@ -24,7 +24,7 @@
     const article = $derived(data.article);
     const userStats = $state(data.userStats);
     const now = new Date();
-    const voteEnd = now > new Date(data.contest.voteEnd);
+    const voteEnd = now > new Date(article.contest?.voteEnd ?? "");
 
     const segments = $derived(stringSegment(article.content));
 
