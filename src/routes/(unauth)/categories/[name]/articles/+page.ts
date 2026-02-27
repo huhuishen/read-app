@@ -4,17 +4,20 @@ import { createApi } from '$lib/util/apiRequest';
 import type { PageLoad } from './$types';
 
 
-export const load: PageLoad = async ({ fetch, params, url }) => {
+export const load: PageLoad = async ({ fetch, params, url, parent }) => {
     const api = createApi(fetch);
     const page = parseInt(url.searchParams.get('page') || '1');
     const limit = parseInt(url.searchParams.get('limit') || '20');
+    const data = await parent();
 
-    const data = await api.get<DataPage<Article>>(
-        `/api/categories/${params.name}/articles?page=${page}&limit=${limit}`,
+    const res = await api.get<DataPage<Article>>(
+        data.category.contest
+            ? `/api/contest/${params.name}?page=${page}&limit=${limit}`
+            : `/api/categories/${params.name}/articles?page=${page}&limit=${limit}`,
     );
 
     return {
         // category: params.name,
-        ...data
+        ...res
     };
 };

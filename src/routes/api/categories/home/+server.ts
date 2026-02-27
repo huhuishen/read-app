@@ -4,10 +4,14 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = withApi(async ({ }) => {
+    // const res = await Categories.find(
+    //     { show: true },
+    //     { sort: { level: -1, createdAt: -1 } }
+    // ).toArray();
+
     const res = await Categories.find(
-        { show: true },
-        { sort: { level: -1, createdAt: -1 } }
-    ).toArray();
+        {},
+    ).sort({ createdAt: -1 }).limit(3).toArray();
 
     return json(res);
 });

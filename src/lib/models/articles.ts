@@ -60,10 +60,31 @@ export type Article = {
     ratingCount: number;
     avgRating: number;
 
-    // bookmarked: boolean;
-    // voted: boolean;
-    // readSeconds: number;
-    // completion: number;
+    contest?: {
+
+        /**
+         * 征文期标识
+         * 格式：yyyy-MM
+         * 示例：2026-02
+         */
+        period: string;
+
+        /**
+         * 投稿开始
+         */
+        submissionStart: Date;
+
+        /**
+         * 投稿截止（当月最后一天）
+         */
+        submissionEnd: Date;
+
+        /**
+         * 投票截止（下月10日）
+         */
+        voteEnd: Date;
+
+    };
 } & Entity;
 
 export class ArticleService extends Collection<Article> {
@@ -214,3 +235,34 @@ export class ArticleService extends Collection<Article> {
 
 export const Articles = new ArticleService();
 
+/**
+ * 根据日期计算征文周期信息
+ * 规则：
+ * 每月1日开始投稿
+ * 当月最后一天停止投稿
+ * 下月10日停止投票
+ */
+export function getContestInfoByDate(now = new Date()) {
+
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-11
+
+    const submissionStart =
+        new Date(year, month, 1, 0, 0, 0);
+
+    const submissionEnd =
+        new Date(year, month + 1, 0, 23, 59, 59);
+
+    const voteEnd =
+        new Date(year, month + 1, 10, 23, 59, 59);
+
+    const period =
+        `${year}-${String(month + 1).padStart(2, "0")}`;
+
+    return {
+        period,
+        submissionStart,
+        submissionEnd,
+        voteEnd,
+    };
+}

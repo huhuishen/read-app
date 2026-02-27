@@ -15,13 +15,13 @@
     let searchQuery = $derived(data.query || "");
     // const api = createApi();
 
-    let categoriesWithPreview = $derived(
-        data.categories?.filter((c) => c.level == 2),
-    );
+    // let categoriesWithPreview = $derived(
+    //     data.categories?.filter((c) => c.level == 2),
+    // );
 
-    let categories1 = $derived(data.categories?.filter((c) => c.level == 1));
+    // let categories1 = $derived(data.categories?.filter((c) => c.level == 1));
 
-    let categories0 = $derived(data.categories?.filter((c) => c.level == 0));
+    // let categories0 = $derived(data.categories?.filter((c) => c.level == 0));
 </script>
 
 <svelte:head>
@@ -74,7 +74,7 @@
         {/if}
     {:else}
         <div class="flex">
-            {#each categoriesWithPreview as category}
+            <!-- {#each data.categories as category}
                 <CategoryTitle name={category.name} laurel={category.award} />
 
                 <div class="flex articles">
@@ -82,9 +82,18 @@
                         <ArticleCard {article}></ArticleCard>
                     {/each}
                 </div>
-            {/each}
+            {/each} -->
+            {#each data.categories as category, i}
+                <CategoryTitle name={category.name} laurel={category.award} />
 
-            {#each categories1 as category}
+                <div class="flex articles">
+                    {#each category.previewArticles as article}
+                        <ArticleCard {article} showCover={i === 0}
+                        ></ArticleCard>
+                    {/each}
+                </div>
+            {/each}
+            <!-- {#each categories1 as category}
                 <CategoryTitle name={category.name} laurel={category.award} />
 
                 <div class="flex articles">
@@ -107,7 +116,7 @@
                         </div>
                     </a>
                 {/each}
-            </div>
+            </div> -->
         </div>
     {/if}
 </div>

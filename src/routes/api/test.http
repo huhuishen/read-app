@@ -29,14 +29,14 @@ GET {{host}}/articles?q=天
 
 
 ###
-GET {{host}}/article/trdro3ejj95f
+GET {{host}}/articles/trdro3ejj95f
 
 ###
-GET {{host}}/article/trdro3ejj95f/comments
+GET {{host}}/articles/trdro3ejj95f/comments
 
 
 ###
-POST {{host}}/article/trdro3ejj95f
+POST {{host}}/articles/trdro3ejj95f
 Content-Type: application/json
 
 {
@@ -46,12 +46,12 @@ Content-Type: application/json
 }
 
 ###
-POST {{host}}/article/
+POST {{host}}/articles/
 Content-Type: application/json
 
 {
-    "title": "2",
-    "content": "2",
+    "title": "时间移民",
+    "content": "时间移民正文",
     "coverImage": null
 }
 
@@ -128,4 +128,7 @@ GET {{host}}/categories/home
 
 
 ###
-POST {{host}}/categories
+# POST {{host}}/categories
+
+###
+GET {{host}}/categories/2026-02

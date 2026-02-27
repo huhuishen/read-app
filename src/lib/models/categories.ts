@@ -1,4 +1,5 @@
 import { type Entity } from "$lib/mongolite";
+import type { Filter } from "mongodb";
 import { Articles, type Article } from "./articles";
 import { Comments } from "./comments";
 import { Collection } from "./db";
@@ -20,6 +21,9 @@ import { Collection } from "./db";
 // export type Category = Infer<typeof CategorySchema> & Entity
 export type Category = {
     name: string;
+    contest: boolean;
+
+
     description?: string;
     show: boolean; // 是否首页显示
     award?: boolean; // 有奖征文
@@ -50,6 +54,7 @@ export class CategoryService extends Collection<Category> {
 
         const doc: Category = {
             name: `${month}届零重力杯`,
+            contest: true,
             show: true,
             level: 2,
             articleCount: 0,
@@ -61,6 +66,60 @@ export class CategoryService extends Collection<Category> {
             voteEnd,
         }
         return await super.insertOne(doc);
+    }
+
+    async ensureExists(name: string) {
+        return await super.updateOne(
+            { name },
+            {
+                $setOnInsert: {
+                    name,
+                    show: true,
+                }
+            },
+            {
+                upsert: true
+            }
+        );
+    }
+
+    async addPreview(article: Article) {
+        if (!article.contest?.period) return;
+
+        const doc = {
+            id: article.id,
+            title: article.title,
+            author: article.author,
+            coverImage: article.coverImage,
+        }
+
+        // await this.ensureExists(article.contest.period);
+        return await super.updateOne(
+            { name: article.contest?.period },
+            {
+                $setOnInsert: {
+                    name: article.contest?.period,
+                    contest: true,
+                },
+
+                // 每次执行都增加文章数
+                $inc: {
+                    articleCount: 1
+                },
+
+                // 每次执行都加入 preview
+                $push: {
+                    previewArticles: {
+                        $each: [doc],
+                        $position: 0, // 最新放前面
+                        // $slice: -10  // 可选限制 preview 数量
+                    }
+                },
+            },
+            {
+                upsert: true
+            }
+        );
     }
 
     async buildPreview(name: string, size: number = 5, show: boolean = true) {

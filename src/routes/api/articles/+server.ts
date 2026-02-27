@@ -1,7 +1,8 @@
-import { Articles, type Article } from '$lib/models';
+import { Articles, Categories, getContestInfoByDate, type Article } from '$lib/models';
 import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { nanoid } from '$lib/util/client';
 
 
 export const GET: RequestHandler = withApi(async ({ url, locals }) => {
@@ -102,17 +103,37 @@ export const GET: RequestHandler = withApi(async ({ url, locals }) => {
 //     }
 // };
 
-export const POST: RequestHandler = async ({ request, params, cookies }) => {
+export const POST: RequestHandler = withApi(async ({ request, params, locals }) => {
+    if (!locals.user) {
+        return json({ error: '未登录' }, { status: 400 });
+    }
+
     const req = await request.json();
 
-    const article = req as Article;
+    let article = req as Article;
 
     if (!article.title || !article.content) {
         return json({ error: '缺少必填项' }, { status: 400 });
     }
 
-    article.bookmarkCount = 0;
-    article.viewCount = 0;
+    article = {
+        ...article,
+        id: nanoid(),
+        version: 0,
+        status: "draft",
+        isLatest: true,
+        authorId: locals.user.id!,
+        author: locals.user.name!,
+        bookmarkCount: 0,
+        viewCount: 0,
+    }
+
+    const now = new Date();
+
+    article.contest = getContestInfoByDate(now);
+
+    await Categories.addPreview(article);
+
     try {
         const res = await Articles.insertOne(article);
         return json({
@@ -122,4 +143,4 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
     } catch (error) {
         return json({ error: JSON.stringify(error) }, { status: 500 });
     }
-};
+});
