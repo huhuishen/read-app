@@ -93,7 +93,7 @@
 
 <style>
     .empty {
-        color: #aaa;
+        color: var(--link-disabled);
     }
 
     .title {
@@ -105,14 +105,14 @@
     }
 
     .gray {
-        color: #666;
+        color: var(--text-secondary);
         font-size: 16px;
     }
 
     .card {
         /* width: 100%; */
         /* max-width: 600px; */
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-soft);
     }
 
     .stats {
@@ -133,7 +133,7 @@
     }
 
     .label {
-        color: #aaa;
+        color: var(--link-disabled);
         text-align: center;
     }
 </style>

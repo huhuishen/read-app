@@ -1,64 +1,167 @@
-/* mini-ui.css */
 :root {
-    /* --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-    --color-text: #212529;
-    --color-border: #ced4da;
-    --color-bg: #fff;
-    --color-primary: #0d6efd;
-    --color-primary-enhance: #0b5ed7;
-    --color-focus: rgba(13, 110, 253, .25);
-    --color-disabled: #e9ecef;
-
-    --color-primary: #3b82f6;
-    --color-danger: #dc3545;
-    --color-light: #f8f9fa;
-    --color-border-light: #ced4da;
-    --color-text-dark: #212529;
-
-
+    --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-size: 16px;
-    --line-height: 1.5; */
-}
-
-:root {
-    --bg-color: #f1f1f1;
-    --reader-bg-color: #fff;
-    --modal-bg-color: #f4f5f7;
-    --control-bg-color: #fff;
-    --control-disabled: #ebecee;
-    --button-primary: #1e80ff;
-    --button-primary-hover: #0066ff;
-    --button-primary-text: #fff;
-    --text-color: #000;
-    --header-color: #411f00;
-    --link-color: #777;
-    --link-disabled: #cacaca;
-    --highlight-color: #000;
+    --line-height: 1.5;
     color-scheme: light dark;
+
+    --surface-page: #f3f4f6;
+    --surface-reader: #ffffff;
+    --surface-modal: #f8fafc;
+    --surface-control: #ffffff;
+    --surface-soft: #f1f5f9;
+    --surface-disabled: #e5e7eb;
+    --surface-ghost: rgba(255, 255, 255, 0.7);
+
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --text-faint: #9ca3af;
+    --text-inverse: #f9fafb;
+    --text-heading: #411f00;;
+
+    --border-soft: #e5e7eb;
+    --border-default: #d1d5db;
+    --border-strong: #cbd5e1;
+
+    --accent-primary: #1e80ff;
+    --accent-primary-hover: #0066ff;
+    --accent-highlight: #0060a8;
+    --accent-secondary: #6366f1;
+    --accent-tertiary: #8b5cf6;
+    --accent-soft: rgba(141, 219, 255, 0.2);
+    --accent-tint-soft: rgba(59, 130, 246, 0.1);
+    --accent-tint-weak: rgba(59, 130, 246, 0.16);
+
+    --danger: var(--danger);
+    --danger-hover: var(--danger-hover);
+    --warning: #f6b024;
+    --brand-gold: #b19046;
+
+    --status-info-text: #1e40af;
+    --status-info-bg: #dbeafe;
+    --status-info-border: #bfdbfe;
+    --status-success-text: #065f46;
+    --status-success-bg: #d1fae5;
+    --status-success-border: #a7f3d0;
+    --status-warning-text: #92400e;
+    --status-warning-bg: #fef3c7;
+    --status-warning-border: #fde68a;
+    --status-danger-text: #991b1b;
+    --status-danger-bg: #fee2e2;
+    --status-danger-border: #fecaca;
+
+    --rank-gold-bg: #fff7cc;
+    --rank-silver-bg: #eef3ff;
+    --rank-bronze-bg: #ffeede;
+
+    --contrib-1: #9be9a8;
+    --contrib-2: #40c463;
+    --contrib-3: #30a14e;
+    --contrib-4: #216e39;
+
+    --overlay-soft: rgba(0, 0, 0, 0.05);
+    --overlay-default: rgba(0, 0, 0, 0.2);
+    --overlay-strong: rgba(0, 0, 0, 0.5);
+    --shadow-sm: rgba(0, 0, 0, 0.08);
+    --shadow-md: rgba(0, 0, 0, 0.15);
+    --shadow-lg: rgba(0, 0, 0, 0.3);
+    --selection-bg: rgba(59, 130, 246, 0.24);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.3);
+    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
+
+    --bg-color: var(--surface-page);
+    --reader-bg-color: var(--surface-reader);
+    --modal-bg-color: var(--surface-modal);
+    --control-bg-color: var(--surface-control);
+    --control-disabled: var(--surface-disabled);
+    --button-primary: var(--accent-primary);
+    --button-primary-hover: var(--accent-primary-hover);
+    --button-primary-text: var(--text-inverse);
+    --text-color: var(--text-primary);
+    --header-color: var(--text-heading);
+    --link-color: var(--text-muted);
+    --link-disabled: var(--text-faint);
+    --highlight-color: var(--accent-highlight);
+    --control-text: var(--text-primary);
+    --control-bg-hover: var(--overlay-soft);
+    --control-bg-selected: rgba(0, 96, 168, 0.18);
+    --control-border-selected: rgba(0, 96, 168, 0.45);
 
     --radius-none: 0;
     --radius-sm: 3px;
     --radius-md: 4px;
     --radius-lg: 6px;
     --radius: var(--radius-none);
-    /* --radius: var(--radius-sm); */
 }
 
 [data-theme="dark"] {
-    --bg-color: #262628;
-    --reader-bg-color: #1e1e1e;
-    --modal-bg-color: #262628;
-    --control-bg-color: #4e4e4f;
-    --control-disabled: #3a3a3d;
-    --button-primary: #1755a5;
-    --button-primary-hover: #0059df;
-    --button-primary-text: #eee;
-    --text-color: #ccc;
-    --header-color: #bda48b;
-    --link-color: #777;
-    --link-disabled: #3b3b3b;
-    --highlight-color: #fff;
+    --surface-page: #0f172ace;
+    --surface-reader: #111827;
+    --surface-modal: #1f2937;
+    --surface-control: #1e293b;
+    --surface-soft: #243244;
+    --surface-disabled: #334155;
+    --surface-ghost: rgba(15, 23, 42, 0.55);
+
+    --text-primary: #e2e8f0;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-faint: #64748b;
+    --text-inverse: #0f172a;
+    --text-heading: #fff6ee;
+
+    --border-soft: #334155;
+    --border-default: #475569;
+    --border-strong: #64748b;
+
+    --accent-primary: #60a5fa;
+    --accent-primary-hover: #3b82f6;
+    --accent-highlight: #93c5fd;
+    --accent-secondary: #818cf8;
+    --accent-tertiary: #a78bfa;
+    --accent-soft: rgba(59, 130, 246, 0.18);
+    --accent-tint-soft: rgba(96, 165, 250, 0.18);
+    --accent-tint-weak: rgba(96, 165, 250, 0.25);
+
+    --danger: #f87171;
+    --danger-hover: #ef4444;
+    --warning: #fbbf24;
+    --brand-gold: #d4b46f;
+
+    --status-info-text: #bfdbfe;
+    --status-info-bg: rgba(59, 130, 246, 0.2);
+    --status-info-border: rgba(96, 165, 250, 0.35);
+    --status-success-text: #86efac;
+    --status-success-bg: rgba(34, 197, 94, 0.16);
+    --status-success-border: rgba(74, 222, 128, 0.32);
+    --status-warning-text: #fcd34d;
+    --status-warning-bg: rgba(245, 158, 11, 0.16);
+    --status-warning-border: rgba(251, 191, 36, 0.32);
+    --status-danger-text: #fca5a5;
+    --status-danger-bg: rgba(239, 68, 68, 0.16);
+    --status-danger-border: rgba(248, 113, 113, 0.35);
+
+    --rank-gold-bg: rgba(251, 191, 36, 0.18);
+    --rank-silver-bg: rgba(148, 163, 184, 0.2);
+    --rank-bronze-bg: rgba(251, 146, 60, 0.18);
+
+    --contrib-1: #3d8f57;
+    --contrib-2: #2f7a49;
+    --contrib-3: #25643c;
+    --contrib-4: #1a4f2e;
+
+    --overlay-soft: rgba(255, 255, 255, 0.08);
+    --overlay-default: rgba(0, 0, 0, 0.38);
+    --overlay-strong: rgba(0, 0, 0, 0.62);
+    --shadow-sm: rgba(0, 0, 0, 0.22);
+    --shadow-md: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.45);
+    --selection-bg: rgba(147, 197, 253, 0.26);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.32);
+
+    --control-bg-selected: rgba(147, 197, 253, 0.22);
+    --control-border-selected: rgba(147, 197, 253, 0.38);
 }
 
 /* =========================
@@ -78,12 +181,12 @@ p {
     font-family: var(--font-base);
     font-size: var(--font-size);
     line-height: var(--line-height);
-    color: var(--color-text);
+    color: var(--text-color);
 }
 
 pre {
     font-family: Cascadia Mono, Fixedsys, Consolas;
-    color: var(--color-text);
+    color: var(--text-color);
     font-size: 14px;
     word-break: break-all;
     white-space: pre-wrap;
@@ -111,7 +214,7 @@ input[type="number"],
 textarea {
     width: 100%;
     padding: 6px 10px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-default);
     border-radius: var(--radius);
     background: var(--control-bg-color);
     /* transition: border-color .15s, box-shadow .15s; */
@@ -127,8 +230,8 @@ input[type="checkbox"][role="switch"]:disabled,
 input[type="radio"]:disabled,
 textarea:disabled,
 select:disabled {
-    background-color: #e9ecef;
-    border-color: #ced4da;
+    background-color: var(--surface-disabled);
+    border-color: var(--border-default);
     cursor: not-allowed;
 }
 
@@ -136,7 +239,7 @@ input:focus,
 textarea:focus,
 select:focus {
     outline: none;
-    border-color: #0d6efd;
+    border-color: var(--accent-primary);
     /* box-shadow: 0 0 0 3px rgba(13, 110, 253, .25); */
 }
 
@@ -154,9 +257,9 @@ input[type="checkbox"] {
     width: 16px;
     height: 16px;
     margin: 0px 3px 3px 3px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-default);
     border-radius: var(--radius);
-    background-color: #fff;
+    background-color: var(--reader-bg-color);
     cursor: pointer;
     vertical-align: middle;
     position: relative;
@@ -165,8 +268,8 @@ input[type="checkbox"] {
 
 /* checked */
 input[type="checkbox"]:checked {
-    border-color: #0d6efd;
-    background-color: #0d6efd;
+    border-color: var(--accent-primary);
+    background-color: var(--accent-primary);
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-6'/></svg>");
     background-repeat: no-repeat;
     background-position: center;
@@ -179,8 +282,8 @@ input[type="checkbox"]:checked {
 input[type="checkbox"]:disabled:checked,
 input[type="checkbox"][role="switch"]:disabled:checked,
 input[type="radio"]:disabled:checked {
-    background-color: #86b6fe;
-    border-color: #86b6fe;
+    background-color: var(--accent-tint-soft);
+    border-color: var(--accent-tint-soft);
 }
 
 /* switch 样式 */
@@ -191,8 +294,8 @@ input[type="checkbox"][role="switch"] {
     height: 18px;
     margin: 0px 3px 3px 3px;
     border-radius: 999px;
-    border: 1px solid #ced4da;
-    background-color: #fff;
+    border: 1px solid var(--border-default);
+    background-color: var(--reader-bg-color);
     cursor: pointer;
     position: relative;
     vertical-align: middle;
@@ -209,17 +312,17 @@ input[type="checkbox"][role="switch"]::after {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background-color: #ced4da;
+    background-color: var(--border-default);
     /* transition: transform .2s; */
 }
 
 input[type="checkbox"][role="switch"]:checked {
-    background: #0d6efd;
-    border-color: #0d6efd;
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
 }
 
 input[type="checkbox"][role="switch"]:checked::after {
-    background: white;
+    background: var(--reader-bg-color);
     transform: translateX(16px);
 }
 
@@ -230,24 +333,24 @@ input[type="radio"] {
     width: 16px;
     height: 16px;
     margin: 1px 3px 3px 3px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-default);
     border-radius: 50%;
-    background: #fff;
+    background: var(--reader-bg-color);
     cursor: pointer;
     vertical-align: middle;
     position: relative;
 }
 
 input[type="radio"]:checked {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
 }
 
 input[type="radio"]:checked::after {
     content: "";
     position: absolute;
     inset: 4px;
-    background: white;
+    background: var(--reader-bg-color);
     border-radius: 50%;
 }
 
@@ -260,10 +363,10 @@ select {
     appearance: none;
     width: 100%;
     padding: 6px 36px 6px 10px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-default);
     border-radius: var(--radius);
     ;
-    background-color: #fff;
+    background-color: var(--reader-bg-color);
     font: inherit;
     color: inherit;
     cursor: pointer;
@@ -290,7 +393,7 @@ button {
     padding: 6px 12px;
     border-radius: var(--radius);
 
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-default);
     background: var(--control-bg-color);
     font: inherit;
     line-height: 1.5;
@@ -306,9 +409,9 @@ button {
 
 .button:hover:not(:disabled),
 button:hover:not(:disabled) {
-    border-color: #0b5ed7;
-    background-color: #e2eeff;
-    /* color: #0b5ed7; */
+    border-color: var(--accent-primary-hover);
+    background-color: var(--accent-soft);
+    /* color: var(--accent-primary-hover); */
 }
 
 .button:focus,
@@ -328,38 +431,38 @@ button:disabled {
 }
 
 button[data-variant="primary"] {
-    background-color: #0d6efd;
-    color: #fff;
-    border-color: #0d6efd;
+    background-color: var(--accent-primary);
+    color: var(--reader-bg-color);
+    border-color: var(--accent-primary);
 }
 
 button[data-variant="primary"]:hover:not(:disabled) {
-    background-color: #0b5ed7;
-    border-color: #0b5ed7;
-    color: #fff;
+    background-color: var(--accent-primary-hover);
+    border-color: var(--accent-primary-hover);
+    color: var(--reader-bg-color);
 }
 
 /* button[data-variant="primary"]:active {
-    background-color: #0a58ca;
-    border-color: #0a58ca;
+    background-color: var(--accent-primary-hover);
+    border-color: var(--accent-primary-hover);
 } */
 
 button[data-variant="danger"] {
-    background-color: #dc3545;
-    color: #fff;
-    border-color: #dc3545;
+    background-color: var(--danger);
+    color: var(--reader-bg-color);
+    border-color: var(--danger);
 }
 
 button[data-variant="danger"]:hover:not(:disabled) {
-    background-color: #bb2d3b;
-    border-color: #bb2d3b;
-    color: #fff;
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
+    color: var(--reader-bg-color);
 }
 
 button[data-variant="light"] {
     background-color: inherit;
     border: none;
-    color: #212529;
+    color: var(--text-primary);
 }
 
 button[data-variant="light"]:hover:not(:disabled) {}

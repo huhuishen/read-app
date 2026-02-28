@@ -36,7 +36,7 @@
     }
 
     .bio {
-        color: #666;
+        color: var(--text-secondary);
         margin-bottom: 16px;
     }
 
@@ -50,7 +50,7 @@
     .tag {
         padding: 4px 10px;
         border-radius: 999px;
-        background: #f2f2f2;
-        color: #444;
+        background: var(--surface-soft);
+        color: var(--text-secondary);
     }
 </style>

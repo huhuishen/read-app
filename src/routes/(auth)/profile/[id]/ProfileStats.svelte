@@ -49,7 +49,7 @@
     }
 
     .label {
-        color: #888;
+        color: var(--link-color);
         text-align: center;
     }
 </style>

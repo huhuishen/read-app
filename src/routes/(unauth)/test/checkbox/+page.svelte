@@ -89,14 +89,14 @@
         gap: 1rem;
         padding: 1rem;
         border-radius: 12px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border-soft);
         cursor: pointer;
         margin: 1rem;
         outline: none;
     }
 
     .card:focus {
-        box-shadow: 0 0 0 3px color-mix(in srgb, #e5e7eb 50%, transparent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--border-soft) 50%, transparent);
     }
 
     .card[aria-selected="true"] {

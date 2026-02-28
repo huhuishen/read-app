@@ -84,8 +84,8 @@
         position: fixed;
         top: 0;
         height: 100vh;
-        background: #fff;
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+        background: var(--reader-bg-color);
+        box-shadow: 2px 0 8px var(--overlay-default);
         display: flex;
         flex-direction: column;
         z-index: 2100;
@@ -143,7 +143,7 @@
         top: 12px;
         right: 12px;
         border: none;
-        background: rgba(0, 0, 0, 0.3);
+        background: var(--shadow-lg);
         border-radius: 50%;
         width: 32px;
         height: 32px;
@@ -153,6 +153,7 @@
         justify-content: center;
     }
     .drawer-close:hover {
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--overlay-strong);
     }
 </style>
+

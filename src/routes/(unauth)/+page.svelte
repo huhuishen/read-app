@@ -25,7 +25,7 @@
 </script>
 
 <svelte:head>
-    <title>零重力阅读</title>
+    <title>零重力阅</title>
 </svelte:head>
 
 <div class="flex top">
@@ -137,7 +137,7 @@
     .empty {
         text-align: center;
         padding: 60px;
-        color: #999;
+        color: var(--link-disabled);
     }
 
     .top {
@@ -152,7 +152,7 @@
     .footer {
         height: 100px;
         justify-content: center;
-        color: #777;
+        color: var(--link-color);
         gap: 10px;
         font-size: 90%;
     }
@@ -202,7 +202,7 @@
         cursor: pointer;
     }
     .card-small:hover {
-        background-color: rgba(141, 219, 255, 0.2);
+        background-color: var(--accent-soft);
     }
     .category-title {
         text-decoration: none;

@@ -32,13 +32,13 @@
     }
 
     .primary {
-        background: #111;
+        background: var(--text-primary);
         color: white;
         border: none;
     }
 
     .secondary {
         background: white;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-default);
     }
 </style>

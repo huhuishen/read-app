@@ -150,7 +150,7 @@
     }
 
     .header p {
-        color: #888;
+        color: var(--link-color);
     }
 
     /* TOP 3 */
@@ -186,9 +186,9 @@
 
         overflow: hidden;
 
-        background: linear-gradient(180deg, #ffffff, #f8f8f8);
+        background: linear-gradient(180deg, var(--reader-bg-color), var(--surface-modal));
 
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 20px var(--shadow-sm);
 
         transition: 0.2s;
     }
@@ -198,15 +198,15 @@
     }
 
     .rank-0 {
-        background: linear-gradient(180deg, #fff7cc, #fff);
+        background: linear-gradient(180deg, var(--rank-gold-bg), var(--reader-bg-color));
     }
 
     .rank-1 {
-        background: linear-gradient(180deg, #eef3ff, #fff);
+        background: linear-gradient(180deg, var(--rank-silver-bg), var(--reader-bg-color));
     }
 
     .rank-2 {
-        background: linear-gradient(180deg, #ffeede, #fff);
+        background: linear-gradient(180deg, var(--rank-bronze-bg), var(--reader-bg-color));
     }
 
     .medal {
@@ -220,7 +220,7 @@
 
     .cover {
         height: 160px;
-        background: #eee;
+        background: var(--border-soft);
     }
 
     .cover img {
@@ -232,7 +232,7 @@
     .placeholder {
         width: 100%;
         height: 100%;
-        background: linear-gradient(45deg, #eee, #ddd);
+        background: linear-gradient(45deg, var(--border-soft), var(--border-default));
     }
 
     .info {
@@ -245,7 +245,7 @@
     }
 
     .meta {
-        color: #777;
+        color: var(--link-color);
         font-size: 14px;
         margin-bottom: 8px;
     }
@@ -254,7 +254,7 @@
         display: flex;
         gap: 16px;
         font-size: 14px;
-        color: #555;
+        color: var(--text-secondary);
     }
 
     /* Others */
@@ -277,7 +277,7 @@
 
         background: white;
 
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 2px 8px var(--overlay-soft);
 
         transition: 0.15s;
     }
@@ -308,13 +308,13 @@
 
     .meta {
         font-size: 13px;
-        color: #777;
+        color: var(--link-color);
     }
 
     .stats {
         display: flex;
         gap: 10px;
         font-size: 13px;
-        color: #666;
+        color: var(--text-secondary);
     }
 </style>

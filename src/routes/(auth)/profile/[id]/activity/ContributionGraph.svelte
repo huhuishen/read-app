@@ -201,7 +201,7 @@
 
         margin-bottom: 6px;
 
-        color: #666;
+        color: var(--text-secondary);
     }
 
     .month {
@@ -232,7 +232,7 @@
 
         border-radius: 2px;
 
-        background: #ebedf0;
+        background: var(--surface-soft);
 
         transition:
             transform 0.08s ease,
@@ -246,23 +246,23 @@
     /* levels */
 
     .level-0 {
-        background: #ebedf0;
+        background: var(--surface-soft);
     }
 
     .level-1 {
-        background: #9be9a8;
+        background: var(--contrib-1);
     }
 
     .level-2 {
-        background: #40c463;
+        background: var(--contrib-2);
     }
 
     .level-3 {
-        background: #30a14e;
+        background: var(--contrib-3);
     }
 
     .level-4 {
-        background: #216e39;
+        background: var(--contrib-4);
     }
 
     /* tooltip */
@@ -270,7 +270,7 @@
     .tooltip {
         position: fixed;
 
-        background: #111;
+        background: var(--text-primary);
 
         color: white;
 

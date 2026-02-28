@@ -118,6 +118,7 @@
         }
 
         return result.sort((a, b) => a.month.localeCompare(b.month));
+        // return result.sort((a, b) => -a.month.localeCompare(b.month));
     }
 
     type MonthGroup = {
@@ -244,7 +245,7 @@
 
     .weekday {
         font-size: 13px;
-        color: #888;
+        color: var(--link-color);
         text-align: center;
     }
 
@@ -252,7 +253,7 @@
         width: 18px;
         height: 18px;
         border-radius: 3px;
-        background: #ebedf0;
+        background: var(--surface-soft);
         transition: transform 0.08s;
     }
 
@@ -265,32 +266,32 @@
     }
 
     .level-0 {
-        background: #ebedf0;
+        background: var(--surface-soft);
     }
 
     .level-1 {
-        background: #9be9a8;
+        background: var(--contrib-1);
     }
 
     .level-2 {
-        background: #40c463;
+        background: var(--contrib-2);
     }
 
     .level-3 {
-        background: #30a14e;
+        background: var(--contrib-3);
     }
 
     .level-4 {
-        background: #216e39;
+        background: var(--contrib-4);
     }
 
     .today {
-        outline: 2px solid #333;
+        outline: 2px solid var(--text-primary);
     }
 
     .tooltip {
         position: fixed;
-        background: #111;
+        background: var(--text-primary);
         color: white;
         padding: 6px 8px;
         border-radius: 6px;

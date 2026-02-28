@@ -44,7 +44,7 @@
     } */
     .action {
         border: none;
-        color: #333;
+        color: var(--text-primary);
         width: 48px;
         height: 48px;
         border-radius: 50%;

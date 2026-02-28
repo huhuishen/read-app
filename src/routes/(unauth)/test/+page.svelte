@@ -269,7 +269,7 @@
             <div class="source-header">
                 <span style="font-weight: 600;">📄 实时 HTML 结构</span>
                 <span
-                    style="font-size: 0.7rem; background: #2e4057; padding: 4px 12px; border-radius: 40px;"
+                    style="font-size: 0.7rem; background: var(--surface-soft); padding: 4px 12px; border-radius: 40px;"
                 >
                     编辑即更新
                 </span>
@@ -298,11 +298,11 @@
         flex-direction: column;
         width: 100%;
         max-width: 900px;
-        background: rgba(255, 255, 255, 0.6);
+        background: var(--surface-ghost);
         backdrop-filter: blur(4px);
         border-radius: 28px;
         padding: 24px;
-        box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
+        box-shadow: 0 20px 40px -12px var(--shadow-md);
     }
 
     .toolbar {
@@ -313,8 +313,8 @@
         padding: 12px 16px;
         border-radius: 48px;
         margin-bottom: 18px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow: 0 4px 10px var(--overlay-soft);
+        border: 1px solid var(--surface-ghost);
     }
 
     .tool-btn {
@@ -323,7 +323,7 @@
         padding: 8px 14px;
         font-size: 0.95rem;
         font-weight: 500;
-        color: #1e2b3c;
+        color: var(--text-heading);
         border-radius: 40px;
         transition: 0.1s ease;
         cursor: pointer;
@@ -336,18 +336,18 @@
     }
 
     .tool-btn:hover {
-        background: #eef3f9;
-        border-color: #cbd5e1;
+        background: var(--surface-soft);
+        border-color: var(--border-strong);
     }
 
     .tool-btn:active {
-        background: #d1dce8;
+        background: var(--border-strong);
         transform: scale(0.96);
     }
 
     .separator {
         width: 1px;
-        background: #cbd5e1;
+        background: var(--border-strong);
         margin: 0 6px;
         display: inline-block;
     }
@@ -358,13 +358,13 @@
         border-radius: 24px;
         padding: 28px 32px;
         min-height: 280px;
-        border: 1px solid rgba(203, 213, 225, 0.6);
+        border: 1px solid var(--surface-ghost);
         box-shadow:
-            inset 0 2px 6px rgba(0, 0, 0, 0.02),
-            0 8px 20px rgba(0, 0, 0, 0.02);
+            inset 0 2px 6px var(--overlay-soft),
+            0 8px 20px var(--overlay-soft);
         font-size: 1.05rem;
         line-height: 1.6;
-        color: #1e293b;
+        color: var(--text-heading);
         outline: none;
         overflow-y: auto;
         transition:
@@ -373,10 +373,10 @@
     }
 
     .rich-editor:focus {
-        border-color: #7c9bcc;
+        border-color: var(--accent-primary);
         box-shadow:
-            inset 0 2px 6px rgba(60, 110, 180, 0.05),
-            0 0 0 3px rgba(96, 145, 210, 0.1);
+            inset 0 2px 6px var(--overlay-soft),
+            0 0 0 3px var(--accent-tint-soft);
     }
 
     /* 编辑器内容样式 */
@@ -395,33 +395,33 @@
     }
 
     .rich-editor :global(blockquote) {
-        border-left: 4px solid #a0c1d9;
+        border-left: 4px solid var(--border-strong);
         margin: 1rem 0;
         padding-left: 1.2rem;
-        color: #3a4e62;
+        color: var(--text-secondary);
         font-style: italic;
     }
 
     .rich-editor :global(pre) {
-        background: #f1f5f9;
+        background: var(--surface-soft);
         padding: 0.9rem;
         border-radius: 16px;
         font-family: "JetBrains Mono", "Cascadia Code", monospace;
         font-size: 0.9rem;
-        border: 1px solid #dce5ec;
+        border: 1px solid var(--border-soft);
         overflow-x: auto;
     }
 
     /* 源码面板 */
     .source-panel {
         margin-top: 24px;
-        background: #1e2b3c;
-        color: #dfeaf2;
+        background: var(--text-heading);
+        color: var(--text-secondary);
         border-radius: 20px;
         padding: 16px 22px;
         font-family: "JetBrains Mono", "Fira Code", monospace;
         font-size: 0.8rem;
-        border: 1px solid #2e4055;
+        border: 1px solid var(--border-default);
         display: flex;
         flex-direction: column;
     }
@@ -431,7 +431,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
-        color: #aac3d4;
+        color: var(--text-muted);
         letter-spacing: 0.5px;
     }
 
@@ -440,22 +440,22 @@
         white-space: pre-wrap;
         max-height: 130px;
         overflow-y: auto;
-        background: #0f1a24;
+        background: var(--surface-page);
         padding: 12px 16px;
         border-radius: 14px;
-        border: 1px solid #354a5e;
-        color: #cbdde8;
+        border: 1px solid var(--border-default);
+        color: var(--text-secondary);
         font-size: 0.8rem;
     }
 
     .placeholder {
-        color: #94a3b8;
+        color: var(--text-muted);
     }
 
     .footnote {
         margin-top: 16px;
         text-align: right;
-        color: #566f82;
+        color: var(--text-muted);
         font-size: 0.75rem;
     }
 </style>

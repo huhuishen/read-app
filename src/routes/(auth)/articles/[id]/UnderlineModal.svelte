@@ -270,7 +270,7 @@
         background-color: var(--reader-bg-color);
         height: 60px;
         z-index: 2200;
-        /* border-bottom: 1px solid #eee; */
+        /* border-bottom: 1px solid var(--border-soft); */
     }
     .comments {
         font-size: 14px;
@@ -288,13 +288,13 @@
 
     .root {
         padding: 1rem;
-        /* border-bottom: 1px solid #eee; */
+        /* border-bottom: 1px solid var(--border-soft); */
     }
 
     .replies {
         margin-top: 1rem;
         padding-left: 1rem;
-        /* border-left: 2px solid #eee; */
+        /* border-left: 2px solid var(--border-soft); */
         display: flex;
         flex-direction: column;
         /* gap: 0.8rem; */
@@ -307,7 +307,7 @@
     }
 
     .gray {
-        color: #aaa;
+        color: var(--link-disabled);
         min-height: 300px;
     }
 </style>

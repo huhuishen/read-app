@@ -159,7 +159,7 @@
         min-width: 220px;
         max-height: 90vh;
         background: white;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 12px 28px var(--shadow-md);
         z-index: 2100;
         overflow: visible;
         width: 90%;
@@ -167,6 +167,7 @@
     .popper-content {
         max-height: 90vh;
         overflow-y: auto; /* 真正滚动在这里 */
+        background: var(--reader-bg-color);
     }
     /* 箭头基础 */
     .arrow {
@@ -181,7 +182,7 @@
         top: 20px;
         border-top: 8px solid transparent;
         border-bottom: 8px solid transparent;
-        border-right: 8px solid white;
+        border-right: 8px solid var(--reader-bg-color);
     }
 
     /* ===== 左侧弹出 → 箭头在右 ===== */
@@ -190,7 +191,7 @@
         top: 20px;
         border-top: 8px solid transparent;
         border-bottom: 8px solid transparent;
-        border-left: 8px solid white;
+        border-left: 8px solid var(--reader-bg-color);
     }
 
     /* ===== 下方弹出 → 箭头在上 ===== */
@@ -199,7 +200,7 @@
         left: 20px;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-bottom: 8px solid white;
+        border-bottom: 8px solid var(--reader-bg-color);
     }
 
     /* ===== 上方弹出 → 箭头在下 ===== */
@@ -208,7 +209,7 @@
         left: 20px;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-top: 8px solid white;
+        border-top: 8px solid var(--reader-bg-color);
     }
 
     .center {

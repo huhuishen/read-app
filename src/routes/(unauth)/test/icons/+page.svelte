@@ -62,7 +62,7 @@
         flex-direction: column;
         align-items: center;
         padding: 12px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border-soft);
         border-radius: 8px;
     }
 
@@ -79,7 +79,7 @@
     .label {
         margin-top: 6px;
         font-size: 12px;
-        color: #555;
+        color: var(--text-secondary);
         word-break: break-all;
         text-align: center;
     }

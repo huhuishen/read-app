@@ -29,7 +29,7 @@
         border-radius: 50%;
         color: var(--link-color);
         background-color: var(--reader-bg-color);
-        box-shadow:  0 0 15px rgba(0, 0, 0, 0.1);
+        box-shadow:  0 0 15px var(--shadow-sm);
         vertical-align: middle;
         cursor: pointer;
         user-select: none;
@@ -38,8 +38,8 @@
 
     .disabled {
         /* background-color: rgba(200, 200, 200, 0.1); */
-        background-color: #eee;
-        color: #ccc;
+        background-color: var(--border-soft);
+        color: var(--border-default);
         cursor: not-allowed;
     }
 
@@ -47,3 +47,4 @@
         color: var(--highlight-color);
     }
 </style>
+

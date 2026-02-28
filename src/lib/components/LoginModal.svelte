@@ -138,7 +138,7 @@
     .close-btn {
         border: none;
         border-radius: 50%;
-        background-color: #eee;
+        background-color: var(--border-soft);
         padding: 6px;
         cursor: pointer;
         font-size: 18px;
@@ -158,24 +158,24 @@
         width: 100%;
         padding: 10px 12px;
         border-radius: 8px;
-        border: 1px solid #e6e7eb;
+        border: 1px solid var(--border-soft);
         font-size: 14px;
         outline: none;
     }
     input:focus {
-        box-shadow: 0 0 0 4px rgba(38, 96, 254, 0.08);
-        border-color: #2563eb;
+        box-shadow: 0 0 0 4px var(--accent-tint-soft);
+        border-color: var(--accent-primary);
     }
 
     .footer {
         font-size: 13px;
-        color: #666;
+        color: var(--text-secondary);
         justify-content: space-between;
         align-items: center;
     }
 
     .hint {
         font-size: 12px;
-        color: #888;
+        color: var(--link-color);
     }
 </style>

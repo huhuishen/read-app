@@ -135,17 +135,17 @@
 
     .page-item:hover:not(.disabled, .active) a {
         color: var(--button-primary-hover);
-        background-color: #e2eeff;
+        background-color: var(--accent-soft);
     }
 
     .active a {
-        color: #fff;
+        color: var(--reader-bg-color);
         background-color: var(--button-primary);
         pointer-events: none;
     }
 
     .disabled a {
-        color: #aaa;
+        color: var(--link-disabled);
         pointer-events: none;
     }
 </style>

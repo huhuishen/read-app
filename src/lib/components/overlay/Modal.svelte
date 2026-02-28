@@ -68,7 +68,7 @@
 
 <style>
     .modal-content {
-        background-color: #fff;
+        background-color: var(--reader-bg-color);
         border-radius: 3px;
 
         /* padding: 16px 18px;
@@ -79,8 +79,8 @@
         display: flex;
         flex-direction: column;
         box-shadow:
-            0 10px 25px rgba(0, 0, 0, 0.12),
-            0 4px 10px rgba(0, 0, 0, 0.08);
+            0 10px 25px var(--shadow-sm),
+            0 4px 10px var(--shadow-sm);
 
         z-index: 2100;
         outline: none;
@@ -114,8 +114,8 @@
         width: 24px;
         height: 24px;
         border: none;
-        background: rgba(0, 0, 0, 0.05);
-        color: #fff;
+        background: var(--overlay-soft);
+        color: var(--reader-bg-color);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -123,6 +123,7 @@
         padding: 0;
     }
     .modal-close:hover {
-        background: rgba(0, 0, 0, 0.2);
+        background: var(--overlay-default);
     }
 </style>
+

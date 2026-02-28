@@ -60,7 +60,7 @@
         flex-direction: column;
         padding: 1rem;
         background: white;
-        /* border-right: 1px solid #eee; */
+        /* border-right: 1px solid var(--border-soft); */
         /* transition: width 0.2s ease; */
         /* height: 100vh; */
         overflow-y: auto;
@@ -80,9 +80,10 @@
         margin-left: 2rem;
     }
     .active {
-        background-color: #eee;
+        background-color: var(--border-soft);
     }
     .menu-item:hover {
-        background: #f0f2f5;
+        background: var(--surface-soft);
     }
 </style>
+

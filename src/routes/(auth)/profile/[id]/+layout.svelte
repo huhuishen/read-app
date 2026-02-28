@@ -72,7 +72,7 @@
         /* transform: translateX(100%); */
         height: fit-content;
         width: 300px;
-        background-color: white;
+        background-color: var(--bg-color);
         padding: 1rem;
     }
 

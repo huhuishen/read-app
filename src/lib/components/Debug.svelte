@@ -13,8 +13,8 @@
         bottom: 0px;
         left: 0px;
         padding: 1rem;
-        /* color: #666; */
-        background-color: rgba(240, 240, 240, 0.5);
+        /* color: var(--text-secondary); */
+        background-color: var(--surface-soft);
         white-space: pre-wrap; /* 保留空格和换行 */
         user-select: none;
         font-size: 0.75rem;

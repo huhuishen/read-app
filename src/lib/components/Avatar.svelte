@@ -13,7 +13,7 @@
 <style>
     .avatar {
         /* border-radius: 50%; */
-        color: #fff;
+        color: var(--reader-bg-color);
         background-color: var(--header-color);
         justify-content: center;
         cursor: default;
@@ -39,3 +39,4 @@
         font-size: 48px;
     }
 </style>
+

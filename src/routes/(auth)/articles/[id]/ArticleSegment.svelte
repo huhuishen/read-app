@@ -106,10 +106,10 @@
     }
 
     .underlined-text {
-        /* text-decoration: underline dotted brown 2px; */
-        /* text-decoration: underline solid brown 1px; */
-        text-decoration: underline wavy purple 1px;
-        /* text-decoration: underline dashed var(--link-color) 1px; */
+        /* text-decoration: underline dotted var(--header-color) 2px; */
+        /* text-decoration: underline solid var(--header-color) 1px; */
+        /* text-decoration: underline wavy var(--header-color) 1px; */
+        text-decoration: underline dashed var(--header-color) 1px;
         text-underline-offset: 10px;
         cursor: pointer;
         /* position: relative; */

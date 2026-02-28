@@ -337,7 +337,7 @@
 
 <style>
     .app-info {
-        background: #f8fafc;
+        background: var(--surface-modal);
         padding: 1rem;
         border-radius: 4px;
         margin-bottom: 2rem;
@@ -345,12 +345,12 @@
 
     .app-info h2 {
         margin: 0 0 0.5rem 0;
-        color: #1e293b;
+        color: var(--text-heading);
     }
 
     .app-info p {
         margin: 0;
-        color: #64748b;
+        color: var(--text-muted);
         font-family: monospace;
         font-size: 0.875rem;
     }
@@ -370,7 +370,7 @@
         display: block;
         margin-bottom: 0.5rem;
         font-weight: 500;
-        color: #374151;
+        color: var(--text-secondary);
         font-size: 0.875rem;
     }
 
@@ -378,7 +378,7 @@
     .select {
         width: 100%;
         padding: 0.5rem 0.75rem;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--border-default);
         border-radius: 4px;
         font-size: 0.875rem;
         transition: border-color 0.2s;
@@ -387,17 +387,17 @@
     .input:focus,
     .select:focus {
         outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-tint-soft);
     }
 
     .collections-list {
         max-height: 200px;
         overflow-y: auto;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border-soft);
         border-radius: 4px;
         padding: 0.5rem;
-        background: #f9fafb;
+        background: var(--surface-modal);
     }
 
     .checkbox {
@@ -414,8 +414,8 @@
     }
 
     .backup-info {
-        background: #f0f9ff;
-        border: 1px solid #bae6fd;
+        background: var(--status-info-bg);
+        border: 1px solid var(--status-info-border);
         border-radius: 4px;
         padding: 0.75rem;
         margin: 1rem 0;
@@ -427,7 +427,7 @@
     }
 
     .hint {
-        color: #6b7280;
+        color: var(--text-muted);
         font-style: italic;
         font-size: 0.875rem;
         margin: 0.5rem 0;
@@ -444,30 +444,30 @@
     }
 
     thead {
-        background-color: #f9fafb;
+        background-color: var(--surface-modal);
     }
 
     th {
         text-align: left;
         padding: 0.75rem 1rem;
         font-weight: 600;
-        color: #374151;
-        border-bottom: 2px solid #e5e7eb;
+        color: var(--text-secondary);
+        border-bottom: 2px solid var(--border-soft);
     }
 
     td {
         padding: 0.75rem 1rem;
-        border-bottom: 1px solid #e5e7eb;
-        color: #4b5563;
+        border-bottom: 1px solid var(--border-soft);
+        color: var(--text-secondary);
     }
 
     tr:hover {
-        background-color: #f9fafb;
+        background-color: var(--surface-modal);
     }
 
     .empty {
         text-align: center;
-        color: #6b7280;
+        color: var(--text-muted);
         font-style: italic;
         padding: 2rem;
     }

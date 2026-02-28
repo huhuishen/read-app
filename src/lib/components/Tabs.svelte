@@ -49,9 +49,9 @@
         display: flex;
         justify-content: center;
         gap: 24px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-soft);
         font-size: 18px;
-        background: white;
+        background: var(--reader-bg-color);
         height: 50px;
         z-index: 100;
     }
@@ -73,18 +73,18 @@
         background: none;
         border: none;
         padding: 0.5rem;
-        color: #666;
+        color: var(--text-secondary);
         cursor: pointer;
     }
 
     .tabs button.selected {
-        color: #111;
-        border-bottom: 2px solid #111;
+        color: var(--text-primary);
+        border-bottom: 2px solid var(--text-primary);
     }
 
     .tab-content {
         padding: 1rem;
         min-height: calc(100vh - 60px);
-        background-color: white;
+        background: var(--reader-bg-color);
     }
 </style>

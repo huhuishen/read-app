@@ -175,7 +175,7 @@
         display: inline-block;
         padding: 6px 12px;
         border-radius: 999px;
-        background: #f1f5f9;
+        background: var(--surface-soft);
         font-size: 14px;
     }
 
@@ -207,7 +207,7 @@
     }
 
     button.secondary {
-        background: #f1f5f9;
+        background: var(--surface-soft);
     }
 
     button.large {
@@ -226,7 +226,7 @@
         width: 320px;
         border-radius: 12px;
         background: white;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 40px var(--shadow-sm);
         padding: 16px;
     }
 
@@ -237,13 +237,13 @@
 
     .line {
         height: 10px;
-        background: #e2e8f0;
+        background: var(--border-strong);
         border-radius: 4px;
         margin-bottom: 8px;
     }
 
     .highlight {
-        background: #fde68a;
+        background: var(--status-warning-border);
     }
 
     .w60 {
@@ -284,7 +284,7 @@
     .feature {
         padding: 20px;
         border-radius: 12px;
-        background: #f8fafc;
+        background: var(--surface-modal);
     }
 
     .icon {
@@ -306,7 +306,7 @@
     .cta {
         text-align: center;
         padding: 120px 20px;
-        background: #f8fafc;
+        background: var(--surface-modal);
     }
 
     .cta h2 {

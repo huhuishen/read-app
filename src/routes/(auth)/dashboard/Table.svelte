@@ -126,7 +126,7 @@
     table {
         table-layout: fixed;
         border-collapse: collapse;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-default);
         cursor: default;
         user-select: none;
         display: block;
@@ -155,29 +155,29 @@
     }
 
     table th {
-        border-right: 1px solid #ccc;
+        border-right: 1px solid var(--border-default);
     }
     /* table th:last-child {
         border-right: none;
     } */
     table th:hover {
-        background: #007acc27;
+        background: var(--accent-tint-weak);
     }
 
     table tbody tr:hover {
-        background: #007acc27;
+        background: var(--accent-tint-weak);
     }
     table tr {
         /* border: 1px solid transparent; */
         cursor: pointer;
     }
     table tr.active {
-        outline: 1px solid #007acc;
+        outline: 1px solid var(--accent-primary);
         outline-offset: -1px;
-        /* box-shadow: inset 0 0 0 1px #007acc;
+        /* box-shadow: inset 0 0 0 1px var(--accent-primary);
         position: relative;
         z-index: 1; */
-        background-color: #007acc10;
+        background-color: var(--accent-tint-soft);
     }
 
     .th-sort {

@@ -27,9 +27,10 @@
 
     .sort-icon path {
         fill: none;
-        stroke: #9ca3af; /* gray-400 */
+        stroke: var(--text-faint); /* gray-400 */
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
     }
 </style>
+

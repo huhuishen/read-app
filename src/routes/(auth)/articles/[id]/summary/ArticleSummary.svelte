@@ -151,7 +151,7 @@
         left: 0;
         top: -50px;
         font-size: 4rem;
-        color: #6c757d;
+        color: var(--text-muted);
         font-family: Georgia, serif;
         opacity: 0.3;
     }
@@ -192,13 +192,13 @@
         /* border: 1px solid brown; */
         /* border: 1px solid var(--link-color); */
         border-radius: 5px;
-        background-color: rgba(200, 200, 200, 0.2);
+        background-color: var(--overlay-soft);
         color: var(--link-color);
         padding: 0.25rem;
         cursor: pointer;
     }
     .tag:hover {
-        background-color: rgba(200, 200, 200, 0.4);
+        background-color: var(--overlay-default);
         color: var(--highlight-color);
     }
     .tag::before {

@@ -77,10 +77,10 @@
         position: fixed;
         z-index: 1000;
         min-width: 180px;
-        background: #fff;
-        border: 1px solid #ddd;
+        background: var(--reader-bg-color);
+        border: 1px solid var(--border-default);
         border-radius: 6px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 20px var(--shadow-md);
         padding: 10px;
     }
 
@@ -99,15 +99,16 @@
     }
 
     .menu button:hover {
-        background: #f3f4f6;
+        background: var(--surface-soft);
     }
 
     .menu .danger {
-        color: #dc2626;
+        color: var(--danger);
     }
 
     .menu hr {
         border: none;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--border-soft);
     }
 </style>
+

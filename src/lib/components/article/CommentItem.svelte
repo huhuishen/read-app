@@ -92,7 +92,7 @@
             <Icon
                 name="thumbs_up"
                 size={16}
-                color={comment.liked ? "brown" : "#ccc"}
+                color={comment.liked ? "brown" : "var(--border-default)"}
             ></Icon>
             <span>{comment.likes ? comment.likes : ""}</span>
         </Button>
@@ -127,7 +127,7 @@
         overflow: hidden;
     }
     .quote {
-        color: #777;
+        color: var(--link-color);
     }
     .fade {
         position: absolute;
@@ -135,12 +135,12 @@
         right: 0;
         bottom: 0;
         height: 40px;
-        background: linear-gradient(to bottom, transparent, #fff);
+        background: linear-gradient(to bottom, transparent, var(--reader-bg-color));
     }
 
     /* 展开按钮 */
     .toggle {
-        background-color: #f1f1f1;
+        background-color: var(--surface-soft);
         border-radius: 999px;
         border: none;
         cursor: pointer;
@@ -148,6 +148,6 @@
     }
 
     .toggle:hover {
-        background-color: #eee;
+        background-color: var(--border-soft);
     }
 </style>

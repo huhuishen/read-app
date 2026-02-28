@@ -129,10 +129,10 @@
         top: 0;
         left: 0;
         height: 100%;
-        color: #f6b024;
+        color: var(--warning);
     }
 
     .outline {
-        color: #ccc;
+        color: var(--border-default);
     }
 </style>

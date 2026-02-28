@@ -13,7 +13,7 @@
 </script>
 
 <label class="flex">
-    <!-- <Icon name="search" className="mr-1" fill="#888"></Icon> -->
+    <!-- <Icon name="search" className="mr-1" fill="var(--link-color)"></Icon> -->
     <div class="input-wrap">
         <input
             type="text"
@@ -29,7 +29,7 @@
         />
         <svg
             class="cross-icon"
-            color="#aaa"
+            color="var(--link-disabled)"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -62,7 +62,7 @@
         transform: translateY(-50%);
         width: 16px;
         height: 16px;
-        fill: #888;
+        fill: var(--link-color);
         pointer-events: auto;
         cursor: pointer;
     }

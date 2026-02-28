@@ -21,7 +21,8 @@
     .category {
         margin-top: 1rem;
         margin-bottom: 1rem;
-        color: #b19046;
+        color: var(--brand-gold);
+        
         user-select: none;
         gap: 0.25rem;
     }

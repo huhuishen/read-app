@@ -62,11 +62,11 @@
         align-items: center;
         cursor: pointer;
         /* min-width: 425px; */
-        /* background-color: #fff; */
+        /* background-color: var(--reader-bg-color); */
     }
 
     .book-card:hover {
-        background-color: rgba(141, 219, 255, 0.2);
+        background-color: var(--accent-soft);
     }
 
     .book-card-image {
@@ -101,7 +101,7 @@
     }
 
     .book-meta {
-        color: #aaa;
+        color: var(--link-disabled);
         flex-wrap: nowrap;
         white-space: nowrap;
         gap: 15px;
@@ -111,7 +111,7 @@
 
     .summary {
         line-height: 22px;
-        color: #aaa;
+        color: var(--link-disabled);
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
@@ -121,9 +121,9 @@
     }
 
     .tag {
-        color: #b19046;
+        color: var(--brand-gold);
         padding: 4px 8px;
-        border: 1px solid #b19046;
+        border: 1px solid var(--brand-gold);
     }
 
     .number {
@@ -152,3 +152,4 @@
         }
     }
 </style>
+

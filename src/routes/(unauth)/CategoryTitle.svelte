@@ -40,7 +40,8 @@
         width: 100%;
         margin-top: 2rem;
         margin-bottom: 0.5rem;
-        color: #b19046;
+        color: var(--brand-gold);
         user-select: none;
     }
 </style>
+

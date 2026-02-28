@@ -24,7 +24,7 @@
         <img
             class="bg"
             src={article.coverImage}
-            alt={article.title ?? "封面图"}
+            alt={article.title ?? "封面"}
         />
     {:else}
         <div class="bg placeholder"></div>
@@ -45,7 +45,11 @@
             <a class="flex g-3" href="/profile/{article.authorId}/articles">
                 {article.author}
                 <span>
-                    <Icon name="star" size={13} fill="#f6b024" color="#f6b024"
+                    <Icon
+                        name="star"
+                        size={13}
+                        fill="var(--warning)"
+                        color="var(--warning)"
                     ></Icon>
                     {(article.ratingSum! / article.ratingCount!).toFixed(1)}
                 </span>
@@ -97,7 +101,7 @@
     .placeholder {
         width: 100%;
         height: 100%;
-        /* background: linear-gradient(-45deg, #ccc, #fff); */
+        /* background: linear-gradient(-45deg, var(--border-default), var(--reader-bg-color)); */
     }
     .title {
         font-size: 20px;
@@ -111,7 +115,7 @@
     .author {
     }
     .gray {
-        color: #666;
+        color: var(--text-secondary);
         font-size: 16px;
     }
 

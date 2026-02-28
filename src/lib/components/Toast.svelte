@@ -32,23 +32,23 @@
     }
 
     .info {
-        color: #052c65;
-        background-color: #cfe2ff;
+        color: var(--status-info-text);
+        background-color: var(--status-info-bg);
     }
 
     .success {
-        color: #0a3622;
-        background-color: #d1e7dd;
+        color: var(--status-success-text);
+        background-color: var(--status-success-bg);
     }
 
     .warn {
-        color: #664d03;
-        background-color: #fff3cd;
+        color: var(--status-warning-text);
+        background-color: var(--surface-soft);
     }
 
     .error {
-        color: #58153b;
-        background-color: #f8d7da;
+        color: var(--status-danger-text);
+        background-color: var(--status-danger-bg);
     }
 
     .show {

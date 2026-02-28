@@ -29,7 +29,7 @@
         /* transform: translateX(100%); */
         height: fit-content;
         width: 300px;
-        background-color: white;
+        background: var(--reader-bg-color);
         padding: 1rem;
     }
 

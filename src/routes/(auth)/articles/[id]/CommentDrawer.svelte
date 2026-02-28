@@ -265,13 +265,13 @@
 
     .root {
         padding: 1rem;
-        /* border-bottom: 1px solid #eee; */
+        /* border-bottom: 1px solid var(--border-soft); */
     }
 
     .replies {
         margin-top: 1rem;
         padding-left: 1rem;
-        /* border-left: 2px solid #eee; */
+        /* border-left: 2px solid var(--border-soft); */
         display: flex;
         flex-direction: column;
         /* gap: 0.8rem; */
@@ -286,12 +286,12 @@
     /* blockquote {
         margin: 0.5rem 0;
         padding-left: 0.8rem;
-        border-left: 3px solid #ccc;
-        color: #666;
+        border-left: 3px solid var(--border-default);
+        color: var(--text-secondary);
         font-size: 13px;
     } */
 
     .gray {
-        color: #aaa;
+        color: var(--link-disabled);
     }
 </style>

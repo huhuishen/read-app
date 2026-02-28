@@ -317,6 +317,6 @@
     /* placeholder */
     .content.editable:empty::before {
         content: attr(data-placeholder);
-        color: #999;
+        color: var(--link-disabled);
     }
 </style>

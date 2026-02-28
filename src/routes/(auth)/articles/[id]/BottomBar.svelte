@@ -131,7 +131,7 @@
     .backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--overlay-soft);
         z-index: 9;
     }
 
@@ -144,11 +144,11 @@
         display: flex;
         gap: 0.5rem;
         padding: 0.75rem;
-        background: var(--panel-bg, #fff);
-        border-top: 1px solid #ddd;
+        background: var(--panel-bg, var(--reader-bg-color));
+        border-top: 1px solid var(--border-default);
         transform: translateY(100%);
         transition: transform 0.1s ease;
-        box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 -6px 20px var(--shadow-sm);
         z-index: 10;
     }
 
@@ -163,10 +163,10 @@
         gap: 0.25rem;
         /* padding: 1em; */
         border: none;
-        color: #333;
+        color: var(--text-primary);
     }
     .action span {
         font-size: 13px;
-        color: #777;
+        color: var(--link-color);
     }
 </style>

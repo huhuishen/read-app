@@ -145,17 +145,17 @@
         flex-wrap: wrap;
         gap: 8px;
         padding: 8px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-default);
         border-radius: 8px;
-        background: #fff;
+        background: var(--reader-bg-color);
     }
 
     .tag {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: #f1f3f5;
-        color: #333;
+        background: var(--surface-soft);
+        color: var(--text-primary);
         padding: 4px 8px;
         border-radius: 999px;
         font-size: 13px;
@@ -197,11 +197,11 @@
         max-height: 210px; /* ✅ 6 条高度限制 */
         overflow-y: auto; /* ✅ 滚动 */
 
-        background: #fff;
-        border: 1px solid #ddd;
+        background: var(--reader-bg-color);
+        border: 1px solid var(--border-default);
         border-radius: 8px;
         z-index: 100;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px var(--shadow-sm);
     }
 
     .option {

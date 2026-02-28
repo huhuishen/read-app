@@ -12,6 +12,6 @@
 
 <style>
     .empty {
-        color: #aaa;
+        color: var(--link-disabled);
     }
 </style>

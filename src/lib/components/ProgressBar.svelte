@@ -78,7 +78,7 @@
     .bar {
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6);
+        background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
 
         transform-origin: left;
         transition: transform 180ms ease;

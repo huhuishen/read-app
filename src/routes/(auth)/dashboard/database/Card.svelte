@@ -17,24 +17,25 @@
     .card {
         background: white;
         /* border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+        box-shadow: 0 2px 4px var(--shadow-sm); */
         overflow: hidden;
     }
 
     .card-header {
         padding: 1rem 1.5rem;
-        /* border-bottom: 1px solid #e5e7eb; */
-        /* background-color: #f9fafb; */
+        /* border-bottom: 1px solid var(--border-soft); */
+        /* background-color: var(--surface-modal); */
     }
 
     .card-header h3 {
         margin: 0;
         font-size: 1.125rem;
         font-weight: 600;
-        color: #111827;
+        color: var(--text-primary);
     }
 
     .card-body {
         padding: 1.5rem;
     }
 </style>
+
