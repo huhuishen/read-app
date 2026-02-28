@@ -6,27 +6,21 @@
     import { session } from "$lib/stores/session.svelte";
     import { toast } from "$lib/stores/toast.svelte";
     import { nanoid } from "nanoid";
-    import type { PageProps } from "../articles/write/$types";
+    import type { PageProps } from "./$types";
+    import { createApi, safeCall } from "$lib/util/apiRequest";
 
     const { data }: PageProps = $props();
 
     // svelte-ignore state_referenced_locally
     let article: Partial<Article> = $state({
-        articleId: nanoid(),
-        version: 0,
-        status: "draft",
-        isLatest: true,
         title: "",
-        authorId: session.user?.id,
-        author: session.user?.name,
         coverImage: "",
         summary: "",
-        categories: ["五十五届零重力杯"],
+        categories: [],
         content: "",
-        nView: 0,
-        nBookmark: 0,
-        nComment: 0,
     });
+
+    const api = createApi();
 </script>
 
 <svelte:head>
@@ -39,26 +33,14 @@
     <div class="footer">
         <Button
             onclick={async () => {
-                try {
-                    // console.log($state.snapshot(article));
-                    const r = await fetch(`/api/article`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(article),
-                    });
+                const res = await safeCall(
+                    api.post(`/api/articles`, article),
+                    toast,
+                );
 
-                    if (r.ok) {
-                        var res = await r.json();
-                        goto(`/article/${article.articleId}`);
-                        toast.show("发表成功！", "success");
-                    } else {
-                        var error = await r.json();
-                        toast.show(error.error, "error");
-                    }
-                } catch (e) {
-                    toast.show(JSON.stringify(e), "error");
+                if (res) {
+                    goto(`/articles/${res.id}`);
+                    toast.show("发表成功！", "success");
                 }
             }}>保存</Button
         >

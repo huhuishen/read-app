@@ -110,20 +110,19 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
 
     const req = await request.json();
 
-    let article = req as Article;
-
-    if (!article.title || !article.content) {
+    if (!req.title || !req.content) {
         return json({ error: '缺少必填项' }, { status: 400 });
     }
 
-    article = {
-        ...article,
+    let article: Partial<Article> = {
         id: nanoid(),
         version: 0,
         status: "draft",
         isLatest: true,
         authorId: locals.user.id!,
         author: locals.user.name!,
+        title: req.title,
+        content: req.content,
         bookmarkCount: 0,
         viewCount: 0,
     }
@@ -132,14 +131,11 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
 
     article.contest = getContestInfoByDate(now);
 
-    await Categories.addPreview(article);
+    await Categories.addPreview(article.contest.year, article.contest.month, article);
 
     try {
-        const res = await Articles.insertOne(article);
-        return json({
-            acknowledged: res.acknowledged,
-            insertedId: res.insertedId
-        }, { status: 200 });
+        await Articles.insertOne(article);
+        return json(article, { status: 200 });
     } catch (error) {
         return json({ error: JSON.stringify(error) }, { status: 500 });
     }

@@ -61,7 +61,8 @@ export type Article = {
     avgRating: number;
 
     contest?: {
-
+        year: number;
+        month: number;
         /**
          * 征文期标识
          * 格式：yyyy-MM
@@ -260,6 +261,8 @@ export function getContestInfoByDate(now = new Date()) {
         `${year}-${String(month + 1).padStart(2, "0")}`;
 
     return {
+        year,
+        month: month + 1,
         period,
         submissionStart,
         submissionEnd,
