@@ -1,240 +1,250 @@
 <script lang="ts">
+    import { tick } from "svelte";
+
+    type Snapshot = {
+        value: string;
+        start: number;
+        end: number;
+    };
+
     let {
         value = $bindable(""),
-        placeholder = "请输入内容...",
+        placeholder = "Start writing...",
+        disabled = false,
+        minHeight = 360,
     }: {
         value?: string;
         placeholder?: string;
+        disabled?: boolean;
+        minHeight?: number;
     } = $props();
 
-    let el = $state<HTMLDivElement>();
+    const HISTORY_LIMIT = 300;
+    const GROUP_MS = 900;
 
-    // 初始化内容
-    // function init() {
-    //     if (!el) return;
-    //     if (!value) {
-    //         el.innerHTML = `<p><br></p>`;
-    //     } else {
-    //         setText(value);
-    //     }
-    // }
+    let el: HTMLTextAreaElement | null = null;
+    let initialized = false;
+    let isComposing = false;
+    let suppressSync = false;
+    let lastGroupAt = 0;
 
-    // 获取纯文本
-    export function getText(): string {
-        if (!el) return "";
-        return el.innerText.replace(/\n$/, "");
+    let undoStack: Snapshot[] = [];
+    let redoStack: Snapshot[] = [];
+
+    function sameSnapshot(a: Snapshot | undefined, b: Snapshot) {
+        return !!a && a.value === b.value && a.start === b.start && a.end === b.end;
     }
 
-    // 设置纯文本 → 自动转 p
-    // export function setText(text: string) {
-    //     if (!el) return;
-
-    //     const lines = text.split("\n");
-
-    //     el.innerHTML = lines
-    //         .map((line) => `<p>${escapeHtml(line) || "<br>"}</p>`)
-    //         .join("");
-    // }
-
-    let lines = $derived(value.split("\n"));
-
-    function escapeHtml(text: string) {
-        const div = document.createElement("div");
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // 粘贴 → 强制纯文本
-    function onPaste(e: ClipboardEvent) {
-        e.preventDefault();
-
-        const text = e.clipboardData?.getData("text/plain") ?? "";
-
-        insertTextAtCursor(text);
-    }
-
-    // 插入纯文本（保持 p 结构）
-    function insertTextAtCursor(text: string) {
-        const sel = window.getSelection();
-        if (!sel?.rangeCount) return;
-
-        const lines = text.split("\n");
-        if (lines.length === 0) return;
-
-        insertParagraphAtCursor();
-
-        const range = sel.getRangeAt(0);
-        let currentP = range.startContainer;
-        while (currentP && (currentP as Element).tagName !== "P") {
-            currentP = currentP.parentNode as Node;
+    function getSnapshot(): Snapshot {
+        if (!el) {
+            const offset = value.length;
+            return { value, start: offset, end: offset };
         }
 
-        if (!currentP) return;
+        const start = el.selectionStart ?? el.value.length;
+        const end = el.selectionEnd ?? el.value.length;
 
-        const parent = (currentP as HTMLElement).parentNode;
-        if (!parent) return;
+        return { value: el.value, start, end };
+    }
 
-        const frag = document.createDocumentFragment();
+    function pushUndo(snapshot: Snapshot) {
+        const last = undoStack.at(-1);
+        if (sameSnapshot(last, snapshot)) return;
 
-        for (const line of lines) {
-            if (line.trim() === "") {
-                continue;
+        undoStack.push(snapshot);
+        if (undoStack.length > HISTORY_LIMIT) {
+            undoStack.shift();
+        }
+    }
+
+    function captureBeforeInput(inputType: string) {
+        if (!el || suppressSync) return;
+
+        const isGroupable =
+            inputType === "insertText" ||
+            inputType === "deleteContentBackward" ||
+            inputType === "deleteContentForward" ||
+            inputType === "insertCompositionText";
+
+        const now = Date.now();
+        if (isGroupable && now - lastGroupAt < GROUP_MS) return;
+
+        pushUndo(getSnapshot());
+        lastGroupAt = now;
+    }
+
+    function applySnapshot(snapshot: Snapshot) {
+        if (!el) return;
+
+        suppressSync = true;
+        value = snapshot.value;
+        el.value = snapshot.value;
+        autoResize();
+
+        tick().then(() => {
+            if (!el) {
+                suppressSync = false;
+                return;
             }
 
-            const p = document.createElement("p");
-            p.className = "segment";
-            p.textContent = line || "";
-            if (!line) p.innerHTML = "<br>";
-            frag.appendChild(p);
-        }
-
-        // 用创建的文档片段替换当前的段落
-        parent.replaceChild(frag, currentP);
-
-        // const firstP = frag.firstChild as HTMLElement;
-        const lastP = frag.lastChild as HTMLElement;
-        if (lastP) {
-            const newRange = document.createRange();
-            // 将光标移动到第一个新段落的开头
-            // newRange.setStart(firstP, 0);
-            // newRange.collapse(true);
-            // 移动光标到末尾
-            // newRange.selectNodeContents(lastP);
-            newRange.setStart(lastP, 0);
-            newRange.collapse(true);
-
-            sel.removeAllRanges();
-            sel.addRange(newRange);
-        }
+            const max = el.value.length;
+            el.setSelectionRange(
+                Math.min(snapshot.start, max),
+                Math.min(snapshot.end, max),
+            );
+            suppressSync = false;
+        });
     }
 
-    // 回车 → 始终创建 p
-    function onKeyDown(e: KeyboardEvent) {
-        if (e.key === "Enter") {
+    function autoResize() {
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = `${Math.max(minHeight, el.scrollHeight)}px`;
+    }
+
+    function handleBeforeInput(e: InputEvent) {
+        if (disabled) {
             e.preventDefault();
+            return;
+        }
 
-            // document.execCommand("insertParagraph");
-            insertParagraphAtCursor();
+        if (isComposing) return;
+        captureBeforeInput(e.inputType);
+    }
+
+    function handleInput() {
+        if (!el) return;
+
+        value = el.value;
+        autoResize();
+        redoStack = [];
+    }
+
+    function handleCompositionStart() {
+        isComposing = true;
+        pushUndo(getSnapshot());
+    }
+
+    function handleCompositionEnd() {
+        isComposing = false;
+        handleInput();
+    }
+
+    function handleKeyDown(e: KeyboardEvent) {
+        const ctrl = e.ctrlKey || e.metaKey;
+        if (!ctrl) return;
+
+        const key = e.key.toLowerCase();
+
+        if (key === "z") {
+            e.preventDefault();
+            if (e.shiftKey) {
+                redo();
+            } else {
+                undo();
+            }
+            return;
+        }
+
+        if (key === "y") {
+            e.preventDefault();
+            redo();
         }
     }
 
-    function insertParagraphAtCursor() {
-        const selection = window.getSelection();
-        if (!selection?.rangeCount) return;
+    export function undo() {
+        if (!el || undoStack.length === 0) return;
 
-        const range = selection.getRangeAt(0);
+        const current = getSnapshot();
+        const previous = undoStack.pop();
+        if (!previous) return;
 
-        // 情况1：如果在p元素的末尾，拆分当前p
-        if (range.endContainer.nodeType === Node.TEXT_NODE) {
-            const textNode = range.endContainer;
-            const offset = range.endOffset;
-            const parentP = textNode.parentElement;
-
-            if (parentP && parentP.tagName === "P") {
-                // 如果光标在文本末尾
-                if (offset === textNode.length) {
-                    const newP = document.createElement("p");
-                    p.className = "segment";
-                    newP.innerHTML = "<br>";
-                    parentP.parentNode?.insertBefore(newP, parentP.nextSibling);
-
-                    // 移动光标到新p
-                    const newRange = document.createRange();
-                    newRange.setStart(newP, 0);
-                    newRange.collapse(true);
-                    selection.removeAllRanges();
-                    selection.addRange(newRange);
-                    return;
-                }
-
-                // 如果光标在文本中间，拆分文本
-                const afterText = textNode.splitText(offset);
-                const newP = document.createElement("p");
-                newP.className = "segment";
-
-                // 将后半部分文本移到新p
-                if (afterText.textContent) {
-                    newP.textContent = afterText.textContent;
-                } else {
-                    newP.innerHTML = "<br>";
-                }
-
-                parentP.parentNode?.insertBefore(newP, parentP.nextSibling);
-
-                // 移除原p中的后半部分文本
-                afterText.remove();
-
-                // 移动光标到新p开头
-                const newRange = document.createRange();
-                newRange.setStart(newP, 0);
-                newRange.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(newRange);
-                return;
+        const lastRedo = redoStack.at(-1);
+        if (!sameSnapshot(lastRedo, current)) {
+            redoStack.push(current);
+            if (redoStack.length > HISTORY_LIMIT) {
+                redoStack.shift();
             }
         }
 
-        // 情况2：如果在p元素的边界
-        if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
-            const element = range.startContainer as Element;
-            if (element.tagName === "P" && range.startOffset === 0) {
-                const newP = document.createElement("p");
-                newP.className = "segment";
-                newP.innerHTML = "<br>";
-                element.parentNode?.insertBefore(newP, element);
-
-                const newRange = document.createRange();
-                newRange.setStart(newP, 0);
-                newRange.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(newRange);
-                return;
-            }
-        }
-
-        // 默认情况：在当前光标位置插入新段落
-        const newP = document.createElement("p");
-        newP.className = "segment";
-        newP.innerHTML = "<br>";
-
-        range.deleteContents();
-        range.insertNode(newP);
-
-        // 移动光标到新段落
-        const newRange = document.createRange();
-        newRange.setStart(newP, 0);
-        newRange.collapse(true);
-        selection.removeAllRanges();
-        selection.addRange(newRange);
+        applySnapshot(previous);
     }
-    // $effect(init);
+
+    export function redo() {
+        if (!el || redoStack.length === 0) return;
+
+        const current = getSnapshot();
+        const next = redoStack.pop();
+        if (!next) return;
+
+        pushUndo(current);
+        applySnapshot(next);
+    }
+
+    export function focus() {
+        el?.focus();
+    }
+
+    $effect(() => {
+        if (!el) return;
+
+        const nextValue = value ?? "";
+        if (!initialized) {
+            initialized = true;
+            el.value = nextValue;
+            autoResize();
+            undoStack = [getSnapshot()];
+            redoStack = [];
+            return;
+        }
+
+        if (suppressSync) return;
+        if (el.value === nextValue) return;
+
+        el.value = nextValue;
+        autoResize();
+        undoStack = [getSnapshot()];
+        redoStack = [];
+    });
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<!-- svelte-ignore element_invalid_self_closing_tag -->
-<div
-    bind:this={el}
-    class="content editable"
-    contenteditable="true"
-    data-placeholder={placeholder}
-    onpaste={onPaste}
-    onkeydown={onKeyDown}
->
-    {#each lines as line}
-        <p class="segment">{line || "<br>"}</p>
-    {/each}
+<div class="editor-wrap">
+    <textarea
+        bind:this={el}
+        class="editor"
+        value={value}
+        placeholder={placeholder}
+        disabled={disabled}
+        spellcheck="false"
+        onbeforeinput={handleBeforeInput}
+        oninput={handleInput}
+        onkeydown={handleKeyDown}
+        oncompositionstart={handleCompositionStart}
+        oncompositionend={handleCompositionEnd}
+    ></textarea>
 </div>
 
 <style>
-    .editable {
+    .editor-wrap {
+        padding: 0 4rem;
+    }
+
+    .editor {
+        width: 100%;
+        min-height: 360px;
+        border: none;
         outline: none;
+        resize: none;
+        overflow: hidden;
+        font-size: 18px;
+        line-height: 1.75;
+        color: var(--text-primary);
+        background: transparent;
         white-space: pre-wrap;
         word-break: break-word;
     }
 
-    .editable:empty::before {
-        content: attr(data-placeholder);
+    .editor::placeholder {
         color: var(--link-disabled);
-        pointer-events: none;
     }
 </style>
