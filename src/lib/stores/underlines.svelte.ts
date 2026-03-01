@@ -1,5 +1,13 @@
 import { nanoid } from 'nanoid';
-import type { UnderlineRange } from '../../routes/(auth)/articles/[id]/underline';
+
+export type UnderlineRange = {
+    id: string;
+    seg: number;
+    start: number;
+    end: number;
+    text: string;
+    color?: string;
+};
 
 let underlines = $state<UnderlineRange[]>([]);
 

@@ -18,6 +18,16 @@
     // 需要 Svelte 5 以上版本，并启用 runes
     import { onMount, onDestroy } from "svelte";
 
+    interface EditorCommand {
+        id: string;
+        label: string;
+        command: string;
+        value?: string;
+        prompt?: string;
+        title?: string;
+        separator?: boolean;
+    }
+
     // ========== 可自定义的命令配置 ==========
     // 暴露给外部的命令配置属性，允许完全自定义工具栏
     interface Props {
@@ -149,7 +159,7 @@
             }
         } else {
             // 直接执行命令
-            document.execCommand(command, false, value || null);
+            document.execCommand(command, false, value);
         }
 
         // 确保编辑器获得焦点

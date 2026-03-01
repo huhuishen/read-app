@@ -3,10 +3,10 @@
     import { goto } from "$app/navigation";
     import { onDestroy, onMount } from "svelte";
     import Button from "$lib/components/Button.svelte";
-    import Editor from "$lib/components/Editor.svelte";
     import type { Article } from "$lib/models";
     import { toast } from "$lib/stores/toast.svelte";
     import { createApi, safeCall } from "$lib/util/apiRequest";
+    import Editable from "../[id]/write/Editable.svelte";
 
     // svelte-ignore state_referenced_locally
     let article: Partial<Article> = $state({
@@ -24,6 +24,22 @@
     let isSubmitting = $state(false);
     let hasHydratedDraft = $state(false);
     let autoSaveTimer: ReturnType<typeof setInterval> | null = null;
+
+    let titleEditor:
+        | {
+              undo: () => void;
+              redo: () => void;
+              focus: () => void;
+          }
+        | undefined = $state();
+
+    let contentEditor:
+        | {
+              undo: () => void;
+              redo: () => void;
+              focus: () => void;
+          }
+        | undefined = $state();
 
     let canSubmit = $derived(
         !!article.title?.trim() && !!article.content?.trim() && !isSubmitting,
@@ -54,8 +70,15 @@
 
         const payload = normalizedPayload();
 
-        if (!payload.title || !payload.content) {
-            toast.show("请先填写标题和正文", "error");
+        if (!payload.title) {
+            toast.show("Title is required", "warn");
+            titleEditor?.focus();
+            return;
+        }
+
+        if (!payload.content) {
+            toast.show("Content is required", "warn");
+            contentEditor?.focus();
             return;
         }
 
@@ -74,7 +97,7 @@
             localStorage.removeItem(draftKey);
         }
 
-        toast.show("发表成功！", "success");
+        toast.show("Published", "success");
         goto(`/articles/${res.id}`);
     }
 
@@ -110,38 +133,71 @@
 </script>
 
 <svelte:head>
-    <title>发表</title>
+    <title>Create Article</title>
 </svelte:head>
 
-<main>
-    <Editor bind:article></Editor>
+<Editable
+    variant="title"
+    bind:this={titleEditor}
+    bind:value={article.title}
+    placeholder="Input title..."
+/>
 
-    <div class="footer">
-        <div class="tips">
-            <span>标题：{titleLength} 字</span>
-            <span>正文：{contentLength} 字</span>
-        </div>
-
-        <Button onclick={submitArticle} disabled={!canSubmit}>
-            {isSubmitting ? "保存中..." : "保存"}
-        </Button>
+<div class="toolbar">
+    <div class="history">
+        <button type="button" class="tool-btn" onclick={() => contentEditor?.undo()}>
+            Undo
+        </button>
+        <button type="button" class="tool-btn" onclick={() => contentEditor?.redo()}>
+            Redo
+        </button>
     </div>
-</main>
+    <div class="meta">Title {titleLength} chars, Content {contentLength} chars</div>
+</div>
+
+<Editable bind:this={contentEditor} bind:value={article.content} />
+
+<div class="footer mb4">
+    <Button onclick={submitArticle} disabled={!canSubmit}>
+        {isSubmitting ? "Saving..." : "Save"}
+    </Button>
+</div>
 
 <style>
-    .footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
+    .toolbar {
         padding: 0 4rem;
-        margin-bottom: 2rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
     }
 
-    .tips {
+    .history {
         display: flex;
-        gap: 1rem;
-        color: var(--muted-color, #666);
+        gap: 0.5rem;
+    }
+
+    .tool-btn {
+        border: 1px solid var(--border-default);
+        background: transparent;
+        color: var(--text-primary);
+        border-radius: 6px;
+        padding: 0.2rem 0.75rem;
+        line-height: 1.6;
+        cursor: pointer;
+    }
+
+    .tool-btn:hover {
+        background: var(--surface-soft);
+    }
+
+    .meta {
+        color: var(--text-secondary);
         font-size: 0.875rem;
+    }
+
+    .footer {
+        padding: 0 4rem;
     }
 </style>

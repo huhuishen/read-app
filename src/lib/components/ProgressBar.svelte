@@ -8,10 +8,6 @@
     let timer: number | null = null;
     let hideTimer: number | null = null;
 
-    function isActive() {
-        return navigating !== null || loadingState.count > 0;
-    }
-
     function start() {
         if (!browser) return;
         if (visible) return;
@@ -42,7 +38,6 @@
 
     $effect(() => {
         const nav = navigating;
-        console.log(nav.from, nav.to, nav.complete);
 
         const active = nav !== null ;
 
@@ -61,7 +56,7 @@
 
 {#if visible}
     <div class="progress">
-        <div class="bar" style="transform: scaleX({progress});" />
+        <div class="bar" style="transform: scaleX({progress});"></div>
     </div>
 {/if}
 

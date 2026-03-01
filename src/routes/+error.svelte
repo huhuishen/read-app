@@ -1,12 +1,14 @@
 <script lang="ts">
     import { page } from "$app/state";
+
+    const error = $derived(page.error as Error & { stack?: string; original?: unknown });
 </script>
 
 <div class="error">
     <h1>{page.status}</h1>
-    <p>{page.error?.message}</p>
-    <pre>{page.error?.stack}</pre>
-    <pre>{page.error?.original}</pre>
+    <p>{error?.message}</p>
+    <pre>{error?.stack}</pre>
+    <pre>{String(error?.original ?? "")}</pre>
 </div>
 
 <style>

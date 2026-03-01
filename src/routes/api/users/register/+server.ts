@@ -19,7 +19,7 @@ export const POST: RequestHandler = async ({ request }) => {
     try {
         const [res, user] = await Users.add(email, name, password);
 
-        if (!res.acknowledged) {
+        if (!("acknowledged" in res) || !res.acknowledged) {
             return json(
                 { error: '注册失败，请稍后重试' },
                 { status: 500 }

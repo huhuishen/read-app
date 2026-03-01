@@ -5,12 +5,27 @@
     import { onMount } from "svelte";
     import { createApi, safeCall } from "$lib/util/apiRequest";
 
+    interface BackupItem {
+        fileName: string;
+        metadata?: {
+            timestamp?: string | number | Date;
+            database?: string;
+        };
+        collections?: string[];
+        documentCounts?: Record<string, number>;
+    }
+
+    interface BackupListResponse {
+        success: boolean;
+        backups: BackupItem[];
+    }
+
     // 页面数据
-    let { data } = $props();
+    let { data }: { data: { backups?: BackupItem[] } } = $props();
 
     // 状态管理
     // svelte-ignore state_referenced_locally
-    let backups = $state(data.backups || []);
+    let backups = $state<BackupItem[]>(data.backups || []);
     let selectedCollections = $state<string[]>([]);
     let availableCollections = $state<string[]>([]);
     let selectedBackup = $state<string>("");
@@ -27,7 +42,7 @@
     // 获取可用集合
     async function fetchCollections() {
         try {
-            const result = await safeCall(api.get<any>("/api/backup/list"));
+            const result = await safeCall(api.get<BackupListResponse>("/api/backup/list"));
             if (!result) return;
 
             if (result.success && result.backups.length > 0) {
@@ -43,7 +58,7 @@
     // 刷新备份列表
     async function refreshBackups() {
         try {
-            const result = await safeCall(api.get<any>("/api/backup/list"));
+            const result = await safeCall(api.get<BackupListResponse>("/api/backup/list"));
             if (!result) return;
 
             if (result.success) {
@@ -258,7 +273,7 @@
                         <p>
                             <strong>Total Documents:</strong>
                             {(
-                                Object.values(backup.documentCounts) as number[]
+                                Object.values(backup.documentCounts ?? {}) as number[]
                             ).reduce((a, b) => a + b, 0)}
                         </p>
                     </div>
@@ -340,7 +355,7 @@
                                 <td
                                     >{(
                                         Object.values(
-                                            backup.documentCounts,
+                                            backup.documentCounts ?? {},
                                         ) as number[]
                                     ).reduce((a, b) => a + b, 0)}</td
                                 >

@@ -4,8 +4,7 @@
     import type { PageProps } from "./$types";
 
     const { data }: PageProps = $props();
-    // svelte-ignore state_referenced_locally
-    const { article, comments, user } = data;
+    const { article } = data as unknown as { article: { title: string } };
 
     const lastSlashIndex = page.url.pathname.lastIndexOf("/");
     const parentUrl = page.url.pathname.substring(0, lastSlashIndex);

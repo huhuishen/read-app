@@ -51,7 +51,7 @@
 
 <div class="mt4 ml1">
     <Checkbox bind:checked={agree} label="我已阅读并同意协议" />
-    <Checkbox bind:checked={agree} readonly label="我已阅读并同意协议" />
+    <Checkbox checked={agree} label="我已阅读并同意协议" />
 
     <p>当前状态：{agree ? "已勾选" : "未勾选"}</p>
 
@@ -67,8 +67,6 @@
         >
             <Checkbox
                 checked={selected.has(item.id)}
-                readonly
-                disabled={selected.size >= 3 && !selected.has(item.id)}
             />
 
             <div class="content">

@@ -51,7 +51,9 @@ export class CategoryService extends Collection<Category> {
         const { submissionStart, submissionEnd, voteEnd } = getContestTimeline(year, month);
 
         const doc: Category = {
-            name: `${month}届零重力杯`,
+            name: `${year}-${month.toString().padStart(2, "0")}`,
+            year,
+            month,
             contest: true,
             show: true,
             level: 2,
@@ -62,7 +64,7 @@ export class CategoryService extends Collection<Category> {
             submissionStart,
             submissionEnd,
             voteEnd,
-        }
+        };
         return await super.insertOne(doc);
     }
 
@@ -84,10 +86,10 @@ export class CategoryService extends Collection<Category> {
     async addPreview(year: number, month: number, article: Partial<Article>) {
         if (!article.contest?.period || !article.id) return;
 
-        const doc = {
+        const doc: NonNullable<Category["previewArticles"]>[number] = {
             id: article.id,
-            title: article.title,
-            author: article.author,
+            title: article.title ?? "",
+            author: article.author ?? "",
             coverImage: article.coverImage,
         }
 

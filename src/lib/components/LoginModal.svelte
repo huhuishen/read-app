@@ -104,7 +104,7 @@
         {/if}
         <div class="flex footer">
             <Button
-                style="secondary"
+                variant="light"
                 onclick={() => {
                     show = false;
                     password = "";

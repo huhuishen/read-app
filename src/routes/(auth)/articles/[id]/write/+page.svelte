@@ -6,7 +6,6 @@
     import { createApi, safeCall } from "$lib/util/apiRequest";
     import type { PageProps } from "./$types";
     import Editable from "./Editable.svelte";
-    import EditableTitle from "./EditableTitle.svelte";
 
     const { data }: PageProps = $props();
 
@@ -83,7 +82,12 @@
     <title>{article.title} - Edit</title>
 </svelte:head>
 
-<EditableTitle bind:this={titleEditor} bind:value={article.title} />
+<Editable
+    variant="title"
+    bind:this={titleEditor}
+    bind:value={article.title}
+    placeholder="Input title..."
+/>
 
 <div class="toolbar">
     <div class="history">

@@ -179,20 +179,26 @@
         {
             name: "上移",
             onclick: (row) => {
-                move(i, -1);
+                move(
+                    categories.findIndex((c) => c.name === row.name),
+                    -1,
+                );
             },
         },
         {
             name: "下移",
             onclick: (row) => {
-                move(i, 1);
+                move(
+                    categories.findIndex((c) => c.name === row.name),
+                    1,
+                );
             },
         },
         {
             name: "删除",
             className: "danger",
             onclick: async (row) => {
-                remove(row);
+                remove(row.name);
             },
             disabled: (row) => {
                 return true;

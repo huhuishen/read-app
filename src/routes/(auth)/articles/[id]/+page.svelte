@@ -333,7 +333,7 @@
             ? `投票已于 ${toLocalDateString(data.contest.voteEnd)} 截止`
             : ""}
         onclick={async () => {
-            const r = await safeCall(
+            const r = await safeCall<{ remain: number }>(
                 // api.post(`/api/articles/${article.id}/stats`, {
                 //     action: "vote",
                 //     value: !article.voted,

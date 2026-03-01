@@ -51,7 +51,7 @@
         },
         {
             name: "读者用时",
-            text: (item) => formatDuration(item.readSeconds),
+            text: (item) => formatDuration((item as Article & { readSeconds?: number }).readSeconds ?? 0),
         },
         {
             name: "创建",

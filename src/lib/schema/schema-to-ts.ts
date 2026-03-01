@@ -34,6 +34,8 @@ function defToTs(def: SchemaDef, indent = 2): string {
                         `${pad(indent)}${k}: ${defToTs(v, indent + 2)};`
                 )
                 .join("\n")}\n}`;
+        default:
+            return "unknown";
     }
 }
 

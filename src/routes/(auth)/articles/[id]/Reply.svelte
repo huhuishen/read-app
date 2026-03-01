@@ -4,13 +4,13 @@
     import { tick } from "svelte";
 
     let {
-        root,
+        root = undefined,
         cotent = $bindable(),
         placeholder = "",
         disabled = false,
         onclick,
     }: {
-        root: HTMLElement;
+        root?: HTMLElement;
         cotent: string;
         placeholder?: string;
         disabled?: boolean;
@@ -41,7 +41,7 @@
     class="mt-1"
     bind:this={el}
     use:visible={{
-        root,
+        root: root ?? null,
         threshold: 0.1,
         onChange: (v) => {
             if (!v && el) {

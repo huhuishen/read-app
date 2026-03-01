@@ -36,7 +36,7 @@
 
 {#if user}
     <a class="flex link" href="/users/{user.id}"
-        ><Avatar name={user.name}></Avatar>
+        ><Avatar name={user.name ?? ""}></Avatar>
     </a>
 {:else}
     <a class="link" href="/login">登录 </a>

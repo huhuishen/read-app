@@ -9,20 +9,30 @@
 
     let {
         value = $bindable(""),
-        placeholder = "Start writing...",
+        variant = "content",
+        placeholder,
         disabled = false,
-        minHeight = 360,
+        minHeight,
     }: {
         value?: string;
+        variant?: "title" | "content";
         placeholder?: string;
         disabled?: boolean;
         minHeight?: number;
     } = $props();
 
+    const isTitle = $derived(variant === "title");
+    const resolvedPlaceholder = $derived.by(() =>
+        placeholder ?? (variant === "title" ? "Input title..." : "Start writing..."),
+    );
+    const resolvedMinHeight = $derived.by(() =>
+        minHeight ?? (variant === "title" ? 0 : 360),
+    );
+
     const HISTORY_LIMIT = 300;
     const GROUP_MS = 900;
 
-    let el: HTMLTextAreaElement | null = null;
+    let el: HTMLTextAreaElement | HTMLInputElement | null = null;
     let initialized = false;
     let isComposing = false;
     let suppressSync = false;
@@ -97,9 +107,9 @@
     }
 
     function autoResize() {
-        if (!el) return;
+        if (!el || isTitle) return;
         el.style.height = "auto";
-        el.style.height = `${Math.max(minHeight, el.scrollHeight)}px`;
+        el.style.height = `${Math.max(resolvedMinHeight, el.scrollHeight)}px`;
     }
 
     function handleBeforeInput(e: InputEvent) {
@@ -209,19 +219,35 @@
 </script>
 
 <div class="editor-wrap">
-    <textarea
-        bind:this={el}
-        class="editor"
-        value={value}
-        placeholder={placeholder}
-        disabled={disabled}
-        spellcheck="false"
-        onbeforeinput={handleBeforeInput}
-        oninput={handleInput}
-        onkeydown={handleKeyDown}
-        oncompositionstart={handleCompositionStart}
-        oncompositionend={handleCompositionEnd}
-    ></textarea>
+    {#if isTitle}
+        <input
+            bind:this={el}
+            class="editor title-editor"
+            value={value}
+            placeholder={resolvedPlaceholder}
+            disabled={disabled}
+            spellcheck="false"
+            onbeforeinput={handleBeforeInput}
+            oninput={handleInput}
+            onkeydown={handleKeyDown}
+            oncompositionstart={handleCompositionStart}
+            oncompositionend={handleCompositionEnd}
+        />
+    {:else}
+        <textarea
+            bind:this={el}
+            class="editor content-editor"
+            value={value}
+            placeholder={resolvedPlaceholder}
+            disabled={disabled}
+            spellcheck="false"
+            onbeforeinput={handleBeforeInput}
+            oninput={handleInput}
+            onkeydown={handleKeyDown}
+            oncompositionstart={handleCompositionStart}
+            oncompositionend={handleCompositionEnd}
+        ></textarea>
+    {/if}
 </div>
 
 <style>
@@ -231,17 +257,30 @@
 
     .editor {
         width: 100%;
-        min-height: 360px;
         border: none;
         outline: none;
         resize: none;
         overflow: hidden;
-        font-size: 18px;
-        line-height: 1.75;
         color: var(--text-primary);
         background: transparent;
         white-space: pre-wrap;
         word-break: break-word;
+        padding: 0;
+        margin: 0;
+    }
+
+    .content-editor {
+        min-height: 360px;
+        font-size: 18px;
+        line-height: 1.75;
+    }
+
+    .title-editor {
+        font-size: 38px;
+        line-height: 1.25;
+        font-weight: 700;
+        color: var(--header-color);
+        margin-bottom: 0.75rem;
     }
 
     .editor::placeholder {

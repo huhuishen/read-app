@@ -1,4 +1,5 @@
-import { Infer, t } from "../index";
+import type { Infer } from "../index";
+import { t } from "../index";
 
 const UserDoc = t.object({
     _id: t.string(),
