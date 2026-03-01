@@ -100,7 +100,7 @@
     {/if}
 
     <div class="flex tags">
-        {#each article.categories as tag}
+        {#each article.tags as tag}
             <a class="tag" href="/categories/{tag}/articles">{tag}</a>
         {/each}
     </div>

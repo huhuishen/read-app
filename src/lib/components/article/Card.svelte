@@ -142,9 +142,6 @@
         .book-details {
             padding: 0px;
         }
-        .book-card {
-            /* padding: 1rem; */
-        }
         .book-card-image {
             /* height: 150px;
             width: 100px; */

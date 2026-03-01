@@ -228,10 +228,6 @@
         gap: 35px;
     }
 
-    .month {
-        /* min-width: 220px; */
-    }
-
     .month-title {
         font-weight: 600;
         margin-bottom: 6px;

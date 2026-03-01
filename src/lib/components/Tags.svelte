@@ -115,7 +115,12 @@
             {#if locked.includes(tag)}
                 <span style="opacity:.5">🔒</span>
             {:else if !readonly}
-                <span class="remove" onclick={() => removeTag(i)}>×</span>
+                <button
+                    type="button"
+                    class="remove"
+                    aria-label="移除标签"
+                    onclick={() => removeTag(i)}>×</button
+                >
             {/if}
         </span>
     {/each}
@@ -126,12 +131,13 @@
         {#if open && input && filtered().length > 0}
             <div class="dropdown">
                 {#each filtered().slice(0, 6) as item, i}
-                    <div
+                    <button
+                        type="button"
                         class="option {i === activeIndex ? 'active' : ''}"
                         onclick={() => addTag(item)}
                     >
                         {item}
-                    </div>
+                    </button>
                 {/each}
             </div>
         {/if}
@@ -162,6 +168,9 @@
     }
 
     .remove {
+        border: none;
+        background: transparent;
+        padding: 0;
         cursor: pointer;
         font-weight: bold;
         opacity: 0.6;
@@ -205,6 +214,10 @@
     }
 
     .option {
+        width: 100%;
+        border: none;
+        background: transparent;
+        text-align: left;
         padding: 8px 10px;
         font-size: 13px;
         cursor: pointer;

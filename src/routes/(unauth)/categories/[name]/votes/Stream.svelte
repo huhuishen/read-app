@@ -14,7 +14,7 @@
     }
 </script>
 
-<div class="flex center g-3 mb-3 ranking">
+<div class="flex center g-3 mb-3">
     {#each rankedArticles as article, i}
         <Card
             {article}
@@ -23,9 +23,3 @@
         ></Card>
     {/each}
 </div>
-
-<style>
-    .ranking {
-        /* min-width: 500px; */
-    }
-</style>

@@ -20,11 +20,12 @@
 
     const { data }: PageProps = $props();
 
-    // svelte-ignore state_referenced_locally
     const article = $derived(data.article);
+    // svelte-ignore state_referenced_locally
     const userStats = $state(data.userStats);
-    const now = new Date();
-    const voteEnd = now > new Date(article.contest?.voteEnd ?? "");
+    const voteEnd = $derived.by(
+        () => new Date() > new Date(article.category?.voteEnd ?? ""),
+    );
 
     const segments = $derived(stringSegment(article.content));
 
@@ -330,7 +331,7 @@
         selected={userStats.voted}
         disabled={voteEnd}
         title={voteEnd
-            ? `投票已于 ${toLocalDateString(data.contest.voteEnd)} 截止`
+            ? `投票已于 ${toLocalDateString(article.category?.voteEnd)} 截止`
             : ""}
         onclick={async () => {
             const r = await safeCall<{ remain: number }>(

@@ -11,24 +11,34 @@
         };
         showCover?: boolean;
     } = $props();
-    //TODO：  href="/articles/{article.articleId}
+    // TODO: href="/articles/{article.articleId}"
 </script>
 
 <a class="book-card" href="/articles/{article.id}/summary">
-    <div>
-        {#if showCover}
-            {#if article.coverImage}
-                <img
-                    src={article.coverImage}
-                    alt={article.title}
-                    class="flex book-cover"
-                />
-            {:else}
-                <div class="flex book-cover placeholder">无封面</div>
-            {/if}
+    <div
+        class="flex book-layout"
+        class:layout-top={showCover}
+        class:layout-left={!showCover}
+    >
+        {#if article.coverImage}
+            <img
+                src={article.coverImage}
+                alt={article.title}
+                class="flex book-cover"
+                class:book-cover-top={showCover}
+                class:book-cover-left={!showCover}
+            />
+        {:else}
+            <div
+                class="flex book-cover placeholder"
+                class:book-cover-top={showCover}
+                class:book-cover-left={!showCover}
+            >
+                No cover
+            </div>
         {/if}
-        <div class="flex book-details">
-            <h3>{article.title}</h3>
+        <div class="flex book-details" class:book-details-left={!showCover}>
+            <h3 class="title">{article.title}</h3>
             <div class="flex comment-meta">
                 <span>{article.author}</span>
             </div>
@@ -38,14 +48,6 @@
 
 <style>
     .book-card {
-        /* background: var(--reader-bg-color);
-        color: var(--text-color);
-        font-size: 16px;
-        width: 25%;
-        height: 350px;
-        user-select: none;
-        text-decoration: none;
-        padding: 10px; */
         background: var(--reader-bg-color);
         color: var(--text-color);
         font-size: 16px;
@@ -55,43 +57,40 @@
         padding: 10px;
         max-width: 600px;
     }
-    /* border: var(--border-soft) solid 2px; */
-    /* border-radius: 1rem; */
-    /* box-shadow: 2px 2px 2px var(--overlay-default); */
-    /* max-width: 400px; */
-    /* width: 100%; */
-    /* transition: all 0.15s ease;
-        transform-origin: center; */
-    /* cursor: pointer; */
 
     .book-card:hover {
         background-color: var(--accent-soft);
-
-        /* box-shadow: 0 4px 8px var(--overlay-default); */
-        /* box-shadow: lightblue 0px 0px 0px; */
-        /* border-color: var(--primary-color); */
-        /* cursor: pointer; */
-        /* transform: scale(1.02); */
-        /* box-shadow: 0 0 0 4px rgba(0, 150, 255, 0.2); */
     }
 
-    /* @media (max-width: 500px) {
-        .book-card {
-            width: 100%;
-        }
-    } */
+    .book-layout.layout-top {
+        flex-wrap: wrap;
+    }
+
+    .book-layout.layout-left {
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
 
     .book-cover {
-        width: 100%;
         object-fit: cover;
         object-position: center;
-        height: 200px;
         margin: 0 auto;
         cursor: pointer;
     }
 
-    .book-cover.placeholder {
+    .book-cover-top {
+        width: 100%;
         height: 200px;
+    }
+
+    .book-cover-left {
+        flex: 0 0 48%;
+        width: 48%;
+        height: 130px;
+        margin: 0;
+    }
+
+    .book-cover.placeholder {
         justify-content: center;
         background: var(--border-default);
         color: var(--link-color);
@@ -101,7 +100,17 @@
         padding: 0 1rem;
         cursor: pointer;
         flex-direction: column;
-        height: 140px;
+        height: 130px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .book-details-left {
+        flex: 1 0 52%;
+        min-height: 130px;
+        padding: 0 0.5rem;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .comment-meta {
@@ -109,11 +118,18 @@
         cursor: pointer;
         color: var(--text-color);
     }
-
-    h3 {
+    .title {
         color: var(--header-color);
         font-size: 20px;
         font-weight: bold;
         font-family: "Times New Roman", Times, serif;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .book-details-left .title {
+        width: 100%;
     }
 </style>

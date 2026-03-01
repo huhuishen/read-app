@@ -129,9 +129,9 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
 
     const now = new Date();
 
-    article.contest = getContestInfoByDate(now);
+    article.category = getContestInfoByDate(now);
 
-    await Categories.addPreview(article.contest.year, article.contest.month, article);
+    await Categories.addPreview(article.category.year, article.category.month, article);
 
     try {
         await Articles.insertOne(article);

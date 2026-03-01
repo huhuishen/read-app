@@ -156,11 +156,13 @@
         {#each weeks as week}
             <div class="week">
                 {#each week as day}
-                    <div
+                    <button
+                        type="button"
                         class="cell level-{level(day.readMinutes)}"
+                        aria-label={`${formatDate(day.date)} · ${day.readMinutes} min`}
                         onmouseenter={(e) => showTip(e, day)}
                         onmouseleave={hideTip}
-                    />
+                    ></button>
                 {/each}
             </div>
         {/each}
@@ -227,6 +229,8 @@
     /* cells */
 
     .cell {
+        border: none;
+        padding: 0;
         width: 12px;
         height: 12px;
 

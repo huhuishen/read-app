@@ -32,7 +32,7 @@
     const HISTORY_LIMIT = 300;
     const GROUP_MS = 900;
 
-    let el: HTMLTextAreaElement | HTMLInputElement | null = null;
+    let el = $state<HTMLTextAreaElement | HTMLInputElement | null>(null);
     let initialized = false;
     let isComposing = false;
     let suppressSync = false;

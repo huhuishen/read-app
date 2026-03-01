@@ -112,8 +112,6 @@
         white-space: nowrap;
         overflow: hidden;
     }
-    .author {
-    }
     .gray {
         color: var(--text-secondary);
         font-size: 16px;

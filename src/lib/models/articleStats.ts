@@ -192,16 +192,11 @@ export class ArticleUserStateService extends Collection<ArticleUserState> {
     }
 
     async voteArticle(userId: string, articleId: string, voted: boolean) {
-        const article = await Articles.findOne({ id: articleId }, { projection: { categories: 1 } });
+        const article = await Articles.findOne({ id: articleId }, { projection: { categories: 1, category: 1 } });
 
         if (!article) throw new Error("Article not found");
 
-        const awardCategory = await Categories.findOne({
-            name: { $in: article.categories },
-            award: true
-        }, { projection: { name: 1 } });
-
-        const awardCategoryName = awardCategory?.name;
+        const awardCategoryName = article.category?.period;
 
         let count = 0;
         // 限制判断
@@ -217,9 +212,6 @@ export class ArticleUserStateService extends Collection<ArticleUserState> {
                 throw new Error("该征文分类最多投3票");
             }
         }
-
-        console.log(count);
-
 
         // 写入投票记录
         const result = await super.updateOne(

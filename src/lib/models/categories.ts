@@ -19,9 +19,9 @@ import { Collection } from "./db";
 // export type Category = Infer<typeof CategorySchema> & Entity
 export type Category = {
     name: string;
-    year: number;
-    month: number;
-    contest: boolean;
+    year?: number;
+    month?: number;
+    // contest?: boolean;
     description?: string;
     show: boolean; // 是否首页显示
     award?: boolean; // 有奖征文
@@ -54,7 +54,7 @@ export class CategoryService extends Collection<Category> {
             name: `${year}-${month.toString().padStart(2, "0")}`,
             year,
             month,
-            contest: true,
+            // contest: true,
             show: true,
             level: 2,
             articleCount: 0,
@@ -84,7 +84,7 @@ export class CategoryService extends Collection<Category> {
     }
 
     async addPreview(year: number, month: number, article: Partial<Article>) {
-        if (!article.contest?.period || !article.id) return;
+        if (!article.category?.period || !article.id) return;
 
         const doc: NonNullable<Category["previewArticles"]>[number] = {
             id: article.id,
@@ -95,10 +95,10 @@ export class CategoryService extends Collection<Category> {
 
         // await this.ensureExists(article.contest.period);
         return await super.updateOne(
-            { name: article.contest?.period },
+            { name: article.category?.period },
             {
                 $setOnInsert: {
-                    name: article.contest?.period,
+                    name: article.category?.period,
                     year,
                     month,
                     contest: true,

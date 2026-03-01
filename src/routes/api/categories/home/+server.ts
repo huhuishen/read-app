@@ -11,7 +11,7 @@ export const GET: RequestHandler = withApi(async ({ }) => {
 
     const res = await Categories.find(
         {},
-    ).sort({ createdAt: -1 }).limit(3).toArray();
+    ).sort({ level: -1, createdAt: -1 }).toArray();
 
     return json(res);
 });

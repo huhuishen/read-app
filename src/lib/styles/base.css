@@ -17,7 +17,8 @@
     --text-muted: #6b7280;
     --text-faint: #9ca3af;
     --text-inverse: #f9fafb;
-    --text-heading: #411f00;;
+    --text-heading: #411f00;
+    ;
 
     --border-soft: #e5e7eb;
     --border-default: #d1d5db;
@@ -129,17 +130,17 @@
     --brand-gold: #d4b46f;
 
     --status-info-text: #bfdbfe;
-    --status-info-bg: rgba(59, 130, 246, 0.2);
-    --status-info-border: rgba(96, 165, 250, 0.35);
+    --status-info-bg: #192d50;
+    --status-info-border: #2d4971;
     --status-success-text: #86efac;
-    --status-success-bg: rgba(34, 197, 94, 0.16);
-    --status-success-border: rgba(74, 222, 128, 0.32);
+    --status-success-bg: #143430;
+    --status-success-border: #235743;
     --status-warning-text: #fcd34d;
-    --status-warning-bg: rgba(245, 158, 11, 0.16);
-    --status-warning-border: rgba(251, 191, 36, 0.32);
+    --status-warning-bg: #352d23;
+    --status-warning-border: #5c4d26;
     --status-danger-text: #fca5a5;
-    --status-danger-bg: rgba(239, 68, 68, 0.16);
-    --status-danger-border: rgba(248, 113, 113, 0.35);
+    --status-danger-bg: #351f2c;
+    --status-danger-border: #623741;
 
     --rank-gold-bg: rgba(251, 191, 36, 0.18);
     --rank-silver-bg: rgba(148, 163, 184, 0.2);

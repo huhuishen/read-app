@@ -47,7 +47,7 @@ export type Article = {
     content: string;
     coverImage: string;
     summary: string;
-    categories: string[],
+    tags: string[],
     status: "draft" | "pending" | "published" | "scheduled"
 
     viewCount: number;
@@ -60,7 +60,7 @@ export type Article = {
     ratingCount: number;
     avgRating: number;
 
-    contest?: {
+    category?: {
         year: number;
         month: number;
         /**
@@ -143,10 +143,10 @@ export class ArticleService extends Collection<Article> {
         // 划线评论是跟随
         const underlines = await Underlines.findByArticle(article.id, article.version);
         const userStats = await ArticleUserStats.getState(article.id, user.id!);
-        const contest = await Categories.getContestByArticle(article.categories);
+        // const contest = await Categories.getContestByArticle(article.categories);
 
         // return { article: { ...article, ...stats }, underlines, contest };
-        return { article, userStats, underlines, contest };
+        return { article, userStats, underlines };
     }
 
 

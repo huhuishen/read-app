@@ -171,14 +171,6 @@
         opacity: 0.7;
     }
 
-    .badge {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 999px;
-        background: var(--surface-soft);
-        font-size: 14px;
-    }
-
     .actions {
         display: flex;
         gap: 12px;

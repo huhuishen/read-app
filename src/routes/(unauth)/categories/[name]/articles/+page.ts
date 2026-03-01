@@ -11,9 +11,9 @@ export const load: PageLoad = async ({ fetch, params, url, parent }) => {
     const data = await parent();
 
     const res = await api.get<DataPage<Article>>(
-        data.category.contest
-            ? `/api/contest/${params.name}?page=${page}&limit=${limit}`
-            : `/api/categories/${params.name}/articles?page=${page}&limit=${limit}`,
+        // data.category.contest
+        //     ? `/api/contest/${params.name}?page=${page}&limit=${limit}`
+        `/api/categories/${params.name}/articles?page=${page}&limit=${limit}`,
     );
 
     return {

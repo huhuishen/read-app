@@ -30,7 +30,7 @@
         },
         {
             name: "栏目标签",
-            text: (item) => item.categories?.join(","),
+            text: (item) => item.tags?.join(","),
             className: "lg",
         },
         {

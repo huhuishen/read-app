@@ -7,6 +7,7 @@
     import { toast } from "$lib/stores/toast.svelte";
     import { createApi, safeCall } from "$lib/util/apiRequest";
     import Editable from "../[id]/write/Editable.svelte";
+    import ArticleNavbar from "../[id]/ArticleNavbar.svelte";
 
     // svelte-ignore state_referenced_locally
     let article: Partial<Article> = $state({
@@ -53,8 +54,8 @@
             content: article.content?.trim(),
             summary: article.summary?.trim() || undefined,
             coverImage: article.coverImage?.trim() || undefined,
-            categories:
-                article.categories
+            tags:
+                article.tags
                     ?.map((item) => item?.trim())
                     .filter(Boolean) ?? [],
         };
@@ -112,7 +113,7 @@
                 article = {
                     ...article,
                     ...draft,
-                    categories: draft.categories ?? [],
+                    tags: draft.tags ?? [],
                 };
             } catch {
                 localStorage.removeItem(draftKey);
@@ -130,40 +131,59 @@
 
         saveDraft();
     });
+
+    let { data } = $props();
 </script>
 
 <svelte:head>
     <title>Create Article</title>
 </svelte:head>
 
-<Editable
-    variant="title"
-    bind:this={titleEditor}
-    bind:value={article.title}
-    placeholder="Input title..."
-/>
-
-<div class="toolbar">
-    <div class="history">
-        <button type="button" class="tool-btn" onclick={() => contentEditor?.undo()}>
-            Undo
-        </button>
-        <button type="button" class="tool-btn" onclick={() => contentEditor?.redo()}>
-            Redo
-        </button>
+<main>
+    <ArticleNavbar user={data.user}></ArticleNavbar>
+    <div class="content title mb-3">
+        <Editable
+            variant="title"
+            bind:this={titleEditor}
+            bind:value={article.title}
+            placeholder="Input title..."
+        />
     </div>
-    <div class="meta">Title {titleLength} chars, Content {contentLength} chars</div>
-</div>
+    <div class="toolbar">
+        <div class="history">
+            <button
+                type="button"
+                class="tool-btn"
+                onclick={() => contentEditor?.undo()}
+            >
+                Undo
+            </button>
+            <button
+                type="button"
+                class="tool-btn"
+                onclick={() => contentEditor?.redo()}
+            >
+                Redo
+            </button>
+        </div>
+        <div class="meta">
+            Title {titleLength} chars, Content {contentLength} chars
+        </div>
+    </div>
 
-<Editable bind:this={contentEditor} bind:value={article.content} />
+    <Editable bind:this={contentEditor} bind:value={article.content} />
 
-<div class="footer mb4">
-    <Button onclick={submitArticle} disabled={!canSubmit}>
-        {isSubmitting ? "Saving..." : "Save"}
-    </Button>
-</div>
+    <div class="footer mb4">
+        <Button onclick={submitArticle} disabled={!canSubmit}>
+            {isSubmitting ? "Saving..." : "Save"}
+        </Button>
+    </div>
+</main>
 
 <style>
+    main {
+        background: var(--reader-bg-color);
+    }
     .toolbar {
         padding: 0 4rem;
         margin-bottom: 0.75rem;

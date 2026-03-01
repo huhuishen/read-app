@@ -1,7 +1,5 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
-    import Icon from "./Icon.svelte";
-    import { goto } from "$app/navigation";
 
     let {
         tabs,
@@ -17,12 +15,6 @@
 </script>
 
 <div class="tabs">
-    <!-- <button
-        class="home"
-        onclick={() => {
-            goto("/");
-        }}><Icon name="chevron-left" size={20} /></button
-    > -->
     <div class="tabs-center">
         {#each tabs as tab}
             <button
@@ -55,13 +47,6 @@
         height: 50px;
         z-index: 100;
     }
-    .home {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
     .tabs-center {
         display: flex;
         justify-content: center;

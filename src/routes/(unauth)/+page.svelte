@@ -15,13 +15,13 @@
     let searchQuery = $derived(data.query || "");
     // const api = createApi();
 
-    // let categoriesWithPreview = $derived(
-    //     data.categories?.filter((c) => c.level == 2),
-    // );
+    let categoriesWithPreview = $derived(
+        data.categories?.filter((c) => c.level == 2),
+    );
 
     // let categories1 = $derived(data.categories?.filter((c) => c.level == 1));
 
-    // let categories0 = $derived(data.categories?.filter((c) => c.level == 0));
+    let categories0 = $derived(data.categories?.filter((c) => c.level == 0));
 </script>
 
 <svelte:head>
@@ -74,16 +74,7 @@
         {/if}
     {:else}
         <div class="flex">
-            <!-- {#each data.categories as category}
-                <CategoryTitle name={category.name} laurel={category.award} />
-
-                <div class="flex articles">
-                    {#each category.previewArticles as article}
-                        <ArticleCard {article}></ArticleCard>
-                    {/each}
-                </div>
-            {/each} -->
-            {#each data.categories as category, i}
+            {#each categoriesWithPreview as category, i}
                 <CategoryTitle name={category.name} laurel={category.award} />
 
                 <div class="flex articles">
@@ -93,30 +84,24 @@
                     {/each}
                 </div>
             {/each}
-            <!-- {#each categories1 as category}
-                <CategoryTitle name={category.name} laurel={category.award} />
-
-                <div class="flex articles">
-                    {#each category.previewArticles as article}
-                        <ArticleCard {article} showCover={false}></ArticleCard>
-                    {/each}
-                </div>
-            {/each}
 
             <CategoryTitle name="其它标签" laurel={false} more={false} />
-            <div class="flex g-2">
+            <div class="flex g-2 categories">
                 {#each categories0 as category}
                     <a
                         class="category-title"
                         href="/categories/{encodeURI(category.name!)}/articles"
                     >
                         <div class="flex card-small">
-                            <span> {category.name}</span>
-                            <span>{category.articleCount}</span>
+                            <span class="card-small-title">{category.name}</span
+                            >
+                            <span class="card-small-count"
+                                >{category.articleCount ?? 0}</span
+                            >
                         </div>
                     </a>
                 {/each}
-            </div> -->
+            </div>
         </div>
     {/if}
 </div>
@@ -165,35 +150,19 @@
     }
 
     .articles {
-        /* justify-content: start;
-        gap: 10px;
-        width: 100%; */
         display: grid;
-        grid-template-columns: repeat(4, minmax(300px, 1fr));
-        /* grid-template-columns: repeat(4, 1fr); */
+        grid-template-columns: repeat(4, 1fr);
         gap: 10px;
         width: 100%;
     }
-    @media (max-width: 1500px) {
-        .articles {
-            grid-template-columns: repeat(3, 1fr);
-        }
+    .categories {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 10px;
+        width: 100%;
     }
-
-    @media (max-width: 900px) {
-        .articles {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (max-width: 600px) {
-        .articles {
-            grid-template-columns: 1fr;
-        }
-    }
-
     .card-small {
-        justify-content: space-between;
+        justify-content: column;
         min-width: 150px;
         height: 100px;
         background: var(--reader-bg-color);
@@ -208,6 +177,40 @@
         text-decoration: none;
         color: var(--header-color);
         font-size: 18px;
-        font-weight: bold;
+        /* font-weight: bold; */
+    }
+    .card-small-title {
+        width: 100%;
+        color: var(--text-secondary);
+    }
+    .card-small-count {
+        width: 100%;
+        color: var(--text-faint);
+    }
+    @media (max-width: 1500px) {
+        .articles {
+            grid-template-columns: repeat(3, minmax(30%, 1fr));
+        }
+        .categories {
+            grid-template-columns: repeat(6, 1fr);
+        }
+    }
+
+    @media (max-width: 900px) {
+        .articles {
+            grid-template-columns: repeat(2, minmax(48%, 1fr));
+        }
+        .categories {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .articles {
+            grid-template-columns: 1fr;
+        }
+        .categories {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 </style>

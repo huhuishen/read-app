@@ -112,7 +112,7 @@ GET {{host}}/users/3rksd5cwbqy7/activity
 GET {{host}}/categories/五十五届零重力杯
 
 ###
-GET {{host}}/categories/五十五届零重力杯/articles?page=1&limit=20
+GET {{host}}/categories/2025-12/articles?page=1&limit=20
 
 ###
 GET {{host}}/categories/五十五届零重力杯/votes

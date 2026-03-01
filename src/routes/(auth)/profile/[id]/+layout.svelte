@@ -59,12 +59,6 @@
         /* padding: 0 30px; */
     }
 
-    .layout {
-        display: grid;
-        grid-template-columns: 1fr 320px;
-        gap: 16px;
-    }
-
     .side {
         position: fixed;
         top: 30px;
@@ -80,10 +74,6 @@
         /* .profile-container {
             padding:0 5px;
         } */
-        .layout {
-            grid-template-columns: 1fr;
-        }
-
         .side {
             position: static;
             width: 100%;
