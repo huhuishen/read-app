@@ -4,6 +4,7 @@
     import type { User } from "$lib/models";
     import { session } from "$lib/stores/session.svelte";
     import { toast } from "$lib/stores/toast.svelte.js";
+    import { createApi, safeCall } from "$lib/util/apiRequest";
     import Avatar from "./Avatar.svelte";
 
     let {
@@ -20,6 +21,7 @@
     let password = $state("");
     let nickname = $state("");
     let register = $state(false);
+    const api = createApi();
 
     async function invalidate() {
         // await invalidateAll();
@@ -48,58 +50,44 @@
     bind:register
     onSubmit={async () => {
         if (register) {
-            const r = await fetch("/api/users/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
+            const r = await safeCall(
+                api.post("/api/users/register", {
                     account,
                     name: nickname,
                     password,
                 }),
-                credentials: "include", // 重要：允许携带和接收cookies
-            });
+                toast,
+            );
 
-            if (r.ok) {
+            if (r) {
                 password = "";
                 toast.show("注册成功！", "success");
                 register = false;
-            } else {
-                var error = await r.json();
-                toast.show(error.error, "error");
             }
         } else {
             // const fp = await FingerprintJS.load();
             // const result = await fp.get();
             // console.log(result);
 
-            const r = await fetch("/api/users/auth", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
+            const r = await safeCall<User>(
+                api.post("/api/users/auth", {
                     account,
                     password,
                     // visitorId: result.visitorId,
                 }),
-                credentials: "include", // 重要：允许携带和接收cookies
-            });
+                toast,
+            );
 
-            if (r.ok) {
+            if (r) {
                 showLogin = false;
                 account = "";
                 password = "";
 
-                session.user = await r.json();
+                session.user = r;
                 // console.log($state.snapshot(session.user));
 
                 toast.show("登录成功！", "success");
                 await invalidate();
-            } else {
-                var error = await r.json();
-                toast.show(error.error, "error");
             }
         }
     }}

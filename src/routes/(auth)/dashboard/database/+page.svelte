@@ -3,6 +3,7 @@
     import Card from "./Card.svelte";
     import Status from "./Status.svelte";
     import { onMount } from "svelte";
+    import { createApi, safeCall } from "$lib/util/apiRequest";
 
     // 页面数据
     let { data } = $props();
@@ -21,11 +22,13 @@
     } | null>(null);
     let dropExisting = $state(false);
 
+    const api = createApi();
+
     // 获取可用集合
     async function fetchCollections() {
         try {
-            const response = await fetch("/api/backup/list");
-            const result = await response.json();
+            const result = await safeCall(api.get<any>("/api/backup/list"));
+            if (!result) return;
 
             if (result.success && result.backups.length > 0) {
                 // 从最新备份中获取集合列表
@@ -40,8 +43,8 @@
     // 刷新备份列表
     async function refreshBackups() {
         try {
-            const response = await fetch("/api/backup/list");
-            const result = await response.json();
+            const result = await safeCall(api.get<any>("/api/backup/list"));
+            if (!result) return;
 
             if (result.success) {
                 backups = result.backups;
@@ -59,21 +62,25 @@
         message = null;
 
         try {
-            const response = await fetch("/api/backup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    collections:
-                        selectedCollections.length > 0
-                            ? selectedCollections
-                            : undefined,
-                    backupName: backupName || undefined,
-                }),
-            });
-
-            const result = await response.json();
+            const result = await safeCall(
+                api.post<any, { collections?: string[]; backupName?: string }>(
+                    "/api/backup",
+                    {
+                        collections:
+                            selectedCollections.length > 0
+                                ? selectedCollections
+                                : undefined,
+                        backupName: backupName || undefined,
+                    },
+                ),
+            );
+            if (!result) {
+                message = {
+                    type: "error",
+                    text: "Failed to create backup",
+                };
+                return;
+            }
 
             if (result.success) {
                 message = {
@@ -107,22 +114,33 @@
         message = null;
 
         try {
-            const response = await fetch("/api/restore", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    backupFile: selectedBackup,
-                    collections:
-                        selectedCollections.length > 0
-                            ? selectedCollections
-                            : undefined,
-                    dropExisting,
-                }),
-            });
-
-            const result = await response.json();
+            const result = await safeCall(
+                api.post<
+                    any,
+                    {
+                        backupFile: string;
+                        collections?: string[];
+                        dropExisting: boolean;
+                    }
+                >(
+                    "/api/restore",
+                    {
+                        backupFile: selectedBackup,
+                        collections:
+                            selectedCollections.length > 0
+                                ? selectedCollections
+                                : undefined,
+                        dropExisting,
+                    },
+                ),
+            );
+            if (!result) {
+                message = {
+                    type: "error",
+                    text: "Failed to restore backup",
+                };
+                return;
+            }
 
             if (result.success) {
                 message = {
