@@ -62,6 +62,7 @@ export function stringSegment(content: string | undefined) {
 
 
 import { goto, invalidateAll } from '$app/navigation';
+import { createApi, safeCall } from '$lib/util/apiRequest';
 import { toast } from '$lib/stores/toast.svelte';
 import { customAlphabet } from 'nanoid';
 // const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -70,6 +71,7 @@ import { customAlphabet } from 'nanoid';
 const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
 // ~35 years or 308M IDs
 export const nanoid = customAlphabet(alphabet, 12);
+const api = createApi();
 // nanoid() //=> "5KCLQ6RK4ues"
 
 
@@ -96,17 +98,10 @@ export function errorMessage(e: any) {
 export async function logout() {
     try {
         // session.user = null;
-        const r = await fetch("/api/users/logout", {
-            method: "POST",
-            credentials: "include", // 重要：允许携带和接收cookies
-        });
+        const r = await safeCall(api.post('/api/users/logout'), toast);
 
-        if (r.ok) {
+        if (r) {
             toast.show("已退出登录！", "success");
-        } else {
-            var error = await r.json();
-
-            toast.show(error.error, "error");
         }
         await goto("/");
         invalidateAll();

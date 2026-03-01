@@ -7,6 +7,8 @@
     import Pagination from "$lib/components/Pagination.svelte";
     import type { Category } from "$lib/models";
     import type { DataPage } from "$lib/mongolite";
+    import { toast } from "$lib/stores/toast.svelte";
+    import { apiRequest, createApi, safeCall } from "$lib/util/apiRequest";
     import Table, { type Column } from "../Table.svelte";
 
     const {
@@ -51,11 +53,11 @@
         },
     ];
 
+    const api = createApi();
+
     async function create() {
-        await fetch("/api/categories", {
-            method: "POST",
-            body: JSON.stringify(form),
-        });
+        const result = await safeCall(api.post("/api/categories", form), toast);
+        if (!result) return;
 
         resetForm();
 
@@ -63,13 +65,14 @@
     }
 
     async function update() {
-        await fetch("/api/categories", {
-            method: "PATCH",
-            body: JSON.stringify({
+        const result = await safeCall(
+            api.patch("/api/categories", {
                 oldName: editing!.name,
                 ...form,
             }),
-        });
+            toast,
+        );
+        if (!result) return;
 
         editing = null;
 
@@ -82,10 +85,14 @@
         if (!name) return;
         if (!confirm("确定删除标签？")) return;
 
-        await fetch("/api/categories", {
-            method: "DELETE",
-            body: JSON.stringify({ name }),
-        });
+        const result = await safeCall(
+            apiRequest("/api/categories", {
+                method: "DELETE",
+                body: { name },
+            }),
+            toast,
+        );
+        if (!result) return;
 
         // await load();
     }
@@ -98,13 +105,14 @@
         const a = categories[index];
         const b = categories[target];
 
-        await fetch("/api/categories/order", {
-            method: "PATCH",
-            body: JSON.stringify([
+        const result = await safeCall(
+            api.patch("/api/categories/order", [
                 { name: a.name, order: b.order },
                 { name: b.name, order: a.order },
             ]),
-        });
+            toast,
+        );
+        if (!result) return;
 
         // await load();
     }

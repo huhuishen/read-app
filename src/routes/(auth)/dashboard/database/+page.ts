@@ -1,17 +1,11 @@
-import type { PageLoad } from "./$types";
+import { createApi, safeCall } from '$lib/util/apiRequest';
+import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch }) => {
-    try {
-        const response = await fetch('/api/backup/list');
-        const data = await response.json();
+    const api = createApi(fetch);
+    const data = await safeCall(api.get<{ success: boolean; backups: unknown[] }>('/api/backup/list'));
 
-        return {
-            backups: data.success ? data.backups : []
-        };
-    } catch (error) {
-        console.error('Failed to load backups:', error);
-        return {
-            backups: []
-        };
-    }
+    return {
+        backups: data?.success ? data.backups : [],
+    };
 };

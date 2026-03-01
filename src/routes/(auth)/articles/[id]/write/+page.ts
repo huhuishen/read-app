@@ -1,18 +1,19 @@
 import type { Article } from '$lib/models';
+import { createApi, safeCall } from '$lib/util/apiRequest';
 import { safe, SafeError } from '$lib/util/safe';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ fetch, params, url }) => {
+export const load: PageLoad = async ({ fetch, params }) => {
     return await safe(async () => {
-        const response = await fetch(`/api/articles/${params.id}`);
-        if (!response.ok) {
-            throw new SafeError(401, 'not authorized',);
+        const api = createApi(fetch);
+        const res = await safeCall<{ article: Article }>(api.get(`/api/articles/${params.id}`));
+
+        if (!res) {
+            throw new SafeError(401, 'not authorized');
         }
 
-        const res = await response.json();
-
         return {
-            article: res.article as Article,
+            article: res.article,
         };
-    })
+    });
 };
