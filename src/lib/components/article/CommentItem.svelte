@@ -135,7 +135,11 @@
         right: 0;
         bottom: 0;
         height: 40px;
-        background: linear-gradient(to bottom, transparent, var(--reader-bg-color));
+        background: linear-gradient(
+            to bottom,
+            transparent,
+            var(--main-bg-color)
+        );
     }
 
     /* 展开按钮 */

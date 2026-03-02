@@ -84,7 +84,7 @@
         position: fixed;
         top: 0;
         height: 100vh;
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
         box-shadow: 2px 0 8px var(--overlay-default);
         display: flex;
         flex-direction: column;
@@ -121,7 +121,7 @@
         width: 100%;
         overflow-y: auto;
         flex: 1;
-        background-color: var(--reader-bg-color);
+        background-color: var(--main-bg-color);
         color: var(--text-color);
     }
     .drawer-top {
@@ -156,4 +156,3 @@
         background: var(--overlay-strong);
     }
 </style>
-

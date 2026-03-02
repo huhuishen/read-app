@@ -165,7 +165,7 @@
         justify-content: column;
         min-width: 150px;
         height: 100px;
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
         color: var(--text-color);
         padding: 1rem;
         cursor: pointer;

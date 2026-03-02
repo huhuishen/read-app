@@ -60,13 +60,13 @@
         align-items: center;
         gap: 1rem;
         padding: 10px;
-        background-color: var(--reader-bg-color);
+        background-color: var(--main-bg-color);
         height: 60px;
         z-index: 2200;
     } */
     header {
         justify-content: space-between;
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
         height: 60px;
         border-bottom: var(--bg-color) 1px solid;
         z-index: 2000;

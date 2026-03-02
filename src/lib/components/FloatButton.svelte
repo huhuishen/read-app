@@ -28,8 +28,8 @@
         height: 48px;
         border-radius: 50%;
         color: var(--link-color);
-        background-color: var(--reader-bg-color);
-        box-shadow:  0 0 15px var(--shadow-sm);
+        background-color: var(--main-bg-color);
+        box-shadow: 0 0 15px var(--shadow-sm);
         vertical-align: middle;
         cursor: pointer;
         user-select: none;
@@ -47,4 +47,3 @@
         color: var(--highlight-color);
     }
 </style>
-

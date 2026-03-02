@@ -83,7 +83,7 @@
         padding: 6px 10px;
         /* border-radius: 8px;
         border: 1px solid var(--border-soft);
-        background: var(--reader-bg-color); */
+        background: var(--main-bg-color); */
         background-color: transparent;
         cursor: pointer;
         user-select: none;
@@ -97,7 +97,7 @@
         min-width: 160px;
         padding: 6px;
         border-radius: 6px;
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
         border: 1px solid var(--border-soft);
         box-shadow: 0 10px 25px var(--shadow-sm);
     }
@@ -129,4 +129,3 @@
         border-bottom: solid 1px var(--border-default);
     }
 </style>
-

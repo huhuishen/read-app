@@ -101,7 +101,7 @@
     .placeholder {
         width: 100%;
         height: 100%;
-        /* background: linear-gradient(-45deg, var(--border-default), var(--reader-bg-color)); */
+        /* background: linear-gradient(-45deg, var(--border-default), var(--main-bg-color)); */
     }
     .title {
         font-size: 20px;

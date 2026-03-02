@@ -39,8 +39,6 @@
             }
         };
     });
-
-
 </script>
 
 <Overlay bind:show {clickClose}>
@@ -68,7 +66,7 @@
 
 <style>
     .modal-content {
-        background-color: var(--reader-bg-color);
+        background-color: var(--main-bg-color);
         border-radius: 3px;
 
         /* padding: 16px 18px;
@@ -115,7 +113,7 @@
         height: 24px;
         border: none;
         background: var(--overlay-soft);
-        color: var(--reader-bg-color);
+        color: var(--main-bg-color);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -126,4 +124,3 @@
         background: var(--overlay-default);
     }
 </style>
-

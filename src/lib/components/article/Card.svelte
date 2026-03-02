@@ -62,7 +62,7 @@
         align-items: center;
         cursor: pointer;
         /* min-width: 425px; */
-        /* background-color: var(--reader-bg-color); */
+        /* background-color: var(--main-bg-color); */
     }
 
     .book-card:hover {
@@ -149,4 +149,3 @@
         }
     }
 </style>
-

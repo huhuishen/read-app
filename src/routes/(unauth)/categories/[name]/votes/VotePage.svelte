@@ -186,7 +186,11 @@
 
         overflow: hidden;
 
-        background: linear-gradient(180deg, var(--reader-bg-color), var(--surface-modal));
+        background: linear-gradient(
+            180deg,
+            var(--main-bg-color),
+            var(--surface-modal)
+        );
 
         box-shadow: 0 4px 20px var(--shadow-sm);
 
@@ -198,15 +202,27 @@
     }
 
     .rank-0 {
-        background: linear-gradient(180deg, var(--rank-gold-bg), var(--reader-bg-color));
+        background: linear-gradient(
+            180deg,
+            var(--rank-gold-bg),
+            var(--main-bg-color)
+        );
     }
 
     .rank-1 {
-        background: linear-gradient(180deg, var(--rank-silver-bg), var(--reader-bg-color));
+        background: linear-gradient(
+            180deg,
+            var(--rank-silver-bg),
+            var(--main-bg-color)
+        );
     }
 
     .rank-2 {
-        background: linear-gradient(180deg, var(--rank-bronze-bg), var(--reader-bg-color));
+        background: linear-gradient(
+            180deg,
+            var(--rank-bronze-bg),
+            var(--main-bg-color)
+        );
     }
 
     .medal {
@@ -232,7 +248,11 @@
     .placeholder {
         width: 100%;
         height: 100%;
-        background: linear-gradient(45deg, var(--border-soft), var(--border-default));
+        background: linear-gradient(
+            45deg,
+            var(--border-soft),
+            var(--border-default)
+        );
     }
 
     .info {

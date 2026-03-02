@@ -71,7 +71,7 @@
     --scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
 
     --bg-color: var(--surface-page);
-    --reader-bg-color: var(--surface-reader);
+    --main-bg-color: var(--surface-reader);
     --modal-bg-color: var(--surface-modal);
     --control-bg-color: var(--surface-control);
     --control-disabled: var(--surface-disabled);
@@ -260,7 +260,7 @@ input[type="checkbox"] {
     margin: 0px 3px 3px 3px;
     border: 1px solid var(--border-default);
     border-radius: var(--radius);
-    background-color: var(--reader-bg-color);
+    background-color: var(--main-bg-color);
     cursor: pointer;
     vertical-align: middle;
     position: relative;
@@ -296,7 +296,7 @@ input[type="checkbox"][role="switch"] {
     margin: 0px 3px 3px 3px;
     border-radius: 999px;
     border: 1px solid var(--border-default);
-    background-color: var(--reader-bg-color);
+    background-color: var(--main-bg-color);
     cursor: pointer;
     position: relative;
     vertical-align: middle;
@@ -323,7 +323,7 @@ input[type="checkbox"][role="switch"]:checked {
 }
 
 input[type="checkbox"][role="switch"]:checked::after {
-    background: var(--reader-bg-color);
+    background: var(--main-bg-color);
     transform: translateX(16px);
 }
 
@@ -336,7 +336,7 @@ input[type="radio"] {
     margin: 1px 3px 3px 3px;
     border: 1px solid var(--border-default);
     border-radius: 50%;
-    background: var(--reader-bg-color);
+    background: var(--main-bg-color);
     cursor: pointer;
     vertical-align: middle;
     position: relative;
@@ -351,7 +351,7 @@ input[type="radio"]:checked::after {
     content: "";
     position: absolute;
     inset: 4px;
-    background: var(--reader-bg-color);
+    background: var(--main-bg-color);
     border-radius: 50%;
 }
 
@@ -367,7 +367,7 @@ select {
     border: 1px solid var(--border-default);
     border-radius: var(--radius);
     ;
-    background-color: var(--reader-bg-color);
+    background-color: var(--main-bg-color);
     font: inherit;
     color: inherit;
     cursor: pointer;
@@ -433,14 +433,14 @@ button:disabled {
 
 button[data-variant="primary"] {
     background-color: var(--accent-primary);
-    color: var(--reader-bg-color);
+    color: var(--main-bg-color);
     border-color: var(--accent-primary);
 }
 
 button[data-variant="primary"]:hover:not(:disabled) {
     background-color: var(--accent-primary-hover);
     border-color: var(--accent-primary-hover);
-    color: var(--reader-bg-color);
+    color: var(--main-bg-color);
 }
 
 /* button[data-variant="primary"]:active {
@@ -450,14 +450,14 @@ button[data-variant="primary"]:hover:not(:disabled) {
 
 button[data-variant="danger"] {
     background-color: var(--danger);
-    color: var(--reader-bg-color);
+    color: var(--main-bg-color);
     border-color: var(--danger);
 }
 
 button[data-variant="danger"]:hover:not(:disabled) {
     background-color: var(--danger-hover);
     border-color: var(--danger-hover);
-    color: var(--reader-bg-color);
+    color: var(--main-bg-color);
 }
 
 button[data-variant="light"] {

@@ -55,9 +55,7 @@
             summary: article.summary?.trim() || undefined,
             coverImage: article.coverImage?.trim() || undefined,
             tags:
-                article.tags
-                    ?.map((item) => item?.trim())
-                    .filter(Boolean) ?? [],
+                article.tags?.map((item) => item?.trim()).filter(Boolean) ?? [],
         };
     }
 
@@ -182,7 +180,7 @@
 
 <style>
     main {
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
     }
     .toolbar {
         padding: 0 4rem;

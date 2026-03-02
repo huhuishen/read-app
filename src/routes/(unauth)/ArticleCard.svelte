@@ -48,7 +48,7 @@
 
 <style>
     .book-card {
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
         color: var(--text-color);
         font-size: 16px;
         max-height: 360px;

@@ -139,7 +139,7 @@
     }
 
     .active a {
-        color: var(--reader-bg-color);
+        color: var(--main-bg-color);
         background-color: var(--button-primary);
         pointer-events: none;
     }

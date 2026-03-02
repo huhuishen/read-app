@@ -153,7 +153,7 @@
         padding: 8px;
         border: 1px solid var(--border-default);
         border-radius: 8px;
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
     }
 
     .tag {
@@ -206,7 +206,7 @@
         max-height: 210px; /* ✅ 6 条高度限制 */
         overflow-y: auto; /* ✅ 滚动 */
 
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
         border: 1px solid var(--border-default);
         border-radius: 8px;
         z-index: 100;

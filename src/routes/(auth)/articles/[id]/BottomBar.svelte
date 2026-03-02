@@ -144,7 +144,7 @@
         display: flex;
         gap: 0.5rem;
         padding: 0.75rem;
-        background: var(--panel-bg, var(--reader-bg-color));
+        background: var(--panel-bg, var(--main-bg-color));
         border-top: 1px solid var(--border-default);
         transform: translateY(100%);
         transition: transform 0.1s ease;

@@ -77,7 +77,7 @@
         position: fixed;
         z-index: 1000;
         min-width: 180px;
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
         border: 1px solid var(--border-default);
         border-radius: 6px;
         box-shadow: 0 0 20px var(--shadow-md);
@@ -111,4 +111,3 @@
         border-top: 1px solid var(--border-soft);
     }
 </style>
-

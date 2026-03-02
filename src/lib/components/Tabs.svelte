@@ -41,9 +41,9 @@
         display: flex;
         justify-content: center;
         gap: 24px;
-        border-bottom: 1px solid var(--border-soft);
+        /* border-bottom: 1px solid var(--border-soft); */
         font-size: 18px;
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
         height: 50px;
         z-index: 100;
     }
@@ -70,6 +70,6 @@
     .tab-content {
         padding: 1rem;
         min-height: calc(100vh - 60px);
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
     }
 </style>

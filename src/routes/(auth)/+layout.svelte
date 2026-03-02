@@ -14,7 +14,7 @@
 </svelte:head>
 
 {@html icons}
+<Toast></Toast>
 
 <!-- <ProgressBar /> -->
 {@render children()}
-<Toast></Toast>

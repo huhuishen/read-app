@@ -11,6 +11,6 @@
 
 <style>
     main {
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
     }
 </style>

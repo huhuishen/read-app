@@ -267,7 +267,7 @@
         align-items: center;
         gap: 1rem;
         padding: 1rem;
-        background-color: var(--reader-bg-color);
+        background-color: var(--main-bg-color);
         height: 60px;
         z-index: 2200;
         /* border-bottom: 1px solid var(--border-soft); */

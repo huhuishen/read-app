@@ -167,7 +167,7 @@
     .popper-content {
         max-height: 90vh;
         overflow-y: auto; /* 真正滚动在这里 */
-        background: var(--reader-bg-color);
+        background: var(--main-bg-color);
     }
     /* 箭头基础 */
     .arrow {
@@ -182,7 +182,7 @@
         top: 20px;
         border-top: 8px solid transparent;
         border-bottom: 8px solid transparent;
-        border-right: 8px solid var(--reader-bg-color);
+        border-right: 8px solid var(--main-bg-color);
     }
 
     /* ===== 左侧弹出 → 箭头在右 ===== */
@@ -191,7 +191,7 @@
         top: 20px;
         border-top: 8px solid transparent;
         border-bottom: 8px solid transparent;
-        border-left: 8px solid var(--reader-bg-color);
+        border-left: 8px solid var(--main-bg-color);
     }
 
     /* ===== 下方弹出 → 箭头在上 ===== */
@@ -200,7 +200,7 @@
         left: 20px;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-bottom: 8px solid var(--reader-bg-color);
+        border-bottom: 8px solid var(--main-bg-color);
     }
 
     /* ===== 上方弹出 → 箭头在下 ===== */
@@ -209,7 +209,7 @@
         left: 20px;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-top: 8px solid var(--reader-bg-color);
+        border-top: 8px solid var(--main-bg-color);
     }
 
     .center {
