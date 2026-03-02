@@ -43,7 +43,12 @@
         gap: 24px;
         /* border-bottom: 1px solid var(--border-soft); */
         font-size: 18px;
-        background: var(--main-bg-color);
+
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px); /* 兼容 Safari */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
         height: 50px;
         z-index: 100;
     }

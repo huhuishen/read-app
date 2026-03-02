@@ -151,19 +151,18 @@
 
     .articles {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(300px, 1fr));
         gap: 10px;
         width: 100%;
     }
     .categories {
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(8, minmax(0, 1fr));
         gap: 10px;
         width: 100%;
     }
     .card-small {
         justify-content: column;
-        min-width: 150px;
         height: 100px;
         background: var(--main-bg-color);
         color: var(--text-color);
@@ -187,30 +186,30 @@
         width: 100%;
         color: var(--text-faint);
     }
-    @media (max-width: 1500px) {
+    @media (max-width: 1229px) {
         .articles {
-            grid-template-columns: repeat(3, minmax(30%, 1fr));
+            grid-template-columns: repeat(3, minmax(300px, 1fr));
         }
         .categories {
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(6, minmax(0, 1fr));
         }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 919px) {
         .articles {
-            grid-template-columns: repeat(2, minmax(48%, 1fr));
+            grid-template-columns: repeat(2, minmax(300px, 1fr));
         }
         .categories {
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
         }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 609px) {
         .articles {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(300px, 1fr);
         }
         .categories {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
 </style>
