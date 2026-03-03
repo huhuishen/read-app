@@ -1,38 +1,26 @@
 <script lang="ts">
     import { tick } from "svelte";
-
-    type Snapshot = {
-        value: string;
-        start: number;
-        end: number;
-    };
+    import {
+        GROUP_MS,
+        type Snapshot,
+        isGroupableInputType,
+        pushSnapshot,
+        sameSnapshot,
+    } from "./editableShared";
 
     let {
         value = $bindable(""),
-        variant = "content",
-        placeholder,
+        placeholder = "Start writing...",
         disabled = false,
-        minHeight,
+        minHeight = 360,
     }: {
         value?: string;
-        variant?: "title" | "content";
         placeholder?: string;
         disabled?: boolean;
         minHeight?: number;
     } = $props();
 
-    const isTitle = $derived(variant === "title");
-    const resolvedPlaceholder = $derived.by(() =>
-        placeholder ?? (variant === "title" ? "Input title..." : "Start writing..."),
-    );
-    const resolvedMinHeight = $derived.by(() =>
-        minHeight ?? (variant === "title" ? 0 : 360),
-    );
-
-    const HISTORY_LIMIT = 300;
-    const GROUP_MS = 900;
-
-    let el = $state<HTMLTextAreaElement | HTMLInputElement | null>(null);
+    let el = $state<HTMLTextAreaElement | null>(null);
     let initialized = false;
     let isComposing = false;
     let suppressSync = false;
@@ -41,8 +29,10 @@
     let undoStack: Snapshot[] = [];
     let redoStack: Snapshot[] = [];
 
-    function sameSnapshot(a: Snapshot | undefined, b: Snapshot) {
-        return !!a && a.value === b.value && a.start === b.start && a.end === b.end;
+    function autoResize() {
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = `${Math.max(minHeight, el.scrollHeight)}px`;
     }
 
     function getSnapshot(): Snapshot {
@@ -53,33 +43,18 @@
 
         const start = el.selectionStart ?? el.value.length;
         const end = el.selectionEnd ?? el.value.length;
-
         return { value: el.value, start, end };
-    }
-
-    function pushUndo(snapshot: Snapshot) {
-        const last = undoStack.at(-1);
-        if (sameSnapshot(last, snapshot)) return;
-
-        undoStack.push(snapshot);
-        if (undoStack.length > HISTORY_LIMIT) {
-            undoStack.shift();
-        }
     }
 
     function captureBeforeInput(inputType: string) {
         if (!el || suppressSync) return;
-
-        const isGroupable =
-            inputType === "insertText" ||
-            inputType === "deleteContentBackward" ||
-            inputType === "deleteContentForward" ||
-            inputType === "insertCompositionText";
-
         const now = Date.now();
-        if (isGroupable && now - lastGroupAt < GROUP_MS) return;
 
-        pushUndo(getSnapshot());
+        if (isGroupableInputType(inputType) && now - lastGroupAt < GROUP_MS) {
+            return;
+        }
+
+        pushSnapshot(undoStack, getSnapshot());
         lastGroupAt = now;
     }
 
@@ -106,12 +81,6 @@
         });
     }
 
-    function autoResize() {
-        if (!el || isTitle) return;
-        el.style.height = "auto";
-        el.style.height = `${Math.max(resolvedMinHeight, el.scrollHeight)}px`;
-    }
-
     function handleBeforeInput(e: InputEvent) {
         if (disabled) {
             e.preventDefault();
@@ -124,7 +93,6 @@
 
     function handleInput() {
         if (!el) return;
-
         value = el.value;
         autoResize();
         redoStack = [];
@@ -132,7 +100,7 @@
 
     function handleCompositionStart() {
         isComposing = true;
-        pushUndo(getSnapshot());
+        pushSnapshot(undoStack, getSnapshot());
     }
 
     function handleCompositionEnd() {
@@ -145,7 +113,6 @@
         if (!ctrl) return;
 
         const key = e.key.toLowerCase();
-
         if (key === "z") {
             e.preventDefault();
             if (e.shiftKey) {
@@ -171,10 +138,7 @@
 
         const lastRedo = redoStack.at(-1);
         if (!sameSnapshot(lastRedo, current)) {
-            redoStack.push(current);
-            if (redoStack.length > HISTORY_LIMIT) {
-                redoStack.shift();
-            }
+            pushSnapshot(redoStack, current);
         }
 
         applySnapshot(previous);
@@ -187,7 +151,7 @@
         const next = redoStack.pop();
         if (!next) return;
 
-        pushUndo(current);
+        pushSnapshot(undoStack, current);
         applySnapshot(next);
     }
 
@@ -219,35 +183,19 @@
 </script>
 
 <div class="editor-wrap">
-    {#if isTitle}
-        <input
-            bind:this={el}
-            class="editor title-editor"
-            value={value}
-            placeholder={resolvedPlaceholder}
-            disabled={disabled}
-            spellcheck="false"
-            onbeforeinput={handleBeforeInput}
-            oninput={handleInput}
-            onkeydown={handleKeyDown}
-            oncompositionstart={handleCompositionStart}
-            oncompositionend={handleCompositionEnd}
-        />
-    {:else}
-        <textarea
-            bind:this={el}
-            class="editor content-editor"
-            value={value}
-            placeholder={resolvedPlaceholder}
-            disabled={disabled}
-            spellcheck="false"
-            onbeforeinput={handleBeforeInput}
-            oninput={handleInput}
-            onkeydown={handleKeyDown}
-            oncompositionstart={handleCompositionStart}
-            oncompositionend={handleCompositionEnd}
-        ></textarea>
-    {/if}
+    <textarea
+        bind:this={el}
+        class="editor content-editor"
+        {value}
+        {placeholder}
+        {disabled}
+        spellcheck="false"
+        onbeforeinput={handleBeforeInput}
+        oninput={handleInput}
+        onkeydown={handleKeyDown}
+        oncompositionstart={handleCompositionStart}
+        oncompositionend={handleCompositionEnd}
+    ></textarea>
 </div>
 
 <style>
@@ -273,14 +221,6 @@
         min-height: 360px;
         font-size: 18px;
         line-height: 1.75;
-    }
-
-    .title-editor {
-        font-size: 38px;
-        line-height: 1.25;
-        font-weight: 700;
-        color: var(--header-color);
-        margin-bottom: 0.75rem;
     }
 
     .editor::placeholder {

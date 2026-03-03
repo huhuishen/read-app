@@ -1,4 +1,4 @@
-import { Articles, Categories, getContestInfoByDate, type Article } from '$lib/models';
+import { Articles, Categories, getContestInfoByDate, Tags, type Article } from '$lib/models';
 import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -114,6 +114,11 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
         return json({ error: '缺少必填项' }, { status: 400 });
     }
 
+    const normalizedTags =
+        Array.isArray(req.tags)
+            ? req.tags.map((item: unknown) => String(item).trim()).filter(Boolean)
+            : [];
+
     let article: Partial<Article> = {
         id: nanoid(),
         version: 0,
@@ -121,8 +126,11 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
         isLatest: true,
         authorId: locals.user.id!,
         author: locals.user.name!,
-        title: req.title,
-        content: req.content,
+        title: String(req.title).trim(),
+        content: String(req.content),
+        summary: req.summary ? String(req.summary) : "",
+        coverImage: req.coverImage ? String(req.coverImage) : "",
+        tags: normalizedTags,
         bookmarkCount: 0,
         viewCount: 0,
     }
@@ -132,6 +140,7 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
     article.category = getContestInfoByDate(now);
 
     await Categories.addPreview(article.category.year, article.category.month, article);
+    await Promise.all(normalizedTags.map((tag: string) => Tags.buildCount(tag)));
 
     try {
         await Articles.insertOne(article);

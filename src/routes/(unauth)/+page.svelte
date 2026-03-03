@@ -83,8 +83,7 @@
 
                 <div class="flex articles">
                     {#each category.previewArticles as article}
-                        <ArticleCard {article} showCover={i < 3}
-                        ></ArticleCard>
+                        <ArticleCard {article} showCover={i < 3}></ArticleCard>
                     {/each}
                 </div>
             {/each}
@@ -92,14 +91,14 @@
             <CategoryTitle name="其它标签" laurel={false} more={false} />
             <div class="flex g-2 categories">
                 {#each tags as tag}
-                    <div class="category-title">
+                    <a class="category-title" href="/tags/{tag.name}">
                         <div class="flex card-small">
                             <span class="card-small-title">{tag.name}</span>
                             <span class="card-small-count"
                                 >{tag.articleCount ?? 0}</span
                             >
                         </div>
-                    </div>
+                    </a>
                 {/each}
             </div>
         </div>

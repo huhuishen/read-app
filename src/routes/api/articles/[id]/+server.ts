@@ -1,4 +1,4 @@
-﻿import { Articles } from '$lib/models';
+import { Articles, Tags } from '$lib/models';
 import { apiError, requireUser, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -22,6 +22,12 @@ function pickArticleUpdate(body: Record<string, unknown>, requireTitleAndContent
         }
     }
 
+    if (Array.isArray(update.tags)) {
+        update.tags = update.tags
+            .map((item) => String(item).trim())
+            .filter(Boolean);
+    }
+
     if (requireTitleAndContent) {
         if (!update.title || !update.content) {
             apiError(400, 'Missing required fields');
@@ -38,7 +44,7 @@ function pickArticleUpdate(body: Record<string, unknown>, requireTitleAndContent
 async function ensureCanEditArticle(user: any, articleId: string) {
     const target = await Articles.findOne(
         { id: articleId, isLatest: true },
-        { projection: { _id: 0, authorId: 1 } }
+        { projection: { _id: 0, authorId: 1, tags: 1 } }
     );
 
     if (!target) {
@@ -49,6 +55,13 @@ async function ensureCanEditArticle(user: any, articleId: string) {
     if (!isAdmin && target.authorId !== user.id) {
         apiError(403, 'Forbidden');
     }
+
+    return target;
+}
+
+async function syncTags(oldTags: string[] = [], nextTags: string[] = []) {
+    const affectedTags = [...new Set([...(oldTags ?? []), ...(nextTags ?? [])])];
+    await Promise.all(affectedTags.map((tag) => Tags.buildCount(tag)));
 }
 
 export const GET: RequestHandler = withApi(async ({ params, locals }) => {
@@ -60,7 +73,7 @@ export const POST: RequestHandler = withApi(async (event) => {
     const user = requireUser(event);
     const { request, params } = event;
 
-    await ensureCanEditArticle(user, params.id);
+    const target = await ensureCanEditArticle(user, params.id);
 
     const body = await request.json() as Record<string, unknown>;
     const update = pickArticleUpdate(body, false);
@@ -72,6 +85,10 @@ export const POST: RequestHandler = withApi(async (event) => {
         }
     );
 
+    const oldTags = target.tags ?? [];
+    const nextTags = Array.isArray(update.tags) ? (update.tags as string[]) : oldTags;
+    await syncTags(oldTags, nextTags);
+
     return json(res);
 });
 
@@ -79,7 +96,7 @@ export const PUT: RequestHandler = withApi(async (event) => {
     const user = requireUser(event);
     const { request, params } = event;
 
-    await ensureCanEditArticle(user, params.id);
+    const target = await ensureCanEditArticle(user, params.id);
 
     const body = await request.json() as Record<string, unknown>;
     const update = pickArticleUpdate(body, true);
@@ -88,6 +105,10 @@ export const PUT: RequestHandler = withApi(async (event) => {
         { id: params.id, isLatest: true },
         { $set: update }
     );
+
+    const oldTags = target.tags ?? [];
+    const nextTags = Array.isArray(update.tags) ? (update.tags as string[]) : oldTags;
+    await syncTags(oldTags, nextTags);
 
     return json(res);
 });
