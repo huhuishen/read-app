@@ -18,7 +18,7 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
     if (!voteEnd) return json(null);
 
     const articles = await Articles.find(
-        { categories: params.name, isLatest: true, status: "published" },
+        { "category.period": params.name, isLatest: true, status: "published" },
         {
             projection: { _id: 0, content: 0, summary: 0 },
             sort: { voteCount: -1 }

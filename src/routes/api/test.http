@@ -115,7 +115,10 @@ GET {{host}}/categories/五十五届零重力杯
 GET {{host}}/categories/2025-12/articles?page=1&limit=20
 
 ###
-GET {{host}}/categories/五十五届零重力杯/votes
+GET {{host}}/categories/2025-12/votes
+
+###
+GET {{host}}/categories/2026-03/votes
 
 ###
 GET {{host}}/categories
@@ -128,7 +131,7 @@ GET {{host}}/categories/home
 
 
 ###
-POST {{host}}/categories/2025-12
+POST {{host}}/categories/2026-03
 
 ###
 GET {{host}}/categories/2026-03

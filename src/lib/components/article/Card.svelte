@@ -44,7 +44,7 @@
                 <span>{toLocalDateString(article.createdAt)}</span>
             </div>
             <div class="summary">
-                {article.summary || "暂无描述"}
+                {article.summary || ""}
             </div>
         </div>
         {@render children?.()}

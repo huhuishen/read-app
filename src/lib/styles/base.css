@@ -67,6 +67,7 @@
     --shadow-md: rgba(0, 0, 0, 0.15);
     --shadow-lg: rgba(0, 0, 0, 0.3);
     --selection-bg: rgba(30, 128, 255, 0.2);
+    --scrollbar-track: #ebe1d2;
     --scrollbar-thumb: rgba(47, 36, 24, 0.24);
     --scrollbar-thumb-hover: rgba(47, 36, 24, 0.38);
 
@@ -161,6 +162,7 @@
     --shadow-md: rgba(0, 0, 0, 0.3);
     --shadow-lg: rgba(0, 0, 0, 0.45);
     --selection-bg: rgba(96, 165, 250, 0.22);
+    --scrollbar-track: #302921;
     --scrollbar-thumb: rgba(239, 227, 211, 0.22);
     --scrollbar-thumb-hover: rgba(239, 227, 211, 0.35);
 
