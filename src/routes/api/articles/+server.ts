@@ -1,4 +1,4 @@
-import { Articles, Categories, getContestInfoByDate, Tags, type Article } from '$lib/models';
+import { Articles, Categories, getContestInfoByDate, Settings, Tags, type Article } from '$lib/models';
 import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -119,10 +119,13 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
             ? req.tags.map((item: unknown) => String(item).trim()).filter(Boolean)
             : [];
 
+    const systemSettings = await Settings.getSystemSettings();
+    const autoPublishWithoutReview = !!systemSettings?.autoPublishWithoutReview;
+
     let article: Partial<Article> = {
         id: nanoid(),
         version: 0,
-        status: "draft",
+        status: autoPublishWithoutReview ? "published" : "pending",
         isLatest: true,
         authorId: locals.user.id!,
         author: locals.user.name!,

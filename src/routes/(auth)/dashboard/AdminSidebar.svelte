@@ -59,7 +59,6 @@
         display: flex;
         flex-direction: column;
         padding: 1rem;
-        background: white;
         /* border-right: 1px solid var(--border-soft); */
         /* transition: width 0.2s ease; */
         /* height: 100vh; */

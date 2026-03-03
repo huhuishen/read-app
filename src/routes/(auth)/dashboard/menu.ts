@@ -34,6 +34,12 @@ export const adminMenu: AdminMenuItem[] = [
         // ],
     },
     {
+        label: "设置",
+        icon: "settings",
+        href: "/dashboard/settings",
+        permission: "user.manage",
+    },
+    {
         label: "数据库",
         icon: "database",
         href: "/dashboard/database",

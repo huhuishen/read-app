@@ -38,7 +38,6 @@
 
     .side {
         /* height: fit-content; */
-        background-color: white;
         border-right: 1px solid var(--border-default);
         /* padding: 1rem; */
     }

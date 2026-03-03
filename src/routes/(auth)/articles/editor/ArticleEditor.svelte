@@ -161,8 +161,9 @@
         }
 
         toast.show("Deleted", "success");
-        const authorId = article.authorId?.trim();
-        goto(authorId ? `/profile/${authorId}/articles` : "/");
+        // const authorId = article.authorId?.trim();
+        // goto(authorId ? `/profile/${authorId}/articles` : "/");
+        goto("/");
     }
 
     async function uploadCover(event: Event) {
@@ -267,7 +268,7 @@
         <div class="section-title">标签</div>
         <TagsManager bind:tags={article.tags} />
 
-        <div class="footer">
+        <div class="flex sb footer">
             <Button
                 variant="primary"
                 onclick={submitArticle}
@@ -299,8 +300,8 @@
 
     .footer {
         margin: 3em 0;
-        display: flex;
         gap: 12px;
+        width: 100%;
     }
 
     .side {
