@@ -1,35 +1,35 @@
 <script lang="ts">
-    // ✅ Svelte 5 Props（支持 bind:tags）
+    // �?Svelte 5 Props（支�?bind:tags�?
     let {
         tags = $bindable<string[]>([]),
         suggestions = [],
         locked = [],
-        placeholder = "输入标签后回车",
+        placeholder = "\u8f93\u5165\u6807\u7b7e\u540e\u56de\u8f66",
         readonly = false,
         max = Infinity,
     }: {
         tags?: string[];
-        suggestions?: string[]; // ✅ 候选标签池
-        locked?: string[]; // ✅ 锁定标签集合
+        suggestions?: string[]; // �?候选标签池
+        locked?: string[]; // �?锁定标签集合
         placeholder?: string;
         readonly?: boolean;
         max?: number;
     } = $props();
 
-    // ✅ 输入框内部状态
+    // �?输入框内部状�?
     let input = $state("");
-    // ✅ 下拉是否展开
+    // �?下拉是否展开
     let open = $state(false);
 
-    // ✅ 当前高亮索引（键盘 ↑ ↓ 使用）
+    // �?当前高亮索引（键�?�?�?使用�?
     let activeIndex = $state(0);
 
-    // ✅ 点击外部关闭
+    // �?点击外部关闭
     function closeDropdown() {
         open = false;
         activeIndex = 0;
     }
-    // ✅ 是否还能继续添加
+    // �?是否还能继续添加
     const canAdd = $derived(() => tags.length < max);
 
     const filtered = $derived(() => {
@@ -60,7 +60,7 @@
         if (readonly) return;
 
         const tag = tags[index];
-        if (locked.includes(tag)) return; // ✅ 锁定标签不可删
+        if (locked.includes(tag)) return; // �?锁定标签不可�?
 
         tags = tags.toSpliced(index, 1);
     }
@@ -100,7 +100,7 @@
             closeDropdown();
         }
 
-        // ✅ 原有：Backspace 删除最后一个
+        // �?原有：Backspace 删除最后一�?
         if (e.key === "Backspace" && input === "" && tags.length > 0) {
             removeTag(tags.length - 1);
         }
@@ -203,8 +203,8 @@
         margin-top: 4px;
 
         width: 100%;
-        max-height: 210px; /* ✅ 6 条高度限制 */
-        overflow-y: auto; /* ✅ 滚动 */
+        max-height: 210px; /* �?6 条高度限�?*/
+        overflow-y: auto; /* �?滚动 */
 
         background: var(--main-bg-color);
         border: 1px solid var(--border-default);
@@ -226,6 +226,6 @@
 
     .option:hover,
     .option.active {
-        background: #e9f0ff; /* ✅ hover + 键盘高亮 */
+        background: var(--control-bg-selected); /* �?hover + 键盘高亮 */
     }
 </style>

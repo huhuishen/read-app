@@ -23,3 +23,11 @@ export function formatDurationWithUnit(seconds?: number) {
         return { value: (seconds / 3600.0).toFixed(1), unit: "小时" };
     }
 }
+
+export function toggleTheme() {
+    const html = document.documentElement;
+    const theme = html.getAttribute("data-theme");
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", nextTheme);
+    localStorage.setItem("theme", nextTheme);
+}

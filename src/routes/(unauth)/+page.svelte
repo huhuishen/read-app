@@ -1,9 +1,11 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import Card from "$lib/components/article/Card.svelte";
+    import Icon from "$lib/components/Icon.svelte";
     import Pagination from "$lib/components/Pagination.svelte";
     import Search from "$lib/components/Search.svelte";
     import Menu from "$lib/components/user/Menu.svelte";
+    import { toggleTheme } from "../util";
     import type { PageProps } from "./$types";
     import ArticleCard from "./ArticleCard.svelte";
     import CategoryTitle from "./CategoryTitle.svelte";
@@ -41,7 +43,8 @@
             }}
         ></Search>
     </div>
-    <div class="flex">
+    <div class="flex g-3">
+        <Icon name="settings" onclick={toggleTheme}></Icon>
         {#if user}
             <Menu {user} />
         {:else}

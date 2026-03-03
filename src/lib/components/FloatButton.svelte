@@ -27,7 +27,7 @@
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        color: var(--link-color);
+        color: var(--icon-color);
         background-color: var(--main-bg-color);
         box-shadow: 0 0 15px var(--shadow-sm);
         vertical-align: middle;
@@ -44,6 +44,6 @@
     }
 
     .control:hover:not(.disabled) {
-        color: var(--highlight-color);
+        color: var(--icon-hover);
     }
 </style>

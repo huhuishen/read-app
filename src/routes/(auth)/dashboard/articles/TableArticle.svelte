@@ -4,7 +4,7 @@
     import type { Article } from "$lib/models";
     import type { DataPage } from "$lib/mongolite";
     import { toLocalDateString } from "$lib/util/client";
-    import { formatDuration } from "../../util";
+    import { formatDuration } from "../../../util";
     import Table, { type Column } from "../Table.svelte";
 
     const {

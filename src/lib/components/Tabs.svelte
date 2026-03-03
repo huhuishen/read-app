@@ -44,10 +44,10 @@
         /* border-bottom: 1px solid var(--border-soft); */
         font-size: 18px;
 
-        background: rgba(255, 255, 255, 0.9);
+        background: color-mix(in srgb, var(--surface-reader) 88%, var(--surface-page) 12%);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px); /* 兼容 Safari */
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom: 1px solid var(--border-soft);
 
         height: 50px;
         z-index: 100;

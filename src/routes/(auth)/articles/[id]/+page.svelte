@@ -17,6 +17,7 @@
     import FloatBar from "./FloatBar.svelte";
     import { ReadTimer } from "./realTimer";
     import UnderlineModal from "./UnderlineModal.svelte";
+    import { toggleTheme } from "../../../util";
 
     const { data }: PageProps = $props();
 
@@ -129,11 +130,7 @@
         // console.log($state.snapshot(selectedUnderline));
     }
 
-    function toggleTheme() {
-        const html = document.documentElement;
-        const theme = html.getAttribute("data-theme");
-        html.setAttribute("data-theme", theme === "dark" ? "light" : "dark");
-    }
+
 
     let spanAct = $state<HTMLSpanElement | null>(null);
 

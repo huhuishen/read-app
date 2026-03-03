@@ -45,7 +45,7 @@
 </script>
 
 <div class="comment" class:collapsed={!expanded} bind:this={container}>
-    <!-- 头像及发表日期，评分（如果有） -->
+    <!-- 头像及发表日期，评分（如果有�?-->
     <div class="flex g-3 mb-1">
         <div class="flex g-2">
             <Avatar name={comment.user!}></Avatar>
@@ -65,7 +65,7 @@
         {#if comment.replyTo}
             <div class="flex g-2 quote">
                 <span>@{comment.replyTo}</span>
-                <span>“{comment.quote}”:</span>
+                <span>"{comment.quote}":</span>
             </div>
         {/if}
         {#each stringSegment(comment.content!) as seg}
@@ -80,7 +80,7 @@
         {/if}
     </div>
 
-    <!-- 点赞及回复按钮 -->
+    <!-- 点赞及回复按�?-->
     <div class="flex g-4">
         <Button
             variant="link"
@@ -92,7 +92,7 @@
             <Icon
                 name="thumbs_up"
                 size={16}
-                color={comment.liked ? "brown" : "var(--border-default)"}
+                color={comment.liked ? "var(--icon-active)" : "var(--link-disabled)"}
             ></Icon>
             <span>{comment.likes ? comment.likes : ""}</span>
         </Button>

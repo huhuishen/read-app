@@ -28,7 +28,7 @@
                 class:book-cover-top={showCover}
                 class:book-cover-left={!showCover}
             />
-        {:else}
+        {:else if showCover}
             <div
                 class="flex book-cover placeholder"
                 class:book-cover-top={showCover}

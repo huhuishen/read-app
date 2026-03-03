@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { User } from "$lib/models";
-    import { formatDuration } from "../../util";
+    import { formatDuration } from "../../../util";
 
     const {
         user,

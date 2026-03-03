@@ -4,7 +4,7 @@
     import type { ArticleUserState } from "$lib/models/articleStats";
     import type { DataPage } from "$lib/mongolite";
     import { toLocalDateString } from "$lib/util/client";
-    import { formatCompletion, formatDurationWithUnit } from "../../../util";
+    import { formatCompletion, formatDurationWithUnit } from "../../../../util";
 
     let {
         data,
