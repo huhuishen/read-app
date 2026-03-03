@@ -24,7 +24,7 @@
 
     .side {
         position: fixed;
-        top: 30px;
+        top: 50px;
         left: calc(50% + 410px);
         /* transform: translateX(100%); */
         height: fit-content;

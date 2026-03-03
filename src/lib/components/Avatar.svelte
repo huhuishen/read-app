@@ -12,11 +12,11 @@
 
 <style>
     .avatar {
-        /* border-radius: 50%; */
+        border-radius: var(--radius);
         color: var(--main-bg-color);
         background-color: var(--header-color);
         justify-content: center;
-        cursor: default;
+        cursor: pointer;
     }
     .size-sm {
         width: 16px;

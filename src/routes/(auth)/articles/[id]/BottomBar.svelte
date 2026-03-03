@@ -18,7 +18,7 @@
     let visible = $state(false);
     let enabled = $state(false);
 
-    const MIN_WIDTH = 768;
+    const MIN_WIDTH = 800;
     const EDGE_HEIGHT = 120;
 
     function updateEnabled() {

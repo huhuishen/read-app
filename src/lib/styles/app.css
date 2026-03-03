@@ -61,7 +61,7 @@ main.scrolling::-webkit-scrollbar-thumb {
 }
 
 .link:hover {
-    color: var(--highlight-color);
+    color: var(--text-primary);
 }
 
 ::selection {

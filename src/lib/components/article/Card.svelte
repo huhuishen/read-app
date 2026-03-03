@@ -123,7 +123,8 @@
     .tag {
         color: var(--brand-gold);
         padding: 0 8px;
-        border: 1px solid var(--brand-gold);
+        background: var(--surface-disabled);
+        /* border: 1px solid var(--brand-gold); */
     }
 
     .number {

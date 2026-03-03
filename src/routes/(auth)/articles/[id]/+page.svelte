@@ -391,12 +391,12 @@
         z-index: 1000;
         gap: 20px;
         position: fixed;
-        bottom: 100px;
+        bottom: 10%;
         /* right: max(0px, calc((100% - 800px) / 2)); */
         right: calc(max((100% - 800px) / 2 - 80px, 20px));
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 800px) {
         .float-button {
             display: none;
         }

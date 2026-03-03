@@ -70,6 +70,7 @@
     .tabs button.selected {
         color: var(--text-primary);
         border-bottom: 2px solid var(--text-primary);
+        border-radius: 0;
     }
 
     .tab-content {
