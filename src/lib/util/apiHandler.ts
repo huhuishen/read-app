@@ -1,4 +1,4 @@
-import { Users } from '$lib/models';
+﻿import { Users } from '$lib/models';
 import type { Cookies } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
 
@@ -8,39 +8,18 @@ export function getUser(cookies: Cookies) {
     return user;
 }
 
-// export function checkUser(cookies: Cookies) {
-//     const { user } = getUser(cookies);
+export class ApiError extends Error {
+    status: number;
 
-//     if (!user) {
-//         throw new SafeError(400, '用户未登录', user);
-//     }
+    constructor(status: number, message: string) {
+        super(message);
+        this.status = status;
+    }
+}
 
-//     return user;
-// }
-
-// export async function checkUser(cookies: Cookies): Promise<AuthUser> {
-//     const token = cookies.get('auth_token');
-
-//     if (!token) {
-//         const err: any = new Error('未登录');
-//         err.status = 401;
-//         throw err;
-//     }
-
-//     try {
-//         const payload: any = await verifyToken(token);
-
-//         return {
-//             id: payload.sub,
-//             name: payload.name,
-//             role: payload.role
-//         };
-//     } catch (e) {
-//         const err: any = new Error('登录已过期');
-//         err.status = 401;
-//         throw err;
-//     }
-// }
+export function apiError(status: number, message: string): never {
+    throw new ApiError(status, message);
+}
 
 export function withApi<T extends (...args: any) => any>(handler: T): T {
     return (async (event: any) => {
@@ -56,17 +35,21 @@ export function withApi<T extends (...args: any) => any>(handler: T): T {
 
             return json(result);
         } catch (err: any) {
-            return json(
-                { message: err?.message ?? '服务器错误', },
-                { status: err?.status ?? 500 }
-            );
+            const status = Number(err?.status ?? 500);
+            const message =
+                err?.message ??
+                err?.body?.message ??
+                err?.body?.error ??
+                'Server error';
+
+            return json({ message }, { status });
         }
     }) as T;
 }
 
 export function requireUser(event: any) {
     if (!event.locals.user) {
-        throw { status: 401, message: '未登录' };
+        apiError(401, 'Unauthorized');
     }
     return event.locals.user;
 }
@@ -75,7 +58,7 @@ export function requireRole(event: any, role: string) {
     const user = requireUser(event);
 
     if (!user.roles?.includes(role)) {
-        throw { status: 403, message: '权限不足' };
+        apiError(403, 'Forbidden');
     }
 
     return user;

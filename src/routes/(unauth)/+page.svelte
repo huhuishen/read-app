@@ -60,9 +60,15 @@
 
     {#if data.query}
         {#if data.searchResults.totalItems > 0}
-            <div class="flex content center">
-                {#each data.searchResults.items as article}
-                    <Card {article}></Card>
+            <div class="flex content center g-3">
+                {#each data.searchResults.items as article, id}
+                    <Card
+                        {article}
+                        number={data.searchResults.totalItems -
+                            data.searchResults.limit *
+                                (data.searchResults.page - 1) -
+                            id}
+                    />
                 {/each}
             </div>
             <div class="mt-3 mb-3">

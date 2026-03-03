@@ -1,12 +1,39 @@
-import { Articles } from "$lib/models";
-import { requireUser, withApi } from "$lib/util/apiHandler";
-import { json } from "@sveltejs/kit";
-import type { RequestHandler } from "./$types";
+﻿import { Articles } from '$lib/models';
+import { apiError, requireUser, withApi } from '$lib/util/apiHandler';
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = withApi(async ({ params, locals }) => {
-    const res = await Articles.getByArticleId(params.id, locals.user!);
-    return json(res);
-});
+const ARTICLE_UPDATE_FIELDS = [
+    'title',
+    'coverImage',
+    'summary',
+    'content',
+    'tags',
+    'status',
+    'category',
+] as const;
+
+function pickArticleUpdate(body: Record<string, unknown>, requireTitleAndContent: boolean) {
+    const update: Record<string, unknown> = {};
+
+    for (const key of ARTICLE_UPDATE_FIELDS) {
+        if (body[key] !== undefined) {
+            update[key] = body[key];
+        }
+    }
+
+    if (requireTitleAndContent) {
+        if (!update.title || !update.content) {
+            apiError(400, 'Missing required fields');
+        }
+    }
+
+    if (Object.keys(update).length === 0) {
+        apiError(400, 'No updatable fields');
+    }
+
+    return update;
+}
 
 async function ensureCanEditArticle(user: any, articleId: string) {
     const target = await Articles.findOne(
@@ -15,36 +42,33 @@ async function ensureCanEditArticle(user: any, articleId: string) {
     );
 
     if (!target) {
-        return { ok: false, response: json({ message: "文章不存在" }, { status: 404 }) };
+        apiError(404, 'Article not found');
     }
 
-    const isAdmin = user.roles?.includes("administrator");
+    const isAdmin = user.roles?.includes('administrator');
     if (!isAdmin && target.authorId !== user.id) {
-        return { ok: false, response: json({ message: "权限不足" }, { status: 403 }) };
+        apiError(403, 'Forbidden');
     }
-
-    return { ok: true as const };
 }
+
+export const GET: RequestHandler = withApi(async ({ params, locals }) => {
+    const res = await Articles.getByArticleId(params.id, locals.user!);
+    return json(res);
+});
 
 export const POST: RequestHandler = withApi(async (event) => {
     const user = requireUser(event);
     const { request, params } = event;
 
-    const permission = await ensureCanEditArticle(user, params.id);
-    if (!permission.ok) {
-        return permission.response;
-    }
+    await ensureCanEditArticle(user, params.id);
 
-    const body = await request.json();
+    const body = await request.json() as Record<string, unknown>;
+    const update = pickArticleUpdate(body, false);
+
     const res = await Articles.updateOne(
         { id: params.id, isLatest: true },
         {
-            $set: {
-                title: body.title,
-                coverImage: body.coverImage,
-                summary: body.summary,
-                content: body.content,
-            },
+            $set: update,
         }
     );
 
@@ -55,20 +79,15 @@ export const PUT: RequestHandler = withApi(async (event) => {
     const user = requireUser(event);
     const { request, params } = event;
 
-    const permission = await ensureCanEditArticle(user, params.id);
-    if (!permission.ok) {
-        return permission.response;
-    }
+    await ensureCanEditArticle(user, params.id);
 
-    const body = await request.json();
-    if (!body.title || !body.content) {
-        return json({ error: "缺少必填项" }, { status: 400 });
-    }
+    const body = await request.json() as Record<string, unknown>;
+    const update = pickArticleUpdate(body, true);
 
-    const { _id, ...rest } = body;
     const res = await Articles.updateOne(
         { id: params.id, isLatest: true },
-        { $set: rest }
+        { $set: update }
     );
+
     return json(res);
 });

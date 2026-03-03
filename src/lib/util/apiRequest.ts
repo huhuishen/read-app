@@ -1,7 +1,7 @@
-import type { ToastState } from "$lib/stores/toast.svelte";
-import { error } from "@sveltejs/kit";
+﻿import type { ToastState } from '$lib/stores/toast.svelte';
+import { error } from '@sveltejs/kit';
 
-export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export interface ApiError {
     message: string;
@@ -9,7 +9,7 @@ export interface ApiError {
 }
 
 export interface RequestOptions<TBody = unknown> {
-    fetch?: typeof fetch; // 支持 event.fetch
+    fetch?: typeof fetch;
     method?: HttpMethod;
     body?: TBody;
     query?: Record<string, string | number | boolean | undefined>;
@@ -17,16 +17,12 @@ export interface RequestOptions<TBody = unknown> {
     token?: string;
 }
 
-/**
- * 通用 API 请求函数
- */
-// lib/api/request.ts
 export async function apiRequest<TResponse, TBody = unknown>(
     url: string,
     options: RequestOptions<TBody> = {},
 ): Promise<TResponse> {
     const {
-        method = "GET",
+        method = 'GET',
         body,
         query,
         headers,
@@ -35,7 +31,6 @@ export async function apiRequest<TResponse, TBody = unknown>(
 
     const fetchFn = customFetch ?? globalThis.fetch;
 
-    // 拼接 query
     if (query) {
         const params = new URLSearchParams();
         for (const [key, value] of Object.entries(query)) {
@@ -52,7 +47,7 @@ export async function apiRequest<TResponse, TBody = unknown>(
     const res = await fetchFn(url, {
         method,
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             ...headers,
         },
         body: body ? JSON.stringify(body) : undefined,
@@ -64,17 +59,14 @@ export async function apiRequest<TResponse, TBody = unknown>(
         data = await res.json();
     } catch {
         throw {
-            message: "服务器响应非 JSON 内容",
+            message: 'Server returned non-JSON response',
             status: res.status,
         } satisfies ApiError;
     }
 
     if (!res.ok) {
-        // throw {
-        //     message: data?.message ?? "Request failed",
-        //     status: res.status,
-        // } satisfies ApiError;
-        throw error(res.status, data?.message ?? "请求失败且响应JSON对象不包含message属性");
+        const message = data?.message ?? data?.error ?? 'Request failed';
+        throw error(res.status, message);
     }
 
     return data as TResponse;
@@ -89,45 +81,44 @@ export async function safeRequest<TResponse, TBody = unknown>(
         return await apiRequest<TResponse, TBody>(url, options);
     } catch (err) {
         const e = err as ApiError;
-        toast?.show(e.message, "error");
+        toast?.show(e.message, 'error');
         return null;
     }
 }
-
 
 export function createApi(fetchFn?: typeof fetch) {
     return {
         get: <T>(url: string, query?: Record<string, any>) =>
             apiRequest<T>(url, {
-                method: "GET",
+                method: 'GET',
                 query,
                 fetch: fetchFn,
             }),
 
         post: <T, B>(url: string, body?: B) =>
             apiRequest<T, B>(url, {
-                method: "POST",
+                method: 'POST',
                 body,
                 fetch: fetchFn,
             }),
 
         put: <T, B>(url: string, body?: B) =>
             apiRequest<T, B>(url, {
-                method: "PUT",
+                method: 'PUT',
                 body,
                 fetch: fetchFn,
             }),
 
         patch: <T, B>(url: string, body?: B) =>
             apiRequest<T, B>(url, {
-                method: "PATCH",
+                method: 'PATCH',
                 body,
                 fetch: fetchFn,
             }),
 
         delete: <T>(url: string) =>
             apiRequest<T>(url, {
-                method: "DELETE",
+                method: 'DELETE',
                 fetch: fetchFn,
             }),
     };
@@ -140,7 +131,7 @@ export async function safeCall<T>(
     try {
         return await promise;
     } catch (err: any) {
-        toast?.show(err.body.message ?? "请求失败", "error");
+        toast?.show(err?.body?.message ?? err?.message ?? 'Request failed', 'error');
         return null;
     }
 }

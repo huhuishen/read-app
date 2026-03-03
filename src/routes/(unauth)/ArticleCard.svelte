@@ -56,6 +56,7 @@
         text-decoration: none;
         padding: 10px;
         max-width: 600px;
+        width: 100%;
     }
 
     .book-card:hover {

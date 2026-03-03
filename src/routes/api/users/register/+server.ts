@@ -1,47 +1,24 @@
-import { Logs, Users } from '$lib/models';
+﻿import { Users } from '$lib/models';
+import { apiError, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async ({ request }) => {
-    const req = await request.json();
+export const POST: RequestHandler = withApi(async ({ request }) => {
+    const req = await request.json() as Record<string, unknown>;
 
     const email = req.email;
     const name = req.name;
     const password = req.password;
 
     if (!email || !password || !name) {
-        return json(
-            { error: '昵称、邮箱和密码是必填项' },
-            { status: 400 }
-        );
+        apiError(400, 'Name, email and password are required');
     }
 
-    try {
-        const [res, user] = await Users.add(email, name, password);
+    const [res] = await Users.add(String(email), String(name), String(password));
 
-        if (!("acknowledged" in res) || !res.acknowledged) {
-            return json(
-                { error: '注册失败，请稍后重试' },
-                { status: 500 }
-            );
-        }
-
-        // await sendActivateMail(email, user.activateToken!);
-
-        // await Logs.add({
-        //     uid: user.id,
-        //     event: "register"
-        // });
-
-        return json(
-            { message: "注册成功，请查收邮箱激活" },
-            { status: 200 }
-        );
-
-    } catch (error: any) {
-        return json(
-            { message: error.message ?? "服务器错误" },
-            { status: 500 }
-        );
+    if (!('acknowledged' in res) || !res.acknowledged) {
+        apiError(500, 'Registration failed, please retry later');
     }
-};
+
+    return json({ message: 'Registration successful, check email to activate' }, { status: 200 });
+});

@@ -139,15 +139,13 @@
 
 <main>
     <ArticleNavbar user={data.user}></ArticleNavbar>
-    <div class="content title mb-3">
         <Editable
             variant="title"
             bind:this={titleEditor}
             bind:value={article.title}
             placeholder="Input title..."
         />
-    </div>
-    <div class="toolbar">
+    <!-- <div class="toolbar">
         <div class="history">
             <button
                 type="button"
@@ -167,7 +165,7 @@
         <div class="meta">
             Title {titleLength} chars, Content {contentLength} chars
         </div>
-    </div>
+    </div> -->
 
     <Editable bind:this={contentEditor} bind:value={article.content} />
 

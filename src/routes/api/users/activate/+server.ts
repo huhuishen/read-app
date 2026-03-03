@@ -1,26 +1,27 @@
-import { Users } from '$lib/models';
+﻿import { Users } from '$lib/models';
+import { apiError, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async ({ request }) => {
-    const { token } = await request.json();
+export const POST: RequestHandler = withApi(async ({ request }) => {
+    const { token } = await request.json() as { token?: string };
 
     if (!token) {
-        return json({ error: "无效 token" }, { status: 400 });
+        apiError(400, 'Invalid token');
     }
 
     const user = await Users.findOne({ activateToken: token });
 
     if (!user) {
-        return json({ error: "激活链接无效" }, { status: 400 });
+        apiError(400, 'Activation link is invalid');
     }
 
     if (user.activated) {
-        return json({ message: "已激活" }, { status: 200 });
+        return json({ message: 'Already activated' }, { status: 200 });
     }
 
     if (new Date(user.activateExpireAt) < new Date()) {
-        return json({ error: "激活链接已过期" }, { status: 400 });
+        apiError(400, 'Activation link has expired');
     }
 
     await Users.updateOne(
@@ -30,11 +31,11 @@ export const POST: RequestHandler = async ({ request }) => {
                 activated: true
             },
             $unset: {
-                activateToken: "",
-                activateExpireAt: ""
+                activateToken: '',
+                activateExpireAt: ''
             }
         }
     );
 
-    return json({ message: "激活成功" }, { status: 200 });
-};
+    return json({ message: 'Activation successful' }, { status: 200 });
+});
