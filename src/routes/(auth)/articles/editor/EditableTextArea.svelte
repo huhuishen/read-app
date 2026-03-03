@@ -10,7 +10,7 @@
 
     let {
         value = $bindable(""),
-        placeholder = "Start writing...",
+        placeholder = "输入正文内容...",
         disabled = false,
         minHeight = 360,
     }: {
@@ -182,7 +182,7 @@
     });
 </script>
 
-<div class="editor-wrap">
+<div class="content">
     <textarea
         bind:this={el}
         class="editor content-editor"
@@ -199,10 +199,6 @@
 </div>
 
 <style>
-    .editor-wrap {
-        padding: 0 4rem;
-    }
-
     .editor {
         width: 100%;
         border: none;
@@ -219,8 +215,12 @@
 
     .content-editor {
         min-height: 360px;
-        font-size: 18px;
-        line-height: 1.75;
+
+        line-height: 2;
+        margin-bottom: 1rem;
+        position: relative;
+        font-size: 20px;
+        color: var(--text-color);
     }
 
     .editor::placeholder {

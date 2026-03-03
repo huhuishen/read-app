@@ -117,7 +117,10 @@
             return;
         }
 
-        const res = await safeCall(api.post(`/api/articles/${id}`, payload), toast);
+        const res = await safeCall(
+            api.post(`/api/articles/${id}`, payload),
+            toast,
+        );
         isSubmitting = false;
 
         if (res) {
@@ -187,35 +190,32 @@
     });
 </script>
 
-<div class="container">
+<div class="editor-container">
     <div class="main-column">
-        <EditableInput
-            bind:this={titleEditor}
-            bind:value={article.title}
-            placeholder="Input title..."
+        <EditableInput bind:this={titleEditor} bind:value={article.title} />
+        <EditableTextArea
+            bind:this={contentEditor}
+            bind:value={article.content}
         />
-        <EditableTextArea bind:this={contentEditor} bind:value={article.content} />
-
-        <div class="footer mb4">
-            <Button onclick={submitArticle} disabled={!canSubmit}>
-                {isSubmitting ? "Saving..." : "Save"}
-            </Button>
-        </div>
     </div>
 
-    <aside class="side flex column g-2">
-        <div class="section-title">Cover</div>
+    <aside class="side flex g-3">
+        <div class="section-title">封面图</div>
         {#if article.coverImage}
-            <img src={article.coverImage} alt="Cover preview" class="cover-preview" />
+            <img
+                src={article.coverImage}
+                alt="封面图预览"
+                class="cover-preview"
+            />
         {/if}
         <input
             class="cover-input"
             type="text"
             bind:value={article.coverImage}
-            placeholder="Cover image URL"
+            placeholder="封面图 URL"
         />
         <label class="upload-btn">
-            {isUploading ? "Uploading..." : "Upload Cover"}
+            {isUploading ? "正在上传..." : "上传封面"}
             <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
@@ -224,23 +224,31 @@
             />
         </label>
 
-        <div class="section-title">Summary</div>
+        <div class="section-title">导读</div>
         <textarea
             class="summary-input"
             bind:value={article.summary}
-            placeholder="Write a short summary"
+            placeholder="填写导读..."
         ></textarea>
 
-        <div class="section-title">Tags</div>
+        <div class="section-title">标签</div>
         <TagsManager bind:tags={article.tags} />
+
+        <div class="footer">
+            <Button
+                variant="primary"
+                onclick={submitArticle}
+                disabled={!canSubmit}
+            >
+                {isSubmitting ? "保存中..." : "保存"}
+            </Button>
+        </div>
     </aside>
 </div>
 
 <style>
     .editor-container {
         position: relative;
-        max-width: 800px;
-        margin: 0 auto;
     }
 
     .main-column {
@@ -248,17 +256,17 @@
     }
 
     .footer {
-        padding: 0 4rem;
+        margin: 3em 0;
     }
 
     .side {
-        position: fixed;
-        top: 50px;
+        position: absolute;
+        top: 0;
         left: calc(50% + 410px);
         height: fit-content;
         width: 300px;
         background: var(--main-bg-color);
-        border: 1px solid var(--border-default);
+        /* border: 1px solid var(--border-default); */
         padding: 1rem;
     }
 

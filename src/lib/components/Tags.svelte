@@ -152,19 +152,21 @@
         gap: 8px;
         padding: 8px;
         border: 1px solid var(--border-default);
-        border-radius: 8px;
+        border-radius: var(--radius);
         background: var(--main-bg-color);
+        width: 100%;
     }
 
     .tag {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: var(--surface-soft);
-        color: var(--text-primary);
-        padding: 4px 8px;
-        border-radius: 999px;
         font-size: 13px;
+
+        border-radius: 5px;
+        background: var(--overlay-soft);
+        color: var(--link-color);
+        padding: 4px 8px;
     }
 
     .remove {
@@ -208,7 +210,7 @@
 
         background: var(--main-bg-color);
         border: 1px solid var(--border-default);
-        border-radius: 8px;
+        border-radius: var(--radius);
         z-index: 100;
         box-shadow: 0 4px 12px var(--shadow-sm);
     }
@@ -221,7 +223,7 @@
         padding: 8px 10px;
         font-size: 13px;
         cursor: pointer;
-        border-radius: 6px;
+        border-radius: var(--radius);
     }
 
     .option:hover,

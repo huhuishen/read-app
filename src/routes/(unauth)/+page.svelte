@@ -91,7 +91,7 @@
             <CategoryTitle name="其它标签" laurel={false} more={false} />
             <div class="flex g-2 categories">
                 {#each tags as tag}
-                    <a class="category-title" href="/tags/{tag.name}">
+                    <a class="category-title" href="/tags/{tag.name}/articles">
                         <div class="flex card-small">
                             <span class="card-small-title">{tag.name}</span>
                             <span class="card-small-count"

@@ -101,7 +101,7 @@
 
     <div class="flex tags">
         {#each article.tags as tag}
-            <a class="tag" href="/categories/{tag}/articles">{tag}</a>
+            <a class="tag" href="/tags/{tag}/articles">{tag}</a>
         {/each}
     </div>
 
@@ -194,7 +194,7 @@
         border-radius: 5px;
         background-color: var(--overlay-soft);
         color: var(--link-color);
-        padding: 0.25rem;
+        padding: 4px 8px;
         cursor: pointer;
     }
     .tag:hover {

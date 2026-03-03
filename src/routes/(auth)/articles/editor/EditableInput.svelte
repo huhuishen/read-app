@@ -10,7 +10,7 @@
 
     let {
         value = $bindable(""),
-        placeholder = "Input title...",
+        placeholder = "输入标题...",
         disabled = false,
     }: {
         value?: string;
@@ -170,7 +170,7 @@
     });
 </script>
 
-<div class="editor-wrap">
+<div class="content title mb-3">
     <input
         bind:this={el}
         class="editor title-editor"
@@ -187,10 +187,6 @@
 </div>
 
 <style>
-    .editor-wrap {
-        padding: 0 4rem;
-    }
-
     .editor {
         width: 100%;
         border: none;
@@ -204,11 +200,11 @@
     }
 
     .title-editor {
-        font-size: 38px;
-        line-height: 1.25;
-        font-weight: 700;
+        font-weight: 600;
+        font-size: 32px;
         color: var(--header-color);
-        margin-bottom: 0.75rem;
+        font-family: "Times New Roman", Times, serif;
+        margin: 0.67em 0;
     }
 
     .editor::placeholder {

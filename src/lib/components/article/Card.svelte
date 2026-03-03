@@ -54,7 +54,7 @@
 <style>
     .book-card {
         width: 100%;
-        max-width: 960px;
+        max-width: 800px;
         min-width: 320px;
         /* margin: 10px; */
         /* padding: 0 15px; */
