@@ -82,7 +82,7 @@ main.scrolling::-webkit-scrollbar-thumb {
     }
 }
 
-button[data-variant="link"] {
+/* button[data-variant="link"] {
     color: var(--link-color);
     border: none;
     padding: 0;
@@ -92,7 +92,7 @@ button[data-variant="link"] {
 
 button[data-variant="link"]:hover:not(:disabled) {
     color: var(--highlight-color);
-}
+} */
 
 .segment {
     line-height: 2;

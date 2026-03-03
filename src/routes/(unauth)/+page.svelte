@@ -17,13 +17,8 @@
     let searchQuery = $derived(data.query || "");
     // const api = createApi();
 
-    let categoriesWithPreview = $derived(
-        data.categories?.filter((c) => c.level == 2),
-    );
-
-    // let categories1 = $derived(data.categories?.filter((c) => c.level == 1));
-
-    let categories0 = $derived(data.categories?.filter((c) => c.level == 0));
+    let categories = $derived(data.categories ?? []);
+    let tags = $derived(data.tags ?? []);
 </script>
 
 <svelte:head>
@@ -83,12 +78,12 @@
         {/if}
     {:else}
         <div class="flex">
-            {#each categoriesWithPreview as category, i}
+            {#each categories as category, i}
                 <CategoryTitle name={category.name} laurel={category.award} />
 
                 <div class="flex articles">
                     {#each category.previewArticles as article}
-                        <ArticleCard {article} showCover={i === 0}
+                        <ArticleCard {article} showCover={i < 3}
                         ></ArticleCard>
                     {/each}
                 </div>
@@ -96,19 +91,15 @@
 
             <CategoryTitle name="其它标签" laurel={false} more={false} />
             <div class="flex g-2 categories">
-                {#each categories0 as category}
-                    <a
-                        class="category-title"
-                        href="/categories/{encodeURI(category.name!)}/articles"
-                    >
+                {#each tags as tag}
+                    <div class="category-title">
                         <div class="flex card-small">
-                            <span class="card-small-title">{category.name}</span
-                            >
+                            <span class="card-small-title">{tag.name}</span>
                             <span class="card-small-count"
-                                >{category.articleCount ?? 0}</span
+                                >{tag.articleCount ?? 0}</span
                             >
                         </div>
-                    </a>
+                    </div>
                 {/each}
             </div>
         </div>
@@ -144,7 +135,7 @@
     }
 
     .footer {
-        height: 100px;
+        height: 300px;
         justify-content: center;
         color: var(--link-color);
         gap: 10px;

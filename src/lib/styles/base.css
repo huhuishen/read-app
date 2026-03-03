@@ -38,18 +38,18 @@
     --warning: #cb9d3e;
     --brand-gold: #9d7a36;
 
-    --status-info-text: #1e40af;
-    --status-info-bg: #dbeafe;
-    --status-info-border: #bfdbfe;
-    --status-success-text: #065f46;
-    --status-success-bg: #d1fae5;
-    --status-success-border: #a7f3d0;
-    --status-warning-text: #92400e;
-    --status-warning-bg: #fef3c7;
-    --status-warning-border: #fde68a;
-    --status-danger-text: #991b1b;
-    --status-danger-bg: #fee2e2;
-    --status-danger-border: #fecaca;
+    --status-info-text: #37506a;
+    --status-info-bg: #e9f0f6;
+    --status-info-border: #cedbe7;
+    --status-success-text: #3a5b4e;
+    --status-success-bg: #e7f1eb;
+    --status-success-border: #cbddd2;
+    --status-warning-text: #6f5835;
+    --status-warning-bg: #f6efe0;
+    --status-warning-border: #e3d4b7;
+    --status-danger-text: #7a4740;
+    --status-danger-bg: #f5eaea;
+    --status-danger-border: #e3cfcf;
 
     --rank-gold-bg: #fff7cc;
     --rank-silver-bg: #eef3ff;
@@ -95,7 +95,7 @@
     --radius-sm: 3px;
     --radius-md: 4px;
     --radius-lg: 6px;
-    --radius: var(--radius-sm);
+    --radius: var(--radius-none);
 }
 
 [data-theme="dark"] {
@@ -132,18 +132,18 @@
     --warning: #d4ab53;
     --brand-gold: #c9a25d;
 
-    --status-info-text: #bfdbfe;
-    --status-info-bg: #192d50;
-    --status-info-border: #2d4971;
-    --status-success-text: #86efac;
-    --status-success-bg: #143430;
-    --status-success-border: #235743;
-    --status-warning-text: #fcd34d;
-    --status-warning-bg: #352d23;
-    --status-warning-border: #5c4d26;
-    --status-danger-text: #fca5a5;
-    --status-danger-bg: #351f2c;
-    --status-danger-border: #623741;
+    --status-info-text: #b6c8d9;
+    --status-info-bg: #243142;
+    --status-info-border: #3a4c61;
+    --status-success-text: #b8cfbf;
+    --status-success-bg: #25352f;
+    --status-success-border: #3b5047;
+    --status-warning-text: #d7c49a;
+    --status-warning-bg: #3a3227;
+    --status-warning-border: #5a4c35;
+    --status-danger-text: #d5bab6;
+    --status-danger-bg: #3a2b2a;
+    --status-danger-border: #5b4442;
 
     --rank-gold-bg: rgba(251, 191, 36, 0.18);
     --rank-silver-bg: rgba(148, 163, 184, 0.2);
@@ -396,7 +396,7 @@ select {
 .button,
 button {
     appearance: none;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
 
@@ -484,12 +484,13 @@ button[data-variant="link"] {
     background-color: transparent;
     color: var(--icon-color);
     padding: 0;
+    gap: 5px;
     border: none;
 }
 
 button[data-variant="link"]:hover:not(:disabled) {
     background-color: transparent;
-    color: var(--icon-hover);
+    color: var(--text-primary);
 }
 
 a {

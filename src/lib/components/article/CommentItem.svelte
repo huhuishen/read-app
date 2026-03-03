@@ -92,7 +92,9 @@
             <Icon
                 name="thumbs_up"
                 size={16}
-                color={comment.liked ? "var(--icon-active)" : "var(--link-disabled)"}
+                color={comment.liked
+                    ? "var(--text-primary)"
+                    : "var(--text-faint)"}
             ></Icon>
             <span>{comment.likes ? comment.likes : ""}</span>
         </Button>

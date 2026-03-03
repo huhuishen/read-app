@@ -128,7 +128,9 @@ GET {{host}}/categories/home
 
 
 ###
-# POST {{host}}/categories
+POST {{host}}/categories/2025-12
 
 ###
-GET {{host}}/categories/2026-02
+GET {{host}}/categories/2026-03
+
+

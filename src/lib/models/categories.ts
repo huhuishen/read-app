@@ -125,8 +125,11 @@ export class CategoryService extends Collection<Category> {
     }
 
     async buildPreview(name: string, size: number = 5, show: boolean = true) {
-        const articleCount = await Articles.countDocuments({ categories: name });
-        const res = await Articles.find({ categories: name, status: "published" },
+        const articleCount = await Articles.countDocuments({ "category.period": name });
+        const res = await Articles.find({
+            "category.period": name,
+            // status: "published"
+        },
             { projection: { id: 1, title: 1, author: 1, coverImage: 1, _id: 0 } }).limit(size).toArray();
 
         return await super.updateOne(

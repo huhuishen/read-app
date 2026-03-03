@@ -1,4 +1,4 @@
-import type { Article, Category } from '$lib/models';
+import type { Article, Category, Tag } from '$lib/models';
 import type { DataPage } from '$lib/mongolite';
 import { createApi } from '$lib/util/apiRequest';
 import type { PageLoad } from './$types';
@@ -10,8 +10,8 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
     const q = url.searchParams.get('q') || '';
 
     if (q.trim() === "") {
-        const categories = await api.get<Category[]>(`/api/categories/home`);
-        return { categories };
+        const res = await api.get<{ categories: Category[]; tags: Tag[] }>(`/api/categories/home`);
+        return res;
     } else {
         const res = await api.get<DataPage<Article>>(
             `/api/articles?q=${encodeURIComponent(q)}&page=${page}&limit=${limit}`,
