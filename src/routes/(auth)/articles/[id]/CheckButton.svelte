@@ -38,15 +38,15 @@
 
         padding: 6px 14px;
         border-radius: 999px;
-        border: 1px solid var(--control-bg-hover);
+        /* border: 1px solid var(--button-primary); */
         /* border: none; */
-        background: transparent;
 
         /* font-size: 14px; */
         cursor: pointer;
         user-select: none;
 
-        color: var(--control-text);
+        background: transparent;
+        color: var(--text-faint);
 
         /* transition:
             background-color 0.15s ease,
@@ -59,15 +59,15 @@
     }
 
     .control:hover:not(.disabled) {
-        background: var(--control-bg-hover);
-        /* border: 1px solid var(--control-bg-hover); */
-        /* color: var(--highlight-color); */
+        background-color: var(--button-primary-hover);
+        border-color: var(--button-primary-hover);
+        color: var(--button-primary-text);
     }
 
     .control.selected {
-        background: var(--control-bg-selected);
-        border: 1px solid var(--control-border-selected);
-        color: var(--highlight-color);
+        background: var(--button-primary);
+        border: 1px solid var(--button-primary);
+        color: var(--button-primary-text);
         /* box-shadow: inset 0 0 0 1px var(--control-border-selected); */
     }
 </style>

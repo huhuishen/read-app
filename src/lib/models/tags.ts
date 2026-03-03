@@ -50,7 +50,6 @@ export class TagService extends Collection<Tag> {
         const articleCount = await Articles.countDocuments({
             tags: name,
             isLatest: true,
-            status: "published",
         });
 
         return await super.updateOne(

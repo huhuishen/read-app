@@ -48,6 +48,7 @@
     let article: Partial<Article> = $state(createInitialArticle());
 
     let isSubmitting = $state(false);
+    let isDeleting = $state(false);
     let isUploading = $state(false);
     let hasHydratedDraft = $state(false);
     let autoSaveTimer: ReturnType<typeof setInterval> | null = null;
@@ -57,6 +58,9 @@
 
     const canSubmit = $derived(
         !!article.title?.trim() && !!article.content?.trim() && !isSubmitting,
+    );
+    const canDelete = $derived(
+        mode === "edit" && !!article.id && !isSubmitting && !isDeleting,
     );
 
     function normalizedPayload() {
@@ -130,6 +134,35 @@
             toast.show("Saved", "success");
             goto(`/articles/${id}`);
         }
+    }
+
+    async function deleteArticle() {
+        if (mode !== "edit" || isDeleting) return;
+
+        const id = article.id;
+        if (!id) {
+            toast.show("Missing article id", "error");
+            return;
+        }
+
+        if (browser) {
+            const ok = window.confirm("确认要删除这篇文章吗？删除后不可恢复。");
+            if (!ok) return;
+        }
+
+        isDeleting = true;
+        const res = await safeCall(api.delete(`/api/articles/${id}`), toast);
+        isDeleting = false;
+
+        if (!res) return;
+
+        if (browser) {
+            localStorage.removeItem(draftKey);
+        }
+
+        toast.show("Deleted", "success");
+        const authorId = article.authorId?.trim();
+        goto(authorId ? `/profile/${authorId}/articles` : "/");
     }
 
     async function uploadCover(event: Event) {
@@ -242,6 +275,15 @@
             >
                 {isSubmitting ? "保存中..." : "保存"}
             </Button>
+            {#if mode === "edit"}
+                <Button
+                    variant="danger"
+                    onclick={deleteArticle}
+                    disabled={!canDelete}
+                >
+                    {isDeleting ? "删除中..." : "删除"}
+                </Button>
+            {/if}
         </div>
     </aside>
 </div>
@@ -257,6 +299,8 @@
 
     .footer {
         margin: 3em 0;
+        display: flex;
+        gap: 12px;
     }
 
     .side {

@@ -1,4 +1,4 @@
-import { Articles, Tags } from '$lib/models';
+import { Articles, Categories, Tags } from '$lib/models';
 import { apiError, requireUser, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -44,7 +44,7 @@ function pickArticleUpdate(body: Record<string, unknown>, requireTitleAndContent
 async function ensureCanEditArticle(user: any, articleId: string) {
     const target = await Articles.findOne(
         { id: articleId, isLatest: true },
-        { projection: { _id: 0, authorId: 1, tags: 1 } }
+        { projection: { _id: 0, authorId: 1, tags: 1, title: 1, coverImage: 1, category: 1 } }
     );
 
     if (!target) {
@@ -59,8 +59,68 @@ async function ensureCanEditArticle(user: any, articleId: string) {
     return target;
 }
 
+async function syncCategoryPreviewCache(
+    articleId: string,
+    oldTitle: string | undefined,
+    oldCoverImage: string | undefined,
+    update: Record<string, unknown>
+) {
+    const hasTitleUpdate = Object.prototype.hasOwnProperty.call(update, 'title');
+    const hasCoverUpdate = Object.prototype.hasOwnProperty.call(update, 'coverImage');
+
+    if (!hasTitleUpdate && !hasCoverUpdate) {
+        return;
+    }
+
+    const nextTitle = hasTitleUpdate ? String(update.title ?? '') : oldTitle ?? '';
+    const nextCoverImage = hasCoverUpdate ? String(update.coverImage ?? '') : oldCoverImage ?? '';
+
+    const titleChanged = hasTitleUpdate && nextTitle !== (oldTitle ?? '');
+    const coverChanged = hasCoverUpdate && nextCoverImage !== (oldCoverImage ?? '');
+
+    if (!titleChanged && !coverChanged) {
+        return;
+    }
+
+    const previewPatch: Record<string, string> = {};
+    if (titleChanged) {
+        previewPatch['previewArticles.$[preview].title'] = nextTitle;
+    }
+    if (coverChanged) {
+        previewPatch['previewArticles.$[preview].coverImage'] = nextCoverImage;
+    }
+
+    await Categories.updateMany(
+        { 'previewArticles.id': articleId },
+        { $set: previewPatch },
+        { arrayFilters: [{ 'preview.id': articleId }] }
+    );
+}
+
+async function syncCategoryCacheOnDelete(
+    articleId: string,
+    categoryPeriod?: string
+) {
+    if (categoryPeriod) {
+        await Categories.updateOne(
+            { name: categoryPeriod },
+            {
+                $inc: { articleCount: -1 },
+                $pull: { previewArticles: { id: articleId } },
+            }
+        );
+    }
+
+    await Categories.updateMany(
+        { 'previewArticles.id': articleId },
+        { $pull: { previewArticles: { id: articleId } } }
+    );
+}
+
 async function syncTags(oldTags: string[] = [], nextTags: string[] = []) {
-    const affectedTags = [...new Set([...(oldTags ?? []), ...(nextTags ?? [])])];
+    const normalize = (tags: string[] = []) =>
+        [...new Set(tags.map((tag) => String(tag).trim()).filter(Boolean))];
+    const affectedTags = [...new Set([...normalize(oldTags), ...normalize(nextTags)])];
     await Promise.all(affectedTags.map((tag) => Tags.buildCount(tag)));
 }
 
@@ -85,6 +145,8 @@ export const POST: RequestHandler = withApi(async (event) => {
         }
     );
 
+    await syncCategoryPreviewCache(params.id, target.title, target.coverImage, update);
+
     const oldTags = target.tags ?? [];
     const nextTags = Array.isArray(update.tags) ? (update.tags as string[]) : oldTags;
     await syncTags(oldTags, nextTags);
@@ -106,9 +168,25 @@ export const PUT: RequestHandler = withApi(async (event) => {
         { $set: update }
     );
 
+    await syncCategoryPreviewCache(params.id, target.title, target.coverImage, update);
+
     const oldTags = target.tags ?? [];
     const nextTags = Array.isArray(update.tags) ? (update.tags as string[]) : oldTags;
     await syncTags(oldTags, nextTags);
+
+    return json(res);
+});
+
+export const DELETE: RequestHandler = withApi(async (event) => {
+    const user = requireUser(event);
+    const { params } = event;
+
+    const target = await ensureCanEditArticle(user, params.id);
+
+    const res = await Articles.deleteMany({ id: params.id });
+
+    await syncCategoryCacheOnDelete(params.id, target.category?.period);
+    await syncTags(target.tags ?? [], []);
 
     return json(res);
 });
