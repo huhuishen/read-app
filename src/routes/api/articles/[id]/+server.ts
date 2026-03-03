@@ -1,63 +1,74 @@
-import { Articles, type Article } from "$lib/models";
-import { withApi } from "$lib/util/apiHandler";
-import { safe } from "$lib/util/safe";
+import { Articles } from "$lib/models";
+import { requireUser, withApi } from "$lib/util/apiHandler";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
-
 export const GET: RequestHandler = withApi(async ({ params, locals }) => {
-    // if (!locals.user) {
-    //     return json({ message: "未登录" }, { status: 401 });
-    // }
-
     const res = await Articles.getByArticleId(params.id, locals.user!);
     return json(res);
 });
 
-export const POST = withApi(async ({ request, params }) => {
+async function ensureCanEditArticle(user: any, articleId: string) {
+    const target = await Articles.findOne(
+        { id: articleId, isLatest: true },
+        { projection: { _id: 0, authorId: 1 } }
+    );
+
+    if (!target) {
+        return { ok: false, response: json({ message: "文章不存在" }, { status: 404 }) };
+    }
+
+    const isAdmin = user.roles?.includes("administrator");
+    if (!isAdmin && target.authorId !== user.id) {
+        return { ok: false, response: json({ message: "权限不足" }, { status: 403 }) };
+    }
+
+    return { ok: true as const };
+}
+
+export const POST: RequestHandler = withApi(async (event) => {
+    const user = requireUser(event);
+    const { request, params } = event;
+
+    const permission = await ensureCanEditArticle(user, params.id);
+    if (!permission.ok) {
+        return permission.response;
+    }
+
     const body = await request.json();
-    const res = await Articles.updateOneById(body._id, {
-        $set: {
-            title: body.title,
-            coverImage: body.coverImage,
-            summary: body.summary,
-            content: body.content,
+    const res = await Articles.updateOne(
+        { id: params.id, isLatest: true },
+        {
+            $set: {
+                title: body.title,
+                coverImage: body.coverImage,
+                summary: body.summary,
+                content: body.content,
+            },
         }
-    });
+    );
 
     return json(res);
-})
+});
 
-// export const POST: RequestHandler = async ({ request, params, cookies }) => {
-//     return await safe(async () => {
-//         const req = await request.json();
+export const PUT: RequestHandler = withApi(async (event) => {
+    const user = requireUser(event);
+    const { request, params } = event;
 
-//         const article = req as Article;
-//         const id = article._id!.toString();
-//         const { ["_id"]: excluded, ...rest } = article;
+    const permission = await ensureCanEditArticle(user, params.id);
+    if (!permission.ok) {
+        return permission.response;
+    }
 
-//         if (!article.title || !article.content) {
-//             return json({ error: '缺少必填项' }, { status: 400 });
-//         }
+    const body = await request.json();
+    if (!body.title || !body.content) {
+        return json({ error: "缺少必填项" }, { status: 400 });
+    }
 
-//         const res = await Articles.updateOneById(id, { $set: rest });
-//         return new Response(JSON.stringify(res));
-//     })
-// };
-
-export const PUT: RequestHandler = async ({ request, params, cookies }) => {
-    return await safe(async () => {
-        const req = await request.json();
-
-        const article = req as Article;
-        const id = article._id!.toString();
-        const { ["_id"]: excluded, ...rest } = article;
-
-        if (!article.title || !article.content) {
-            return json({ error: '缺少必填项' }, { status: 400 });
-        }
-
-        const res = await Articles.updateOneById(id, { $set: rest });
-        return new Response(JSON.stringify(res));
-    })
-};
+    const { _id, ...rest } = body;
+    const res = await Articles.updateOne(
+        { id: params.id, isLatest: true },
+        { $set: rest }
+    );
+    return json(res);
+});

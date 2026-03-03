@@ -1,17 +1,20 @@
 <script lang="ts">
     import type { User } from "$lib/models";
-    import { formatDuration } from "../../../util";
+    import { formatDurationWithUnit } from "../../../util";
 
     const {
         user,
     }: {
         user: User;
     } = $props();
+
+    // svelte-ignore state_referenced_locally
+        const { value, unit } = formatDurationWithUnit(user.readSeconds);
 </script>
 
 <div class="stats">
     <div>
-        <div class="value">{formatDuration(user.readSeconds)}</div>
+        <div class="value">{value} <small>{unit}</small></div>
         <div class="label">阅读时长</div>
     </div>
     <div>
@@ -43,9 +46,13 @@
     }
 
     .value {
-        font-size: 24px;
+        font-size: 20px;
         /* font-weight: 600//; */
         text-align: center;
+    }
+
+    small {
+        font-size: 13px;
     }
 
     .label {

@@ -33,11 +33,11 @@
 
     .side {
         position: fixed;
-        top: 30px;
+        top: 50px;
         left: calc(50% + 410px);
         /* transform: translateX(100%); */
         height: fit-content;
-        /* width: 300px; */
+        width: 300px;
         background-color: var(--main-bg-color);
         padding: 1rem;
     }

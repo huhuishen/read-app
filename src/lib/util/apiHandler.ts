@@ -63,3 +63,20 @@ export function withApi<T extends (...args: any) => any>(handler: T): T {
         }
     }) as T;
 }
+
+export function requireUser(event: any) {
+    if (!event.locals.user) {
+        throw { status: 401, message: '未登录' };
+    }
+    return event.locals.user;
+}
+
+export function requireRole(event: any, role: string) {
+    const user = requireUser(event);
+
+    if (!user.roles?.includes(role)) {
+        throw { status: 403, message: '权限不足' };
+    }
+
+    return user;
+}

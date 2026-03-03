@@ -1,5 +1,5 @@
 import { Categories } from '$lib/models';
-import { withApi } from '$lib/util/apiHandler';
+import { requireRole, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
@@ -22,7 +22,10 @@ export const GET: RequestHandler = withApi(async ({ url, locals }) => {
 });
 
 
-export const PATCH: RequestHandler = withApi(async ({ request }) => {
+export const PATCH: RequestHandler = withApi(async (event) => {
+    requireRole(event, "administrator");
+
+    const { request } = event;
     const body = await request.json();
 
     const res = await Categories.updateOne(
@@ -33,7 +36,9 @@ export const PATCH: RequestHandler = withApi(async ({ request }) => {
     return json(res);
 })
 
-export const POST: RequestHandler = withApi(async ({ request }) => {
+export const POST: RequestHandler = withApi(async (event) => {
+    requireRole(event, "administrator");
+
     const res = await Categories.createAward(2026, 2);
 
     return json(res);
