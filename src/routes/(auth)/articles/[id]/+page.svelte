@@ -130,8 +130,6 @@
         // console.log($state.snapshot(selectedUnderline));
     }
 
-
-
     let spanAct = $state<HTMLSpanElement | null>(null);
 
     async function showUnderlineComment(
@@ -329,7 +327,7 @@
         disabled={voteEnd}
         title={voteEnd
             ? `投票已于 ${toLocalDateString(article.category?.voteEnd)} 截止`
-            : ""}
+            : `投票将于 ${toLocalDateString(article.category?.voteEnd)} 截止`}
         onclick={async () => {
             const r = await safeCall<{ remain: number }>(
                 // api.post(`/api/articles/${article.id}/stats`, {

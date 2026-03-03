@@ -89,7 +89,7 @@
     placeholder="Input title..."
 />
 
-<div class="toolbar">
+<!-- <div class="toolbar">
     <div class="history">
         <button type="button" class="tool-btn" onclick={() => contentEditor?.undo()}>
             Undo
@@ -99,7 +99,7 @@
         </button>
     </div>
     <div class="meta">Title {titleLength} chars, Content {contentLength} chars</div>
-</div>
+</div> -->
 
 <Editable bind:this={contentEditor} bind:value={article.content} />
 

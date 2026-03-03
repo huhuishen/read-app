@@ -43,8 +43,8 @@
         gap: 24px;
         /* border-bottom: 1px solid var(--border-soft); */
         font-size: 18px;
-
-        background: color-mix(in srgb, var(--surface-reader) 88%, var(--surface-page) 12%);
+        background-color: var(--surface-ghost);
+        /* background: color-mix(in srgb, var(--surface-reader) 88%, var(--surface-page) 12%); */
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px); /* 兼容 Safari */
         border-bottom: 1px solid var(--border-soft);

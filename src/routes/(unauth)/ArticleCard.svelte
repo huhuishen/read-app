@@ -34,7 +34,7 @@
                 class:book-cover-top={showCover}
                 class:book-cover-left={!showCover}
             >
-                No cover
+                无封面
             </div>
         {/if}
         <div class="flex book-details" class:book-details-left={!showCover}>
@@ -93,8 +93,8 @@
 
     .book-cover.placeholder {
         justify-content: center;
-        background: var(--border-default);
-        color: var(--link-color);
+        background: var(--bg-color);
+        color: var(--text-faint);
     }
 
     .book-details {

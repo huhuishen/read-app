@@ -122,7 +122,7 @@
 
     .tag {
         color: var(--brand-gold);
-        padding: 4px 8px;
+        padding: 0 8px;
         border: 1px solid var(--brand-gold);
     }
 

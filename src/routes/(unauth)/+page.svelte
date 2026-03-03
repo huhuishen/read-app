@@ -64,10 +64,10 @@
                 {#each data.searchResults.items as article, id}
                     <Card
                         {article}
-                        number={data.searchResults.totalItems -
-                            data.searchResults.limit *
-                                (data.searchResults.page - 1) -
-                            id}
+                        number={data.searchResults.limit *
+                            (data.searchResults.page - 1) +
+                            id +
+                            1}
                     />
                 {/each}
             </div>
