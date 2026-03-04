@@ -15,7 +15,7 @@ export type ArticleVoteState = {
     articleId: string;
     userId: string;
     voted: boolean;
-    awardCategory?: string;
+    period?: string;
 } & Entity;
 
 export type ArticleReadState = {
@@ -51,7 +51,7 @@ class ArticleBookmarkStateService extends Collection<ArticleBookmarkState> {
             { id: articleId },
             {
                 $inc: {
-                    bookmarkCount: bookmarked ? 1 : -1,
+                    "stats.mark": bookmarked ? 1 : -1,
                 },
             },
         );
@@ -62,21 +62,21 @@ class ArticleVoteStateService extends Collection<ArticleVoteState> {
     constructor() {
         super("article_user_votes");
         super.createIndex({ articleId: 1, userId: 1 }, { unique: true });
-        super.createIndex({ userId: 1, awardCategory: 1, voted: 1 });
+        super.createIndex({ userId: 1, period: 1, voted: 1 });
     }
 
     async setState(
         articleId: string,
         userId: string,
         voted: boolean,
-        awardCategory?: string,
+        period?: string,
     ) {
         const result = await super.updateOne(
             { articleId, userId, voted: { $ne: voted } },
             {
                 $set: {
                     voted,
-                    ...(awardCategory ? { awardCategory } : {}),
+                    ...(period ? { period: period } : {}),
                 },
             },
             { upsert: true },
@@ -90,7 +90,7 @@ class ArticleVoteStateService extends Collection<ArticleVoteState> {
             { id: articleId },
             {
                 $inc: {
-                    voteCount: voted ? 1 : -1,
+                    "stats.vote": voted ? 1 : -1,
                 },
             },
         );
@@ -112,7 +112,7 @@ class ArticleVoteStateService extends Collection<ArticleVoteState> {
         if (voted && !current?.voted) {
             const count = await super.countDocuments({
                 userId,
-                awardCategory: period,
+                period: period,
                 voted: true,
             });
             if (count >= 3) {
@@ -126,7 +126,7 @@ class ArticleVoteStateService extends Collection<ArticleVoteState> {
             3 -
             (await super.countDocuments({
                 userId,
-                awardCategory: period,
+                period: period,
                 voted: true,
             }));
 
@@ -165,7 +165,7 @@ class ArticleReadStateService extends Collection<ArticleReadState> {
                 { id: articleId },
                 {
                     $inc: {
-                        viewCount: 1,
+                        "stats.view": 1,
                         readSeconds,
                     },
                 },
@@ -242,7 +242,7 @@ class ArticleUserStatsService {
     }
 
     async getArticleStats(articleId: string) {
-        const [bookmarkCount, voteCount, readAgg] = await Promise.all([
+        const [mark, vote, readAgg] = await Promise.all([
             ArticleBookmarkStats.countDocuments({ articleId, bookmarked: true }),
             ArticleVoteStats.countDocuments({ articleId, voted: true }),
             ArticleReadStats.aggregate([
@@ -257,8 +257,8 @@ class ArticleUserStatsService {
         ]);
 
         return {
-            bookmarkCount,
-            voteCount,
+            mark,
+            vote,
             totalreadSeconds: readAgg[0]?.totalreadSeconds ?? 0,
         };
     }

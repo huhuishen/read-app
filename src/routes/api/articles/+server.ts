@@ -1,4 +1,4 @@
-import { Articles, Categories, getContestInfoByDate, Settings, Tags, type Article } from '$lib/models';
+import { Articles, Categories,  getContestInfoByDate, Settings, Tags, type Article } from '$lib/models';
 import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -134,8 +134,15 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
         summary: req.summary ? String(req.summary) : "",
         coverImage: req.coverImage ? String(req.coverImage) : "",
         tags: normalizedTags,
-        bookmarkCount: 0,
-        viewCount: 0,
+        stats: {
+            view: 0,
+            mark: 0,
+            comment: 0,
+            vote: 0,
+            rate: 0,
+            rateSum: 0,
+            rateCount: 0,
+        },
     }
 
     const now = new Date();

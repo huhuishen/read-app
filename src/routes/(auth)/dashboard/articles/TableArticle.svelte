@@ -21,7 +21,7 @@
         },
         {
             name: "作者",
-            text: (item) => item.author,
+            text: (item) => item.author ?? "",
             className: "lg",
         },
         {
@@ -35,19 +35,19 @@
         },
         {
             name: "收藏",
-            text: (item) => item.bookmarkCount?.toString(),
+            text: (item) => item.stats?.mark?.toString(),
         },
         {
             name: "评论",
-            text: (item) => item.commentCount?.toString(),
+            text: (item) => item.stats?.comment?.toString(),
         },
         {
             name: "投票",
-            text: (item) => item.voteCount?.toString(),
+            text: (item) => item.stats?.vote?.toString(),
         },
         {
             name: "阅读",
-            text: (item) => item.viewCount?.toString(),
+            text: (item) => item.stats?.view?.toString(),
         },
         {
             name: "读者用时",

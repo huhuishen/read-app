@@ -12,10 +12,6 @@
         size?: "sm" | "lg" | "xl";
     } = $props();
 
-    function rating(a: Partial<Article>) {
-        if (!a.ratingCount) return null;
-        return (a.ratingSum! / a.ratingCount).toFixed(1);
-    }
 </script>
 
 <div class="card card-{size}">
@@ -51,14 +47,16 @@
                         fill="var(--warning)"
                         color="var(--warning)"
                     ></Icon>
-                    {(article.ratingSum! / article.ratingCount!).toFixed(1)}
+                    {article.stats?.rateCount
+                        ? (article.stats.rateSum / article.stats.rateCount).toFixed(1)
+                        : "-.-"}
                 </span>
             </a>
         </div>
 
         <div class="stats">
             <div class="value">
-                {article.voteCount ?? 0}
+                {article.stats?.vote ?? 0}
             </div>
             <div class="label">投票</div>
         </div>

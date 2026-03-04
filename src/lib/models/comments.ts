@@ -70,9 +70,9 @@ export class CommentService extends Collection<Comment> {
             await Articles.updateOne({ id: doc.articleId },
                 {
                     $inc: {
-                        ratingSum: doc.rating,
-                        ratingCount: 1,
-                        commentCount: 1,
+                        "stats.rateSum": doc.rating,
+                        "stats.rateCount": 1,
+                        "stats.comment": 1,
                     }
                 });
         }
@@ -100,9 +100,9 @@ export class CommentService extends Collection<Comment> {
             await Articles.updateOne({ id: comment.articleId },
                 {
                     $inc: {
-                        ratingSum: -comment.rating,
-                        ratingCount: -1,
-                        commentCount: -1,
+                        "stats.rateSum": -comment.rating,
+                        "stats.rateCount": -1,
+                        "stats.comment": -1,
                     }
                 });
         }

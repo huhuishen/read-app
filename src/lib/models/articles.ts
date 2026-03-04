@@ -50,15 +50,15 @@ export type Article = {
     tags: string[],
     status: "draft" | "pending" | "published" | "scheduled"
 
-    viewCount: number;
-    bookmarkCount: number;
-    commentCount: number;
-    voteCount: number;
-
-    rating: number;
-    ratingSum: number;
-    ratingCount: number;
-    avgRating: number;
+    stats: {
+        view: number;
+        mark: number;
+        comment: number;
+        vote: number;
+        rate: number;
+        rateSum: number;
+        rateCount: number;
+    };
 
     category: {
         year: number;
@@ -76,6 +76,30 @@ export type Article = {
         voteEnd: Date;
     };
 } & Entity;
+
+const defaultArticleStats = {
+    view: 0,
+    mark: 0,
+    comment: 0,
+    vote: 0,
+    rate: 0,
+    rateSum: 0,
+    rateCount: 0,
+};
+
+// export function ensureArticleStats<T extends Partial<Article> & Record<string, any>>(article: T) {
+//     article.stats = {
+//         view: article.stats?.view ?? article.viewCount ?? 0,
+//         mark: article.stats?.mark ?? article.bookmarkCount ?? 0,
+//         comment: article.stats?.comment ?? article.commentCount ?? 0,
+//         vote: article.stats?.vote ?? article.voteCount ?? 0,
+//         rate: article.stats?.rate ?? article.stats?.rateAvg ?? article.rating ?? article.avgRating ?? 0,
+//         rateSum: article.stats?.rateSum ?? article.ratingSum ?? 0,
+//         rateCount: article.stats?.rateCount ?? article.ratingCount ?? 0,
+//     };
+
+//     return article as T & { stats: typeof defaultArticleStats };
+// }
 
 export class ArticleService extends Collection<Article> {
     constructor() {
@@ -127,7 +151,11 @@ export class ArticleService extends Collection<Article> {
             throw new SafeError(404, "找不到文章");
         }
 
-        article.rating = article.ratingSum / article.ratingCount * 2;
+        // ensureArticleStats(article);
+
+        article.stats.rate = article.stats.rateCount > 0
+            ? (article.stats.rateSum / article.stats.rateCount) * 2
+            : 0;
 
         // 划线评论是跟随
         const underlines = await Underlines.findByArticle(article.id, article.version);

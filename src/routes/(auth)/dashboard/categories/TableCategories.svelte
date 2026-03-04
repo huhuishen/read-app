@@ -23,10 +23,10 @@
             text: (item) => item.name,
             className: "xlg",
         },
-        {
-            name: "有奖征文",
-            text: (item) => (item.award ? "是" : ""),
-        },
+        // {
+        //     name: "有奖征文",
+        //     text: (item) => (item.award ? "是" : ""),
+        // },
         {
             name: "首页显示",
             text: (item) => (item.show ? "显示" : ""),
@@ -97,32 +97,31 @@
         // await load();
     }
 
-    async function move(index: number, dir: number) {
-        const target = index + dir;
+    // async function move(index: number, dir: number) {
+    //     const target = index + dir;
 
-        if (target < 0 || target >= categories.length) return;
+    //     if (target < 0 || target >= categories.length) return;
 
-        const a = categories[index];
-        const b = categories[target];
+    //     const a = categories[index];
+    //     const b = categories[target];
 
-        const result = await safeCall(
-            api.patch("/api/categories/order", [
-                { name: a.name, order: b.order },
-                { name: b.name, order: a.order },
-            ]),
-            toast,
-        );
-        if (!result) return;
+    //     const result = await safeCall(
+    //         api.patch("/api/categories/order", [
+    //             { name: a.name, order: b.order },
+    //             { name: b.name, order: a.order },
+    //         ]),
+    //         toast,
+    //     );
+    //     if (!result) return;
 
-        // await load();
-    }
+    //     // await load();
+    // }
 
     function edit(c: Category) {
         editing = c;
 
         form.name = c.name ?? "";
         form.description = c.description ?? "";
-        form.award = c.award ?? false;
         form.show = c.show ?? false;
         form.level = c.level ?? 0;
         form.previewSize = c.previewSize ?? 0;
@@ -176,24 +175,24 @@
         {
             name: "",
         },
-        {
-            name: "上移",
-            onclick: (row) => {
-                move(
-                    categories.findIndex((c) => c.name === row.name),
-                    -1,
-                );
-            },
-        },
-        {
-            name: "下移",
-            onclick: (row) => {
-                move(
-                    categories.findIndex((c) => c.name === row.name),
-                    1,
-                );
-            },
-        },
+        // {
+        //     name: "上移",
+        //     onclick: (row) => {
+        //         move(
+        //             categories.findIndex((c) => c.name === row.name),
+        //             -1,
+        //         );
+        //     },
+        // },
+        // {
+        //     name: "下移",
+        //     onclick: (row) => {
+        //         move(
+        //             categories.findIndex((c) => c.name === row.name),
+        //             1,
+        //         );
+        //     },
+        // },
         {
             name: "删除",
             className: "danger",

@@ -16,18 +16,6 @@
         underlines: Underline[];
     } = $props();
 
-    function numberS(n: number, dig: number = 0) {
-        if (typeof n !== "number") {
-            return 0;
-        }
-        const formatter = new Intl.NumberFormat("en-US", {
-            minimumFractionDigits: dig,
-            maximumFractionDigits: dig,
-        });
-
-        return formatter.format(n);
-    }
-
     function countText(text: string) {
         var c = text.length;
         return c > 1000
@@ -74,10 +62,10 @@
         </div>
         <h2 class="score">
             <span
-                title={article.ratingCount > 0
-                    ? `来自 ${article.ratingCount} 个用户的评分`
+                title={article.stats.rateCount > 0
+                    ? `来自 ${article.stats.rateCount} 个用户的评分`
                     : "暂无评分"}
-                >{article.rating ? article.rating.toFixed(1) : "-.-"}
+                >{article.stats.rate ? article.stats.rate.toFixed(1) : "-.-"}
                 <small>/ 10</small></span
             >
         </h2>
@@ -86,12 +74,12 @@
     <div class="flex stats">
         <ReadingStats
             title="阅读"
-            value={article.viewCount ?? 0}
-            subtitle={`${article.bookmarkCount ?? 0} 人关注`}
+            value={article.stats.view ?? 0}
+            subtitle={`${article.stats.mark ?? 0} 人关注`}
         />
         <ReadingStats
             title="评论"
-            value={article.commentCount ?? 0}
+            value={article.stats.comment ?? 0}
             subtitle={`${underlines.length ?? 0} 划线评论`}
         />
         <ReadingStats

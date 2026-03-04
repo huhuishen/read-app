@@ -5,14 +5,9 @@
     import type { PageProps } from "./$types";
 
     const { data }: PageProps = $props();
-
-    let tabs = [
-        { key: "articles", label: "作品" },
-        { key: "votes", label: "投票" },
-    ];
 </script>
 
-<CategoryTabs name={data.params.name} {tabs} active="articles">
+<CategoryTabs name={data.params.name}  active="articles">
     <div class="flex column">
         {#each data.items as article, id}
             <Card

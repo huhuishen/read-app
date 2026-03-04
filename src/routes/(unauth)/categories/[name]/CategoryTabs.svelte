@@ -5,15 +5,18 @@
 
     let {
         name,
-        tabs,
         active,
         children,
     }: {
         name: string;
-        tabs: { key: string; label: string }[];
         active: string;
         children: Snippet;
     } = $props();
+
+    let tabs = [
+        { key: "articles", label: "作品" },
+        { key: "votes", label: "投票" },
+    ];
 </script>
 
 <Tabs

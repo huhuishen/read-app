@@ -3,11 +3,6 @@
 
     const { items }: { items: Partial<Article>[] } = $props();
 
-    function avgRating(article: Article) {
-        if (!article.ratingCount) return null;
-        return (article.ratingSum! / article.ratingCount).toFixed(1);
-    }
-
     function medal(index: number) {
         if (index === 0) return "🥇";
         if (index === 1) return "🥈";
@@ -48,9 +43,9 @@
                     </div>
 
                     <div class="stats">
-                        <span>👍 {items[0].voteCount ?? 0}</span>
-                        <span>👁 {items[0].viewCount ?? 0}</span>
-                        <span>💬 {items[0].commentCount ?? 0}</span>
+                        <span>👍 {items[0].stats?.vote ?? 0}</span>
+                        <span>👁 {items[0].stats?.view ?? 0}</span>
+                        <span>💬 {items[0].stats?.comment ?? 0}</span>
                     </div>
                 </div>
             </article>
@@ -83,9 +78,9 @@
                         </div>
 
                         <div class="stats">
-                            <span>👍 {article.voteCount ?? 0}</span>
-                            <span>👁 {article.viewCount ?? 0}</span>
-                            <span>💬 {article.commentCount ?? 0}</span>
+                            <span>👍 {article.stats?.vote ?? 0}</span>
+                            <span>👁 {article.stats?.view ?? 0}</span>
+                            <span>💬 {article.stats?.comment ?? 0}</span>
                         </div>
                     </div>
                 </article>
@@ -123,9 +118,9 @@
                 </div>
 
                 <div class="stats">
-                    <span>👍 {article.voteCount ?? 0}</span>
-                    <span>👁 {article.viewCount ?? 0}</span>
-                    <span>💬 {article.commentCount ?? 0}</span>
+                    <span>👍 {article.stats?.vote ?? 0}</span>
+                    <span>👁 {article.stats?.view ?? 0}</span>
+                    <span>💬 {article.stats?.comment ?? 0}</span>
                 </div>
             </article>
         {/each}

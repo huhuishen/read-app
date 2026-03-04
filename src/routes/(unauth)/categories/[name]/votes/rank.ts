@@ -13,9 +13,9 @@ export function rankByVotes(articles: Partial<Article>[]): RankedArticle[] {
         index++;
 
         // 投票数不同 → 更新排名
-        if (article.voteCount !== lastVotes) {
+        if (article.stats?.vote !== lastVotes) {
             currentRank = index;
-            lastVotes = article.voteCount;
+            lastVotes = article.stats?.vote;
         }
 
         return {

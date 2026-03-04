@@ -21,9 +21,12 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
         { "category.period": params.name, isLatest: true, status: "published" },
         {
             projection: { _id: 0, content: 0, summary: 0 },
-            sort: { voteCount: -1 }
         },
     ).toArray();
+
+    // const items = articles
+    //     .map((item) => ensureArticleStats(item as any))
+    //     .sort((a, b) => b.stats.vote - a.stats.vote);
 
     return json(articles);
 });
