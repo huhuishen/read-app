@@ -88,8 +88,8 @@
 
         background: linear-gradient(
             -45deg,
-            rgba(204, 204, 204, 0.7),
-            rgba(255, 255, 255, 0.7)
+            var(--accent-soft),
+            var(--surface-ghost)
         );
 
         /* 关键：融合模式 */

@@ -35,9 +35,5 @@
 </div>
 
 <style>
-    .empty {
-        color: var(--link-disabled);
-        text-align: center;
-        padding: 3rem 1rem;
-    }
+
 </style>

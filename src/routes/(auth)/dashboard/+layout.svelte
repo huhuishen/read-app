@@ -34,6 +34,7 @@
     .main {
         min-width: 0;
         /* font-size: 13px; */
+        background: var(--main-bg-color);
     }
 
     .side {

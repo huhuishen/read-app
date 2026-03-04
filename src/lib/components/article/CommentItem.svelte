@@ -93,7 +93,7 @@
                 name="thumbs_up"
                 size={16}
                 color={comment.liked
-                    ? "var(--text-primary)"
+                    ? "var(--danger-hover)"
                     : "var(--text-faint)"}
             ></Icon>
             <span>{comment.likes ? comment.likes : ""}</span>

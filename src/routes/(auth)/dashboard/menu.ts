@@ -35,7 +35,7 @@ export const adminMenu: AdminMenuItem[] = [
     },
     {
         label: "设置",
-        icon: "settings",
+        icon: "settings-2",
         href: "/dashboard/settings",
         permission: "user.manage",
     },

@@ -109,7 +109,7 @@
         /* text-decoration: underline dotted var(--header-color) 2px; */
         /* text-decoration: underline solid var(--header-color) 1px; */
         /* text-decoration: underline wavy var(--header-color) 1px; */
-        text-decoration: underline dashed var(--header-color) 1px;
+        text-decoration: underline dashed var(--danger-hover) 1px;
         text-underline-offset: 10px;
         cursor: pointer;
         /* position: relative; */

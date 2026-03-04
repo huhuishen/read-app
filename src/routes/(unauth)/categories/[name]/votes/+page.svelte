@@ -14,7 +14,9 @@
     <!-- <VotePage items={data.items} /> -->
 
     {#if data.items === null}
-        <p>投票结果将于 {toLocalDateString(data.category.voteEnd)} 显示</p>
+        <p class="empty">
+            投票结果将于 {toLocalDateString(data.category.voteEnd)} 显示
+        </p>
     {:else}
         <Stream items={data.items} />
     {/if}

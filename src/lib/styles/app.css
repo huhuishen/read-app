@@ -105,3 +105,10 @@ button[data-variant="link"]:hover:not(:disabled) {
     color: var(--text-color);
     margin-bottom: 1rem;
 }
+
+
+.empty {
+    color: var(--link-disabled);
+    text-align: center;
+    padding: 3rem 1rem;
+}

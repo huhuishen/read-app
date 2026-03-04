@@ -295,7 +295,10 @@
     }
 
     .main-column {
-        min-height: calc(100vh - 160px);
+        min-height: 100vh;
+        border-bottom: 1px solid var(--border-soft);
+        padding-bottom: 5rem;
+        margin-bottom: 5rem;
     }
 
     .footer {
