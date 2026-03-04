@@ -68,17 +68,13 @@
     .modal-content {
         background-color: var(--main-bg-color);
         border-radius: 3px;
-
-        /* padding: 16px 18px;
-        margin: 12px; */
-
         max-height: 90vh;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        box-shadow:
+        /* box-shadow:
             0 10px 25px var(--shadow-sm),
-            0 4px 10px var(--shadow-sm);
+            0 4px 10px var(--shadow-sm); */
 
         z-index: 2100;
         outline: none;

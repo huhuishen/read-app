@@ -47,9 +47,9 @@ export class ReadTimer {
 
         // 如果页面即将卸载，强制发送剩余时间
         window.addEventListener("beforeunload", () => {
-            // this.accumulateAndSend(true);
+            this.accumulateAndSend(true);
             // 换用下行，禁止发送过短（< 60s）的阅读时间
-            this.accumulateAndSend();
+            // this.accumulateAndSend();
         });
     }
 

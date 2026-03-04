@@ -1,335 +1,200 @@
 <script lang="ts">
+    import Modal from "$lib/components/overlay/Modal.svelte";
     import type { Article } from "$lib/models";
+    import { toast } from "$lib/stores/toast.svelte";
+    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { toLocalDateString } from "$lib/util/client";
+    import Card from "./Card.svelte";
+    import { rankByVotes, type RankedArticle } from "./rank";
+
+    type VoteUser = {
+        id: string;
+        name: string;
+        avatarColor?: string;
+        votedAt?: Date;
+    };
 
     const { items }: { items: Partial<Article>[] } = $props();
 
-    function medal(index: number) {
-        if (index === 0) return "🥇";
-        if (index === 1) return "🥈";
-        if (index === 2) return "🥉";
-        return null;
+    const api = createApi();
+    let rankedArticles = $derived(rankByVotes(items));
+
+    let showVotersModal = $state(false);
+    let selectedArticle = $state<Partial<Article> | null>(null);
+    let voters = $state<VoteUser[]>([]);
+    let loadingVoters = $state(false);
+
+    function displayRank(list: RankedArticle[], index: number) {
+        if (index === 0) return list[index].rank;
+        if (list[index].rank !== list[index - 1].rank) return list[index].rank;
+        return undefined;
+    }
+
+    function userInitial(name: string) {
+        return (name || "?").trim().slice(0, 1).toUpperCase();
+    }
+
+    async function openVoters(article: Partial<Article>) {
+        if (!article.id) return;
+
+        selectedArticle = article;
+        showVotersModal = true;
+        loadingVoters = true;
+        voters = [];
+
+        const data = await safeCall(
+            api.get<VoteUser[]>(`/api/articles/${article.id}/voters`),
+            toast,
+        );
+
+        if (data) {
+            voters = data;
+        }
+
+        loadingVoters = false;
     }
 </script>
 
-<div class="ranking">
-    <header class="header">
-        <h1>作品排行榜</h1>
-        <p>按投票数排序</p>
-    </header>
-
-    <!-- Top 3 -->
-    <section class="top3">
-        <!-- 第一名 -->
-        {#if items[0]}
-            <article class="top-card first rank-0">
-                <div class="medal">🥇</div>
-
-                <div class="cover large">
-                    {#if items[0].coverImage}
-                        <img
-                            src={items[0].coverImage}
-                            alt={items[0].title ?? "封面图"}
-                        />
-                    {:else}
-                        <div class="placeholder"></div>
-                    {/if}
-                </div>
-
-                <div class="info">
-                    <h2>{items[0].title}</h2>
-
-                    <div class="meta">
-                        {items[0].author}
-                    </div>
-
-                    <div class="stats">
-                        <span>👍 {items[0].stats?.vote ?? 0}</span>
-                        <span>👁 {items[0].stats?.view ?? 0}</span>
-                        <span>💬 {items[0].stats?.comment ?? 0}</span>
-                    </div>
-                </div>
-            </article>
-        {/if}
-
-        <!-- 第二三名 -->
-        <div class="second-row">
-            {#each items.slice(1, 3) as article, i}
-                <article class="top-card rank-{i + 1}">
-                    <div class="medal">
-                        {i === 0 ? "🥈" : "🥉"}
-                    </div>
-
-                    <div class="cover">
-                        {#if article.coverImage}
-                            <img
-                                src={article.coverImage}
-                                alt={article.title ?? "封面图"}
-                            />
-                        {:else}
-                            <div class="placeholder"></div>
-                        {/if}
-                    </div>
-
-                    <div class="info">
-                        <h2>{article.title}</h2>
-
-                        <div class="meta">
-                            {article.author}
-                        </div>
-
-                        <div class="stats">
-                            <span>👍 {article.stats?.vote ?? 0}</span>
-                            <span>👁 {article.stats?.view ?? 0}</span>
-                            <span>💬 {article.stats?.comment ?? 0}</span>
-                        </div>
-                    </div>
-                </article>
-            {/each}
-        </div>
-    </section>
-
-    <!-- Others -->
-    <section class="others">
-        {#each items.slice(3) as article, i}
-            <article class="list-item">
-                <div class="rank">
-                    #{i + 4}
-                </div>
-
-                <div class="cover small">
-                    {#if article.coverImage}
-                        <img
-                            src={article.coverImage}
-                            alt={article.title ?? "封面图"}
-                        />
-                    {:else}
-                        <div class="placeholder"></div>
-                    {/if}
-                </div>
-
-                <div class="info">
-                    <div class="title">
-                        {article.title}
-                    </div>
-
-                    <div class="meta">
-                        {article.author}
-                    </div>
-                </div>
-
-                <div class="stats">
-                    <span>👍 {article.stats?.vote ?? 0}</span>
-                    <span>👁 {article.stats?.view ?? 0}</span>
-                    <span>💬 {article.stats?.comment ?? 0}</span>
-                </div>
-            </article>
-        {/each}
-    </section>
+<div class="flex center g-3 mb-3">
+    {#each rankedArticles as article, i}
+        <Card
+            {article}
+            number={displayRank(rankedArticles, i)}
+            size={article.rank === 1 ? "xl" : article.rank <= 3 ? "lg" : "sm"}
+            onVoteClick={openVoters}
+        ></Card>
+    {/each}
 </div>
 
+<Modal bind:show={showVotersModal} size="full">
+    <div class="voters-modal">
+        <div class="header">
+            <h3>ͶƱ�û�</h3>
+            <button
+                type="button"
+                class="close-btn"
+                aria-label="�ر�"
+                onclick={() => {
+                    showVotersModal = false;
+                }}
+            >
+                x
+            </button>
+        </div>
+
+        <div class="article-title">{selectedArticle?.title}</div>
+
+        {#if loadingVoters}
+            <p class="hint">加载中...</p>
+        {:else if voters.length === 0}
+            <p class="hint">暂无投票</p>
+        {:else}
+            <ul class="voter-list">
+                {#each voters as user}
+                    <li class="voter-item">
+                        <div
+                            class="avatar"
+                            style={`background:${user.avatarColor || "var(--accent-primary)"}`}
+                        >
+                            {userInitial(user.name)}
+                        </div>
+                        <div class="info">
+                            <div class="name">{user.name}</div>
+                            <div class="time">
+                                {toLocalDateString(user.votedAt)}
+                            </div>
+                        </div>
+                    </li>
+                {/each}
+            </ul>
+        {/if}
+    </div>
+</Modal>
+
 <style>
-    .ranking {
-        max-width: 1000px;
-        margin: auto;
-        padding: 24px;
+    .voters-modal {
+        padding: 14px;
+        min-width: 300px;
     }
 
     .header {
-        text-align: center;
-        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
     }
 
-    .header h1 {
-        font-size: 32px;
+    .header h3 {
         margin: 0;
-    }
-
-    .header p {
-        color: var(--link-color);
-    }
-
-    /* TOP 3 */
-
-    .second-row {
-        display: grid;
-
-        grid-template-columns: 1fr 1fr;
-
-        gap: 20px;
-    }
-
-    @media (max-width: 700px) {
-        .second-row {
-            grid-template-columns: 1fr;
-        }
-    }
-    .top-card.first {
-        transform: scale(1.05);
-    }
-
-    .cover.large {
-        height: 240px;
-    }
-
-    .top-card.first h2 {
-        font-size: 24px;
-    }
-    .top-card {
-        position: relative;
-
-        border-radius: 16px;
-
-        overflow: hidden;
-
-        background: linear-gradient(
-            180deg,
-            var(--main-bg-color),
-            var(--surface-modal)
-        );
-
-        box-shadow: 0 4px 20px var(--shadow-sm);
-
-        transition: 0.2s;
-    }
-
-    .top-card:hover {
-        transform: translateY(-4px);
-    }
-
-    .rank-0 {
-        background: linear-gradient(
-            180deg,
-            var(--rank-gold-bg),
-            var(--main-bg-color)
-        );
-    }
-
-    .rank-1 {
-        background: linear-gradient(
-            180deg,
-            var(--rank-silver-bg),
-            var(--main-bg-color)
-        );
-    }
-
-    .rank-2 {
-        background: linear-gradient(
-            180deg,
-            var(--rank-bronze-bg),
-            var(--main-bg-color)
-        );
-    }
-
-    .medal {
-        position: absolute;
-
-        top: 8px;
-        left: 8px;
-
-        font-size: 28px;
-    }
-
-    .cover {
-        height: 160px;
-        background: var(--border-soft);
-    }
-
-    .cover img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .placeholder {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-            45deg,
-            var(--border-soft),
-            var(--border-default)
-        );
-    }
-
-    .info {
-        padding: 16px;
-    }
-
-    .info h2 {
-        margin: 0 0 6px;
         font-size: 18px;
     }
 
-    .meta {
-        color: var(--link-color);
-        font-size: 14px;
-        margin-bottom: 8px;
+    .close-btn {
+        border: none;
+        border-radius: 8px;
+        background: var(--border-soft);
+        color: var(--text-primary);
+        width: 28px;
+        height: 28px;
+        line-height: 1;
+        cursor: pointer;
     }
 
-    .stats {
-        display: flex;
-        gap: 16px;
-        font-size: 14px;
+    .article-title {
+        margin-top: 8px;
+        font-weight: 600;
         color: var(--text-secondary);
     }
 
-    /* Others */
+    .hint {
+        margin: 14px 0 0;
+        color: var(--text-secondary);
+        text-align: center;
+    }
 
-    .others {
+    .voter-list {
+        list-style: none;
+        margin: 12px 0 0;
+        padding: 0;
         display: flex;
         flex-direction: column;
         gap: 10px;
+        max-height: 320px;
+        overflow: auto;
     }
 
-    .list-item {
+    .voter-item {
         display: flex;
         align-items: center;
-
-        gap: 12px;
-
-        padding: 12px;
-
-        border-radius: 12px;
-
-        background: white;
-
-        box-shadow: 0 2px 8px var(--overlay-soft);
-
-        transition: 0.15s;
+        gap: 10px;
+        border: 1px solid var(--border-soft);
+        border-radius: 10px;
+        padding: 8px;
+        background: var(--main-bg-color);
     }
 
-    .list-item:hover {
-        transform: translateX(4px);
-    }
-
-    .rank {
-        font-weight: bold;
+    .avatar {
         width: 32px;
-    }
-
-    .cover.small {
-        width: 50px;
-        height: 50px;
-        border-radius: 8px;
-        overflow: hidden;
+        height: 32px;
+        border-radius: 50%;
+        color: var(--reader-bg-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex: none;
     }
 
     .info {
-        flex: 1;
+        min-width: 0;
     }
 
-    .title {
+    .name {
         font-weight: 600;
     }
 
-    .meta {
-        font-size: 13px;
-        color: var(--link-color);
-    }
-
-    .stats {
-        display: flex;
-        gap: 10px;
-        font-size: 13px;
+    .time {
+        font-size: 12px;
         color: var(--text-secondary);
     }
 </style>

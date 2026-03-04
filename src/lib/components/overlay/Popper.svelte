@@ -32,9 +32,9 @@
         if (!anchor) {
             // ===== 无 anchor 时居中 =====
             const top =
-                (window.innerHeight - modalRect.height) / 2 + window.scrollY;
+                (window.innerHeight - modalRect.height) / 2;
             const left =
-                (window.innerWidth - modalRect.width) / 2 + window.scrollX;
+                (window.innerWidth - modalRect.width) / 2;
             modalEl.style.top = `${top}px`;
             modalEl.style.left = `${left}px`;
             placement = "center";
@@ -93,8 +93,8 @@
             }
         }
 
-        modalEl.style.top = `${top + window.scrollY}px`;
-        modalEl.style.left = `${left + window.scrollX}px`;
+        modalEl.style.top = `${top}px`;
+        modalEl.style.left = `${left}px`;
 
         // ===== 动态设置箭头偏移 =====
         const arrowEl = modalEl.querySelector(".arrow") as HTMLElement;

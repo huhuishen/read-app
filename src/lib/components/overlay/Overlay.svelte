@@ -45,8 +45,9 @@
 
 {#if show}
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="overlay-mask" onpointerdown={handlePointerDown}></div>
-    {@render children?.()}
+    <div class="overlay-mask" onpointerdown={handlePointerDown}>
+        {@render children?.()}
+    </div>
 {/if}
 
 <style>

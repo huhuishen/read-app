@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Button from "$lib/components/Button.svelte";
     import Icon from "$lib/components/Icon.svelte";
     import type { Article } from "$lib/models";
 
@@ -6,16 +7,16 @@
         article,
         number,
         size = "sm",
+        onVoteClick,
     }: {
         article: Partial<Article>;
         number?: number;
         size?: "sm" | "lg" | "xl";
+        onVoteClick?: (article: Partial<Article>) => void;
     } = $props();
-
 </script>
 
 <div class="card card-{size}">
-    <!-- 背景图片层 -->
     {#if article.coverImage}
         <img
             class="bg"
@@ -26,13 +27,13 @@
         <div class="bg placeholder"></div>
     {/if}
 
-    <!-- 前景内容层 -->
     <div class="flex row content">
         {#if number}
             <div class="number">#{number}</div>
         {:else}
             <div class="number"></div>
         {/if}
+
         <div class="book">
             <a class="title" href="/articles/{article.id}/summary">
                 {article.title}
@@ -48,18 +49,25 @@
                         color="var(--warning)"
                     ></Icon>
                     {article.stats?.rateCount
-                        ? (article.stats.rateSum / article.stats.rateCount).toFixed(1)
+                        ? (
+                              article.stats.rateSum / article.stats.rateCount
+                          ).toFixed(1)
                         : "-.-"}
                 </span>
             </a>
         </div>
 
-        <div class="stats">
-            <div class="value">
-                {article.stats?.vote ?? 0}
+        <Button
+            variant="danger"
+            onclick={() => {
+                onVoteClick?.(article);
+            }}
+        >
+            <div class="stats">
+                <div class="value">{article.stats?.vote ?? 0}</div>
+                <div class="label">投票</div>
             </div>
-            <div class="label">投票</div>
-        </div>
+        </Button>
     </div>
 </div>
 
@@ -72,26 +80,23 @@
         font-size: 20px;
         font-weight: bold;
     }
+
     .cover {
-        /* width: calc(max(60%, 280px)); */
         width: 100%;
         height: 100%;
         position: relative;
         overflow: hidden;
     }
+
     .card::before {
         content: "";
         position: absolute;
         inset: 0;
-
         background: linear-gradient(
             -45deg,
             var(--accent-soft),
             var(--surface-ghost)
         );
-
-        /* 关键：融合模式 */
-        /* mix-blend-mode: soft-light; */
         pointer-events: none;
         z-index: 1;
     }
@@ -99,8 +104,8 @@
     .placeholder {
         width: 100%;
         height: 100%;
-        /* background: linear-gradient(-45deg, var(--border-default), var(--main-bg-color)); */
     }
+
     .title {
         font-size: 20px;
         font-weight: 600;
@@ -110,6 +115,7 @@
         white-space: nowrap;
         overflow: hidden;
     }
+
     .gray {
         color: var(--text-secondary);
         font-size: 16px;
@@ -121,33 +127,54 @@
         display: flex;
         width: 100%;
     }
+
     .card-sm {
         height: 80px;
     }
+
     .card-lg {
         height: 180px;
     }
+
     .card-xl {
         height: 360px;
     }
+
     .card-lg .title {
         height: 48px;
         font-size: 28px;
         line-height: 24px;
     }
+
     .card-lg .number {
         font-size: 28px;
     }
+
     .card-xl .title {
         height: 64px;
         font-size: 32px;
         line-height: 32px;
     }
+
     .card-xl .number {
         font-size: 32px;
     }
+
     .stats {
         width: 50px;
+    }
+
+    .vote-trigger {
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        color: inherit;
+        border-radius: 8px;
+    }
+
+    .vote-trigger:hover {
+        background: var(--overlay-soft);
     }
 
     .value {
@@ -159,43 +186,35 @@
         text-align: center;
     }
 
-    /* 背景图片 */
     .bg {
         position: absolute;
         inset: 0;
-
         width: 100%;
         height: 100%;
-
         object-fit: cover;
-
         z-index: 0;
     }
 
-    /* 前景内容 */
     .content {
         position: relative;
         z-index: 2;
-
         display: flex;
         flex-direction: row;
-
         justify-content: space-between;
-
         width: 100%;
         height: 100%;
-
         padding: 4px 16px;
     }
+
     @media (max-width: 425px) {
         .content {
             padding: 0;
         }
     }
+
     .book {
         display: flex;
         flex-direction: column;
-        /* width: calc(max(60%, 280px)); */
         width: 60%;
     }
 </style>
