@@ -125,8 +125,15 @@ async function syncTags(oldTags: string[] = [], nextTags: string[] = []) {
 }
 
 export const GET: RequestHandler = withApi(async ({ params, locals }) => {
-    const res = await Articles.getByArticleId(params.id, locals.user!);
-    return json(res);
+    const data = await Articles.getByArticleId(params.id, locals.user!);
+    const now = Date.now();
+
+    if (now < data.article.category.voteEnd.getTime()) {
+        delete data.article.author;
+        delete data.article.authorId;
+    }
+
+    return json(data);
 });
 
 export const POST: RequestHandler = withApi(async (event) => {

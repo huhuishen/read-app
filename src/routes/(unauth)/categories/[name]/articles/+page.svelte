@@ -2,13 +2,14 @@
     import Card from "$lib/components/article/Card.svelte";
     import Pagination from "$lib/components/Pagination.svelte";
     import CategoryTabs from "../CategoryTabs.svelte";
-    import { getTabs } from "../tabDef";
     import type { PageProps } from "./$types";
 
     const { data }: PageProps = $props();
 
-    // 根据是否有奖征文，决定是否显示投票结果标签页
-    let tabs = $derived(getTabs(data.category.award));
+    let tabs = [
+        { key: "articles", label: "作品" },
+        { key: "votes", label: "投票" },
+    ];
 </script>
 
 <CategoryTabs name={data.params.name} {tabs} active="articles">

@@ -12,7 +12,8 @@
     <title>{article.title} - 作品概况</title>
 </svelte:head>
 
-<ArticleSummary {article} underlines={data.underlines}></ArticleSummary>
+<ArticleSummary {article} user={data.user} underlines={data.underlines}
+></ArticleSummary>
 
 <style>
 </style>

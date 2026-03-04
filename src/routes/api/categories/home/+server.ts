@@ -2,6 +2,9 @@ import { Categories, Tags } from '$lib/models';
 import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { sanitizeCategoryPreviewAuthors } from '../util';
+
+
 
 export const GET: RequestHandler = withApi(async ({ }) => {
     const [categories, tags] = await Promise.all([
@@ -13,5 +16,7 @@ export const GET: RequestHandler = withApi(async ({ }) => {
         ).sort({ articleCount: -1, createdAt: -1 }).toArray(),
     ]);
 
-    return json({ categories, tags });
+    const sanitizedCategories = categories.map(sanitizeCategoryPreviewAuthors);
+
+    return json({ categories: sanitizedCategories, tags });
 });

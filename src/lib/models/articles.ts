@@ -42,8 +42,8 @@ export type Article = {
     version: number;
     isLatest: boolean;
     title: string;
-    authorId: string;
-    author: string;
+    authorId?: string;
+    author?: string;
     content: string;
     coverImage: string;
     summary: string;
@@ -60,7 +60,7 @@ export type Article = {
     ratingCount: number;
     avgRating: number;
 
-    category?: {
+    category: {
         year: number;
         month: number;
         /**
@@ -71,20 +71,9 @@ export type Article = {
         period: string;
 
         /**
-         * 投稿开始
-         */
-        submissionStart: Date;
-
-        /**
-         * 投稿截止（当月最后一天）
-         */
-        submissionEnd: Date;
-
-        /**
          * 投票截止（下月10日）
          */
         voteEnd: Date;
-
     };
 } & Entity;
 

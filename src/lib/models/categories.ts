@@ -24,18 +24,18 @@ export type Category = {
     // contest?: boolean;
     description?: string;
     show: boolean; // 是否首页显示
-    award?: boolean; // 有奖征文
-    submissionStart?: Date;
-    submissionEnd?: Date;
+    // award?: boolean; // 有奖征文
+    // submissionStart?: Date;
+    // submissionEnd?: Date;
     voteEnd?: Date;
     level: 0 | 1 | 2;
-    order?: number; // 首页排序
+    // order?: number; // 首页排序
     articleCount: number;
     previewSize?: number;
     previewArticles?: {
         id: string;
         title: string;
-        author: string;
+        author?: string;
         coverImage?: string;
     }[];
 } & Entity
@@ -60,9 +60,7 @@ export class CategoryService extends Collection<Category> {
             articleCount: 0,
             previewSize: 8,
             previewArticles: [],
-            award: true,
-            submissionStart,
-            submissionEnd,
+            // award: true,
             voteEnd,
         };
         return await super.insertOne(doc);
@@ -167,8 +165,8 @@ export class CategoryService extends Collection<Category> {
         // 3. 返回简化的征文信息
         return {
             name: contest.name,
-            submissionStart: contest.submissionStart,
-            submissionEnd: contest.submissionEnd,
+            // submissionStart: contest.submissionStart,
+            // submissionEnd: contest.submissionEnd,
             voteEnd: contest.voteEnd,
         };
     }

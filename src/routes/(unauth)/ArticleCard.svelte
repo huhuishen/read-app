@@ -5,7 +5,7 @@
     }: {
         article: {
             title: string;
-            author: string;
+            author?: string;
             id: string;
             coverImage?: string;
         };
@@ -40,7 +40,7 @@
         <div class="flex book-details" class:book-details-left={!showCover}>
             <h3 class="title">{article.title}</h3>
             <div class="flex comment-meta">
-                <span>{article.author}</span>
+                <span>{article.author ?? "匿名"}</span>
             </div>
         </div>
     </div>

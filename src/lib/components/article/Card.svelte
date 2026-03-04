@@ -40,7 +40,7 @@
                 {/if}
             </div>
             <div class="flex book-meta">
-                <span>{article.author}</span>
+                <span>{article.author ?? "匿名"}</span>
                 <span>{toLocalDateString(article.createdAt)}</span>
             </div>
             <div class="summary">

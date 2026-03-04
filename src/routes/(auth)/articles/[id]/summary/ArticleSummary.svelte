@@ -2,16 +2,17 @@
     import { goto } from "$app/navigation";
     import Avatar from "$lib/components/Avatar.svelte";
     import Button from "$lib/components/Button.svelte";
-    import { type Article } from "$lib/models";
+    import { type Article, type User } from "$lib/models";
     import type { Underline } from "$lib/models/underline";
-    import { user } from "$lib/stores/session.svelte";
     import ReadingStats from "./ReadingStats.svelte";
 
     let {
         article,
+        user,
         underlines,
     }: {
         article: Article;
+        user: Partial<User>;
         underlines: Underline[];
     } = $props();
 
@@ -59,10 +60,18 @@
     </div>
 
     <div class="flex sb">
-        <a class="flex g-3" href="/profile/{article.authorId}/articles">
-            <Avatar name={article.author}></Avatar>
-            <span> {article.author}</span>
-        </a>
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div
+            class="flex g-3"
+            onclick={() => {
+                if (article.authorId)
+                    goto(`/profile/${article.authorId}/articles`);
+            }}
+        >
+            <Avatar name={article.author ?? "匿名"}></Avatar>
+            <span> {article.author ?? "匿名"}</span>
+        </div>
         <h2 class="score">
             <span
                 title={article.ratingCount > 0
@@ -106,18 +115,20 @@
     </div>
 
     <div class="start">
-        <Button
-            onclick={() => {
-                goto(`/articles/${article.id}/write`);
-            }}>编辑</Button
-        >
-        {#if article.status === "pending" && user?.name === "admin"}
+        {#if article.authorId === user.id}
+            <Button
+                onclick={() => {
+                    goto(`/articles/${article.id}/write`);
+                }}>编辑</Button
+            >
+        {/if}
+        <!-- {#if article.status === "pending" && user?.name === "admin"}
             <Button
                 onclick={() => {
                     goto(`/articles/${article.id}/review`);
                 }}>审核</Button
             >
-        {/if}
+        {/if} -->
         <Button
             variant="primary"
             onclick={() => {

@@ -43,9 +43,11 @@
         {#if user}
             <Menu {user} />
         {:else}
-            <a class="link" href="/login">登录</a>
-            <span class="seperator"></span>
-            <a class="link" href="/register">注册</a>
+            <div class="flex">
+                <a class="link" href="/login">登录</a>
+                <div class="seperator"></div>
+                <a class="link" href="/register">注册</a>
+            </div>
         {/if}
     </div>
 </div>
@@ -79,7 +81,7 @@
     {:else}
         <div class="flex">
             {#each categories as category, i}
-                <CategoryTitle name={category.name} laurel={category.award} />
+                <CategoryTitle name={category.name} />
 
                 <div class="flex articles">
                     {#each category.previewArticles as article}
