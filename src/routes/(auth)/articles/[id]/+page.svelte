@@ -330,10 +330,6 @@
             : `投票将于 ${toLocalDateString(article.category?.voteEnd)} 截止`}
         onclick={async () => {
             const r = await safeCall<{ remain: number }>(
-                // api.post(`/api/articles/${article.id}/stats`, {
-                //     action: "vote",
-                //     value: !article.voted,
-                // }),
                 api.post(`/api/articles/${article.id}/vote`, {
                     value: !userStats.voted,
                 }),

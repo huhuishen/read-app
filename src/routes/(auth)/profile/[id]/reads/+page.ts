@@ -1,5 +1,5 @@
 import type { Article } from '$lib/models';
-import type { ArticleUserState } from '$lib/models/articleStats';
+import type { ArticleReadState } from '$lib/models/articleStats';
 import type { DataPage } from '$lib/mongolite';
 import { createApi } from '$lib/util/apiRequest';
 import type { PageLoad } from './$types';
@@ -10,7 +10,7 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
     const limit = parseInt(url.searchParams.get('limit') || '20');
 
     interface ResponseData {
-        stats: DataPage<ArticleUserState>;
+        stats: DataPage<ArticleReadState>;
         articles: Article[];
     }
     const data = await api.get<ResponseData>(

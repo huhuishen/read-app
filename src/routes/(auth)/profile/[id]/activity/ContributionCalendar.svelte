@@ -200,7 +200,7 @@
                             onmouseleave={hideTip}
                         ></div>
                     {:else}
-                        <div class="cell empty"></div>
+                        <div class="cell cell-empty"></div>
                     {/if}
                 {/each}
             </div>
@@ -257,7 +257,7 @@
         transform: scale(1.2);
     }
 
-    .empty {
+    .cell-empty {
         background: transparent;
     }
 
@@ -287,7 +287,7 @@
 
     .tooltip {
         position: fixed;
-        background: var(--text-primary);
+        background: var(--surface-page);
         color: white;
         padding: 6px 8px;
         border-radius: 6px;

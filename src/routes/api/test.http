@@ -55,6 +55,14 @@ Content-Type: application/json
     "coverImage": null
 }
 
+###
+POST {{host}}/articles/cqr4rczghhs3/vote
+Content-Type: application/json
+
+{
+    "value": false
+}
+
 
 ###
 GET {{host}}/category

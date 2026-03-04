@@ -46,14 +46,14 @@
 
 <div class="comment" class:collapsed={!expanded} bind:this={container}>
     <!-- 头像及发表日期，评分（如果有�?-->
-    <div class="flex g-3 mb-1">
+    <div class="flex g-3 mb-1 gray">
         <div class="flex g-2">
             <Avatar name={comment.user!}></Avatar>
             <a class="ml1" href={`/profile/${comment.userId}/articles`}
                 >{comment.user}</a
             >
         </div>
-        <div class="gray">
+        <div class="">
             {toLocalDateString(comment.createdAt)}
         </div>
         {#if comment.rating}
@@ -143,7 +143,9 @@
             var(--main-bg-color)
         );
     }
-
+    .gray {
+        color: var(--text-faint);
+    }
     /* 展开按钮 */
     .toggle {
         background-color: var(--surface-soft);

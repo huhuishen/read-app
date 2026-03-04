@@ -1,7 +1,7 @@
 <script lang="ts">
     import Pagination from "$lib/components/Pagination.svelte";
     import type { Article } from "$lib/models";
-    import type { ArticleUserState } from "$lib/models/articleStats";
+    import type { ArticleReadState } from "$lib/models/articleStats";
     import type { DataPage } from "$lib/mongolite";
     import { toLocalDateString } from "$lib/util/client";
     import { formatCompletion, formatDurationWithUnit } from "../../../../util";
@@ -10,7 +10,7 @@
         data,
     }: {
         data: {
-            stats: DataPage<ArticleUserState>;
+            stats: DataPage<ArticleReadState>;
             articles: Article[];
         };
     } = $props();
@@ -63,7 +63,7 @@
                         <div class="label">最大进度</div>
                     </div>
                     <div>
-                        {@render durationStat(item.value)}
+                        {@render durationStat(item.readSeconds ?? 0)}
                         <div class="label">阅读时长</div>
                     </div>
                     <div>
