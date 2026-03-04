@@ -34,7 +34,7 @@
             <div class="number"></div>
         {/if}
 
-        <div class="book">
+        <div class="flex column book">
             <a class="title" href="/articles/{article.id}/summary">
                 {article.title}
             </a>
@@ -116,6 +116,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        width: 100%;
     }
 
     .gray {
@@ -128,6 +129,7 @@
         overflow: hidden;
         display: flex;
         width: 100%;
+        flex-wrap: nowrap;
     }
 
     .card-sm {
@@ -145,7 +147,6 @@
     .card-lg .title {
         height: 48px;
         font-size: 28px;
-        line-height: 24px;
     }
 
     .card-lg .number {
@@ -194,7 +195,7 @@
         z-index: 2;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        gap: 1rem;
         width: 100%;
         height: 100%;
         padding: 4px 16px;
@@ -207,8 +208,8 @@
     }
 
     .book {
-        display: flex;
-        flex-direction: column;
-        width: 60%;
+        align-items: start;
+        flex: 1;
+        min-width: 0;
     }
 </style>

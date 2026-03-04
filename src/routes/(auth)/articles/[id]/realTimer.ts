@@ -10,6 +10,24 @@ export class ReadTimer {
     private tickId: number | null = null;
 
     private onUpdate: (t: number) => void;
+    private activityHandler = () => this.onUserActivity();
+    private visibilityHandler = () => {
+        if (document.visibilityState === "hidden") {
+            this.markInactive();
+            this.accumulateAndSend(true);
+            return;
+        }
+        this.markActive();
+    };
+    private blurHandler = () => {
+        this.markInactive();
+    };
+    private beforeUnloadHandler = () => {
+        this.accumulateAndSend(true);
+    };
+    private pageHideHandler = () => {
+        this.accumulateAndSend(true);
+    };
 
     constructor(
         onUpdate: (t: number) => void,
@@ -30,27 +48,30 @@ export class ReadTimer {
         const events = ["mousemove", "keydown", "scroll", "click", "touchstart"];
 
         events.forEach(e =>
-            window.addEventListener(e, () => this.onUserActivity(), true)
+            window.addEventListener(e, this.activityHandler, true)
         );
 
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "hidden") {
-                this.markInactive();
-            } else {
-                this.markActive();
-            }
-        });
+        document.addEventListener("visibilitychange", this.visibilityHandler);
 
-        window.addEventListener("blur", () => {
-            this.markInactive();
-        });
+        window.addEventListener("blur", this.blurHandler);
 
         // 如果页面即将卸载，强制发送剩余时间
-        window.addEventListener("beforeunload", () => {
-            this.accumulateAndSend(true);
-            // 换用下行，禁止发送过短（< 60s）的阅读时间
-            // this.accumulateAndSend();
-        });
+        window.addEventListener("beforeunload", this.beforeUnloadHandler);
+        // iOS Safari / bfcache 场景下，pagehide 比 beforeunload 更可靠
+        window.addEventListener("pagehide", this.pageHideHandler);
+    }
+
+    private unbindEvents() {
+        const events = ["mousemove", "keydown", "scroll", "click", "touchstart"];
+
+        events.forEach(e =>
+            window.removeEventListener(e, this.activityHandler, true)
+        );
+
+        document.removeEventListener("visibilitychange", this.visibilityHandler);
+        window.removeEventListener("blur", this.blurHandler);
+        window.removeEventListener("beforeunload", this.beforeUnloadHandler);
+        window.removeEventListener("pagehide", this.pageHideHandler);
     }
 
     // -----------------------------
@@ -121,6 +142,9 @@ export class ReadTimer {
     // 销毁
     // -----------------------------
     public destroy() {
+        this.accumulateAndSend(true);
+
+        this.unbindEvents();
         if (this.tickId) clearInterval(this.tickId);
         if (this.idleTimeoutId) clearTimeout(this.idleTimeoutId);
     }

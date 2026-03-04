@@ -58,6 +58,7 @@ export type Article = {
         rate: number;
         rateSum: number;
         rateCount: number;
+        readSeconds: number;
     };
 
     category: {

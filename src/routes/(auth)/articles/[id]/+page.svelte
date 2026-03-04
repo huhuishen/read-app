@@ -320,7 +320,7 @@
                 "selectionchange",
                 handleSelectionChange,
             );
-            document.removeEventListener("scroll", handleSelectionChange);
+            document.removeEventListener("scroll", updateScrollProgress);
             timer.destroy();
         };
     });

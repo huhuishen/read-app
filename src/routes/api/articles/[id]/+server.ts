@@ -130,7 +130,7 @@ export const GET: RequestHandler = withApi(async ({ params, locals }) => {
 
     if (now < data.article.category.voteEnd.getTime()) {
         delete data.article.author;
-        delete data.article.authorId;
+        // delete data.article.authorId;
     }
 
     return json(data);

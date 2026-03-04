@@ -166,7 +166,7 @@ class ArticleReadStateService extends Collection<ArticleReadState> {
                 {
                     $inc: {
                         "stats.view": 1,
-                        readSeconds,
+                        "stats.readSeconds": readSeconds,
                     },
                 },
             );
@@ -175,7 +175,7 @@ class ArticleReadStateService extends Collection<ArticleReadState> {
                 { id: articleId },
                 {
                     $inc: {
-                        readSeconds,
+                        "stats.readSeconds": readSeconds,
                     },
                 },
             );
