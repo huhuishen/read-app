@@ -41,6 +41,7 @@
     width={finalWidth}
     height={finalHeight}
     class={className}
+    class:hand={onclick != undefined}
     {fill}
     stroke={color}
     stroke-width={computedStrokeWidth}
@@ -62,3 +63,10 @@
     {/if}
     <use href={`#${name}`} />
 </svg>
+
+<style>
+    .hand {
+        cursor: pointer;
+        outline: none;
+    }
+</style>

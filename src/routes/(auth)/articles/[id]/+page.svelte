@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
     import { browser } from "$app/environment";
     import Debug from "$lib/components/Debug.svelte";
     import Icon from "$lib/components/Icon.svelte";
@@ -9,6 +9,7 @@
     import { createApi, safeCall } from "$lib/util/apiRequest";
     import { stringSegment, toLocalDateString } from "$lib/util/client";
     import { onMount } from "svelte";
+    import Modal from "$lib/components/overlay/Modal.svelte";
     import type { PageProps } from "./$types";
     import ArticleSegment from "./ArticleSegment.svelte";
     import BottomBar from "./BottomBar.svelte";
@@ -17,7 +18,7 @@
     import FloatBar from "./FloatBar.svelte";
     import { ReadTimer } from "./realTimer";
     import UnderlineModal from "./UnderlineModal.svelte";
-    import { toggleTheme } from "../../../util";
+    import { getTheme, setTheme } from "../../../util";
 
     const { data }: PageProps = $props();
 
@@ -49,6 +50,96 @@
     let range: Range | null = null;
 
     const api = createApi();
+    type ReaderOption = { label: string; value: string };
+    type ThemeOption = { label: string; value: "light" | "dark" };
+
+    const THEME_OPTIONS: ThemeOption[] = [
+        { label: "浅色", value: "light" },
+        { label: "深色", value: "dark" },
+    ];
+    const FONT_OPTIONS: ReaderOption[] = [
+        {
+            label: "宋体书卷",
+            value: '"Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", serif',
+        },
+        {
+            label: "黑体清晰",
+            value: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif',
+        },
+        {
+            label: "楷体人文",
+            value: '"Kaiti SC", "STKaiti", "KaiTi", serif',
+        },
+        {
+            label: "仿宋古雅",
+            value: '"STFangsong", "FangSong", serif',
+        },
+        {
+            label: "圆体亲和",
+            value: '"YouYuan", "Arial Rounded MT Bold", "PingFang SC", sans-serif',
+        },
+        {
+            label: "系统默认",
+            value: '-apple-system, "SF Pro SC", "Segoe UI", "Roboto", "PingFang SC", "Microsoft YaHei", sans-serif',
+        },
+    ];
+    const FONT_SIZE_OPTIONS: ReaderOption[] = [
+        { label: "小 (16px)", value: "16px" },
+        { label: "中 (20px)", value: "20px" },
+        { label: "大 (24px)", value: "24px" },
+        { label: "特大 (28px)", value: "28px" },
+    ];
+
+    const READER_THEME_KEY = "reader.theme";
+    const READER_FONT_KEY = "reader.font.family";
+    const READER_FONT_SIZE_KEY = "reader.font.size";
+
+    let showSettingsModal = $state(false);
+    let selectedTheme = $state<"light" | "dark">("light");
+    let selectedFont = $state(FONT_OPTIONS[0].value);
+    let selectedFontSize = $state(FONT_SIZE_OPTIONS[1].value);
+
+    function openSettings() {
+        showSettingsModal = true;
+    }
+
+    function applyReaderPreferences() {
+        const root = document.documentElement;
+        root.style.setProperty("--reader-font-family", selectedFont);
+        root.style.setProperty("--reader-font-size", selectedFontSize);
+        setTheme(selectedTheme);
+
+        localStorage.setItem(READER_THEME_KEY, selectedTheme);
+        localStorage.setItem(READER_FONT_KEY, selectedFont);
+        localStorage.setItem(READER_FONT_SIZE_KEY, selectedFontSize);
+    }
+
+    function initReaderPreferences() {
+        const currentTheme = getTheme();
+        if (currentTheme === "dark" || currentTheme === "light") {
+            selectedTheme = currentTheme;
+        }
+
+        const savedTheme = localStorage.getItem(READER_THEME_KEY);
+        if (savedTheme === "dark" || savedTheme === "light") {
+            selectedTheme = savedTheme;
+        }
+
+        const savedFont = localStorage.getItem(READER_FONT_KEY);
+        if (savedFont && FONT_OPTIONS.some((o) => o.value === savedFont)) {
+            selectedFont = savedFont;
+        }
+
+        const savedFontSize = localStorage.getItem(READER_FONT_SIZE_KEY);
+        if (
+            savedFontSize &&
+            FONT_SIZE_OPTIONS.some((o) => o.value === savedFontSize)
+        ) {
+            selectedFontSize = savedFontSize;
+        }
+
+        applyReaderPreferences();
+    }
 
     function saveSelection() {
         if (!browser) return null;
@@ -113,7 +204,7 @@
 
         const segment = parseInt(id, 10);
 
-        // 段落选区前面的文字长度
+        // 段落选区前面的文本长度
         const preSelectionRange = range.cloneRange();
         preSelectionRange.selectNodeContents(target);
         const maxlen = preSelectionRange.toString().length;
@@ -149,7 +240,7 @@
 
     function getTopVisibleParagraph(): number | null {
         const x = window.innerWidth / 2;
-        const y = 10; // 视口顶部往下 10px
+        const y = 10; // 视口顶部向下 10px
         const elements = document.elementsFromPoint(x, y);
 
         for (const el of elements) {
@@ -190,6 +281,7 @@
 
     onMount(() => {
         if (!browser) return;
+        initReaderPreferences();
 
         const timer = new ReadTimer(
             (duration) => {
@@ -237,7 +329,7 @@
         {
             label: "设置",
             icon: "settings",
-            onclick: toggleTheme,
+            onclick: openSettings,
         },
         {
             label: "评论",
@@ -344,13 +436,70 @@
     >
 </div>
 
-<!-- 桌面版右下浮动工具条 -->
+<!-- 桌面端右下浮动工具栏 -->
 <div class="float-button">
     <FloatBar {actions}></FloatBar>
 </div>
 
-<!-- 移动端底部弹出浮动工具条 -->
+<!-- 移动端底部浮动工具栏 -->
 <BottomBar {actions} />
+
+<Modal bind:show={showSettingsModal} closeButton size="sm">
+    <div class="settings-modal">
+        <h3>阅读设置</h3>
+
+        <section class="setting-section">
+            <p>主题</p>
+            <div class="setting-options">
+                {#each THEME_OPTIONS as option}
+                    <CheckButton
+                        selected={selectedTheme === option.value}
+                        onclick={() => {
+                            selectedTheme = option.value;
+                            applyReaderPreferences();
+                        }}
+                    >
+                        {option.label}
+                    </CheckButton>
+                {/each}
+            </div>
+        </section>
+
+        <section class="setting-section">
+            <p>字体</p>
+            <div class="setting-options">
+                {#each FONT_OPTIONS as option}
+                    <CheckButton
+                        selected={selectedFont === option.value}
+                        onclick={() => {
+                            selectedFont = option.value;
+                            applyReaderPreferences();
+                        }}
+                    >
+                        {option.label}
+                    </CheckButton>
+                {/each}
+            </div>
+        </section>
+
+        <section class="setting-section">
+            <p>字号</p>
+            <div class="setting-options">
+                {#each FONT_SIZE_OPTIONS as option}
+                    <CheckButton
+                        selected={selectedFontSize === option.value}
+                        onclick={() => {
+                            selectedFontSize = option.value;
+                            applyReaderPreferences();
+                        }}
+                    >
+                        {option.label}
+                    </CheckButton>
+                {/each}
+            </div>
+        </section>
+    </div>
+</Modal>
 
 <!-- 划线评论 -->
 <UnderlineModal
@@ -363,7 +512,7 @@
     anchor={spanAct}
 ></UnderlineModal>
 
-<!-- 评分及评论 -->
+<!-- 评论区抽屉 -->
 <CommentDrawer
     bind:show={showCommentDrawer}
     articleId={article.id}
@@ -380,7 +529,7 @@
         font-weight: 600;
         font-size: 32px;
         color: var(--header-color);
-        font-family: "Times New Roman", Times, serif;
+        font-family: var(--reader-font-family, "Times New Roman", Times, serif);
     }
 
     .float-button {
@@ -404,5 +553,30 @@
         margin: 3em 0;
         border-top: 1px solid var(--link-disabled);
         gap: 2em;
+    }
+
+    .settings-modal {
+        padding: 20px;
+    }
+
+    .settings-modal h3 {
+        margin: 0 0 14px;
+        color: var(--header-color);
+    }
+
+    .setting-section {
+        margin-top: 14px;
+    }
+
+    .setting-section p {
+        margin: 0 0 8px;
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+
+    .setting-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 </style>

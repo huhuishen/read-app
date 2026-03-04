@@ -25,9 +25,22 @@ export function formatDurationWithUnit(seconds?: number) {
 }
 
 export function toggleTheme() {
+    const theme = getTheme();
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+
+    localStorage.setItem("reader.theme", nextTheme);
+    return nextTheme;
+}
+
+export function setTheme(theme: "light" | "dark") {
+    const html = document.documentElement;
+    html.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+}
+
+export function getTheme() {
     const html = document.documentElement;
     const theme = html.getAttribute("data-theme");
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    html.setAttribute("data-theme", nextTheme);
-    localStorage.setItem("theme", nextTheme);
+    return theme;
 }

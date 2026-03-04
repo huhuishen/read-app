@@ -44,7 +44,7 @@
     });
 </script>
 
-<div class="comment" class:collapsed={!expanded} bind:this={container}>
+<div class="comment" bind:this={container}>
     <!-- 头像及发表日期，评分（如果有�?-->
     <div class="flex g-3 mb-1 gray">
         <div class="flex g-2">
@@ -61,7 +61,7 @@
         {/if}
     </div>
 
-    <div class="g-2 mb-1">
+    <div class="flex g-2" class:collapsed={!expanded}>
         {#if comment.replyTo}
             <div class="flex g-2 quote">
                 <span>@{comment.replyTo}</span>
@@ -72,16 +72,15 @@
             <p>{seg.text}</p>
         {/each}
         {#if overflow && !expanded}
-            <div class="flex center fade">
-                <button class="toggle" onclick={() => (expanded = true)}
-                    >展开更多内容</button
-                >
-            </div>
+            <div class="flex center fade"></div>
         {/if}
     </div>
+    {#if overflow && !expanded}
+        <Button variant="link" onclick={() => (expanded = true)}>展开</Button>
+    {/if}
 
     <!-- 点赞及回复按�?-->
-    <div class="flex g-4">
+    <div class="flex g-4 mt-1">
         <Button
             variant="link"
             onclick={() => {
@@ -125,8 +124,9 @@
         transition: max-height 0.25s ease;
     }
     .collapsed {
-        max-height: 200px;
+        max-height: 180px;
         overflow: hidden;
+        position: relative;
     }
     .quote {
         color: var(--link-color);
@@ -145,17 +145,5 @@
     }
     .gray {
         color: var(--text-faint);
-    }
-    /* 展开按钮 */
-    .toggle {
-        background-color: var(--surface-soft);
-        border-radius: 999px;
-        border: none;
-        cursor: pointer;
-        padding: 5px 20px;
-    }
-
-    .toggle:hover {
-        background-color: var(--border-soft);
     }
 </style>

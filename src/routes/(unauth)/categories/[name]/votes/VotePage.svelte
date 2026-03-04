@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Avatar from "$lib/components/Avatar.svelte";
     import Modal from "$lib/components/overlay/Modal.svelte";
     import type { Article } from "$lib/models";
     import { toast } from "$lib/stores/toast.svelte";
@@ -66,23 +67,9 @@
     {/each}
 </div>
 
-<Modal bind:show={showVotersModal} size="full">
+<Modal bind:show={showVotersModal} size="sm" closeButton={true}>
     <div class="voters-modal">
-        <div class="header">
-            <h3>ͶƱ�û�</h3>
-            <button
-                type="button"
-                class="close-btn"
-                aria-label="�ر�"
-                onclick={() => {
-                    showVotersModal = false;
-                }}
-            >
-                x
-            </button>
-        </div>
-
-        <div class="article-title">{selectedArticle?.title}</div>
+        <div class="article-title">投票人员</div>
 
         {#if loadingVoters}
             <p class="hint">加载中...</p>
@@ -92,12 +79,7 @@
             <ul class="voter-list">
                 {#each voters as user}
                     <li class="voter-item">
-                        <div
-                            class="avatar"
-                            style={`background:${user.avatarColor || "var(--accent-primary)"}`}
-                        >
-                            {userInitial(user.name)}
-                        </div>
+                        <Avatar name={user.name}></Avatar>
                         <div class="info">
                             <div class="name">{user.name}</div>
                             <div class="time">
@@ -113,31 +95,7 @@
 
 <style>
     .voters-modal {
-        padding: 14px;
-        min-width: 300px;
-    }
-
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-    }
-
-    .header h3 {
-        margin: 0;
-        font-size: 18px;
-    }
-
-    .close-btn {
-        border: none;
-        border-radius: 8px;
-        background: var(--border-soft);
-        color: var(--text-primary);
-        width: 28px;
-        height: 28px;
-        line-height: 1;
-        cursor: pointer;
+        padding: 1.5rem;
     }
 
     .article-title {
@@ -167,34 +125,16 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        border: 1px solid var(--border-soft);
-        border-radius: 10px;
         padding: 8px;
         background: var(--main-bg-color);
-    }
-
-    .avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        color: var(--reader-bg-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        flex: none;
     }
 
     .info {
         min-width: 0;
     }
 
-    .name {
-        font-weight: 600;
-    }
-
     .time {
-        font-size: 12px;
-        color: var(--text-secondary);
+        font-size: 13px;
+        color: var(--text-faint);
     }
 </style>

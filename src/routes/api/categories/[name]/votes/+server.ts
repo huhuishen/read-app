@@ -22,7 +22,7 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
         {
             projection: { _id: 0, content: 0, summary: 0 },
         },
-    ).toArray();
+    ).sort({ "stats.vote": -1 }).toArray();
 
     // const items = articles
     //     .map((item) => ensureArticleStats(item as any))

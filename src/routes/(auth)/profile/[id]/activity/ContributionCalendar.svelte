@@ -288,7 +288,7 @@
     .tooltip {
         position: fixed;
         background: var(--surface-page);
-        color: white;
+        color: var(--text-primary);
         padding: 6px 8px;
         border-radius: 6px;
         font-size: 12px;

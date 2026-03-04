@@ -57,17 +57,19 @@
             </a>
         </div>
 
-        <Button
-            variant="danger"
-            onclick={() => {
-                onVoteClick?.(article);
-            }}
-        >
-            <div class="stats">
-                <div class="value">{article.stats?.vote ?? 0}</div>
-                <div class="label">投票</div>
-            </div>
-        </Button>
+        <div class="vote-trigger">
+            <Button
+                variant="link"
+                onclick={() => {
+                    onVoteClick?.(article);
+                }}
+            >
+                <div class="stats">
+                    <div class="value">{article.stats?.vote ?? 0}</div>
+                    <div class="label">投票</div>
+                </div>
+            </Button>
+        </div>
     </div>
 </div>
 
@@ -165,16 +167,8 @@
     }
 
     .vote-trigger {
-        border: none;
-        background: transparent;
-        padding: 0;
-        cursor: pointer;
-        color: inherit;
-        border-radius: 8px;
-    }
-
-    .vote-trigger:hover {
-        background: var(--overlay-soft);
+        background: var(--surface-ghost);
+        padding: 0.5rem;
     }
 
     .value {

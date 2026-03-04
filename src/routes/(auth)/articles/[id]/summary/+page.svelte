@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Modal from "$lib/components/overlay/Modal.svelte";
     import type { PageProps } from "./$types";
     import ArticleSummary from "./ArticleSummary.svelte";
 
@@ -12,9 +11,6 @@
 <svelte:head>
     <title>{article.title} - 作品概况</title>
 </svelte:head>
-<Modal show={true}>asdf</Modal>
 
 <ArticleSummary {article} user={data.user} underlines={data.underlines}
 ></ArticleSummary>
-<style>
-</style>

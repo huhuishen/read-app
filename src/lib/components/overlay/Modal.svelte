@@ -8,11 +8,13 @@
         show = $bindable(),
         children,
         clickClose = true,
+        closeButton = false,
         size = "md",
     }: {
         show: boolean;
         children?: Snippet;
         clickClose?: boolean;
+        closeButton?: boolean;
         size?: "sm" | "md" | "lg" | "full";
     } = $props();
 
@@ -49,7 +51,7 @@
         aria-modal="true"
         tabindex="0"
     >
-        {#if size === "full"}
+        {#if closeButton}
             <button
                 class="modal-close"
                 aria-label="Close modal"
@@ -66,15 +68,17 @@
 
 <style>
     .modal-content {
+        position: relative;
+
         background-color: var(--main-bg-color);
         border-radius: 3px;
         max-height: 90vh;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        /* box-shadow:
+        box-shadow:
             0 10px 25px var(--shadow-sm),
-            0 4px 10px var(--shadow-sm); */
+            0 4px 10px var(--shadow-sm);
 
         z-index: 2100;
         outline: none;

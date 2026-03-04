@@ -101,7 +101,8 @@
         line-height: 2;
         margin-bottom: 1rem;
         position: relative;
-        font-size: 20px;
+        font-size: var(--reader-font-size, 20px);
+        font-family: var(--reader-font-family, "Times New Roman", Times, serif);
         color: var(--text-color);
     }
 

@@ -5,7 +5,8 @@
     import Pagination from "$lib/components/Pagination.svelte";
     import Search from "$lib/components/Search.svelte";
     import Menu from "$lib/components/user/Menu.svelte";
-    import { toggleTheme } from "../util";
+    import { onMount } from "svelte";
+    import { getTheme, toggleTheme } from "../util";
     import type { PageProps } from "./$types";
     import ArticleCard from "./ArticleCard.svelte";
     import CategoryTitle from "./CategoryTitle.svelte";
@@ -15,10 +16,15 @@
 
     let user = $derived(data.user);
     let searchQuery = $derived(data.query || "");
+    let theme = $state("light");
     // const api = createApi();
 
     let categories = $derived(data.categories ?? []);
     let tags = $derived(data.tags ?? []);
+
+    onMount(() => {
+        theme = getTheme() ?? "light";
+    });
 </script>
 
 <svelte:head>
@@ -39,7 +45,12 @@
         ></Search>
     </div>
     <div class="flex g-3">
-        <Icon name="settings" onclick={toggleTheme}></Icon>
+        <Icon
+            name={theme === "dark" ? "sun" : "moon"}
+            onclick={() => {
+                theme = toggleTheme();
+            }}
+        ></Icon>
         {#if user}
             <Menu {user} />
         {:else}
