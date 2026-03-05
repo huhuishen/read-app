@@ -9,12 +9,14 @@
         children,
         clickClose = true,
         closeButton = false,
+        title,
         size = "md",
     }: {
         show: boolean;
         children?: Snippet;
         clickClose?: boolean;
         closeButton?: boolean;
+        title?: string;
         size?: "sm" | "md" | "lg" | "full";
     } = $props();
 
@@ -51,17 +53,20 @@
         aria-modal="true"
         tabindex="0"
     >
-        {#if closeButton}
-            <button
-                class="modal-close"
-                aria-label="Close modal"
-                onclick={() => {
-                    show = false;
-                }}
-            >
-                <Icon name="cross" size={16} strokeWidth={1} />
-            </button>
-        {/if}
+        <div class="flex sb title">
+            <h3>{title}</h3>
+            {#if closeButton}
+                <button
+                    class="modal-close"
+                    aria-label="Close modal"
+                    onclick={() => {
+                        show = false;
+                    }}
+                >
+                    <Icon name="cross" size={16} strokeWidth={1} />
+                </button>
+            {/if}
+        </div>
         {@render children?.()}
     </div>
 </Overlay>
@@ -83,6 +88,11 @@
         z-index: 2100;
         outline: none;
         width: 100%;
+        padding: 1rem;
+    }
+    .title h3 {
+        padding: 0;
+        margin: 0;
     }
 
     /* 尺寸控制（非常实用） */
@@ -106,9 +116,9 @@
 
     /* 默认全屏关闭按钮 */
     .modal-close {
-        position: absolute;
+        /* position: absolute;
         top: 12px;
-        right: 12px;
+        right: 12px; */
         width: 24px;
         height: 24px;
         border: none;

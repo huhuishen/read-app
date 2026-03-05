@@ -109,8 +109,17 @@ function enforceStatusTransition(
         (isOwner || hasEditorPermission) &&
         currentStatus === "上架" &&
         nextStatus === "下架";
+    const canRepublish =
+        hasEditorPermission &&
+        currentStatus === "下架" &&
+        nextStatus === "上架";
 
-    if (!canSubmitForReview && !canReviewDecision && !canTakeDown) {
+    if (
+        !canSubmitForReview &&
+        !canReviewDecision &&
+        !canTakeDown &&
+        !canRepublish
+    ) {
         apiError(403, "Invalid status transition");
     }
 }

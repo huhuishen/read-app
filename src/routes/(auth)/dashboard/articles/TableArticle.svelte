@@ -2,6 +2,8 @@
     import { goto } from "$app/navigation";
     import Pagination from "$lib/components/Pagination.svelte";
     import type { Article } from "$lib/models";
+    import { toast } from "$lib/stores/toast.svelte";
+    import { createApi, safeCall } from "$lib/util/apiRequest";
     import type { DataPage } from "$lib/mongolite";
     import { toLocalDateString } from "$lib/util/client";
     import { formatDuration } from "../../../util";
@@ -12,6 +14,7 @@
     }: {
         data: DataPage<Article>;
     } = $props();
+    const api = createApi();
 
     const columns: Column<Article>[] = [
         {
@@ -80,7 +83,7 @@
     onSelect={(row) => {}}
     context={[
         {
-            name: "转到",
+            name: "跳转",
             className: "bold",
             onclick: (row) => {
                 goto(`/articles/${row.id}`);
@@ -88,7 +91,35 @@
         },
         {
             name: "上/下架",
-            onclick: async (row) => {},
+            onclick: async (row) => {
+                if (!row?.id) return;
+
+                let res;
+                if (row.status === "下架") {
+                    res = await safeCall(
+                        api.post(`/api/articles/${row.id}`, {
+                            status: "上架",
+                        }),
+                        toast,
+                    );
+
+                    if (!res) return;
+                    row.status = "上架";
+                } else if (row.status === "上架") {
+                    res = await safeCall(
+                        api.post(`/api/articles/${row.id}`, {
+                            status: "下架",
+                        }),
+                        toast,
+                    );
+
+                    if (!res) return;
+                    row.status = "下架";
+                }
+
+                data.items = [...data.items];
+                // toast.show("已下架", "success");
+            },
         },
         {
             name: "",

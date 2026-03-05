@@ -444,10 +444,13 @@
 <!-- 移动端底部浮动工具栏 -->
 <BottomBar {actions} />
 
-<Modal bind:show={showSettingsModal} closeButton size="md">
+<Modal
+    bind:show={showSettingsModal}
+    closeButton={true}
+    title="阅读设置"
+    size="md"
+>
     <div class="settings-modal">
-        <h3>阅读设置</h3>
-
         <section class="setting-section">
             <p>主题</p>
             <div class="setting-options">
@@ -560,12 +563,7 @@
     }
 
     .settings-modal {
-        padding: 40px;
-    }
-
-    .settings-modal h3 {
-        margin: 0 0 14px;
-        color: var(--header-color);
+        padding: 2rem 1rem;
     }
 
     .setting-section {

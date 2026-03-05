@@ -29,7 +29,7 @@ GET {{host}}/articles?q=天
 
 
 ###
-GET {{host}}/articles/xj5dsrou3uru
+GET {{host}}/articles/8q917sqo19k8
 
 ###
 GET {{host}}/articles/trdro3ejj95f/comments

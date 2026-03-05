@@ -9,6 +9,7 @@
     import { onDestroy, onMount } from "svelte";
     import EditableInput from "./EditableInput.svelte";
     import EditableTextArea from "./EditableTextArea.svelte";
+    import Debug from "$lib/components/Debug.svelte";
 
     type EditorHandle = {
         undo: () => void;
@@ -159,9 +160,7 @@
         const res = await safeCall(
             api.post(
                 `/api/articles/${id}`,
-                mode === "review"
-                    ? { ...payload, status: "上架" }
-                    : payload,
+                mode === "review" ? { ...payload, status: "上架" } : payload,
             ),
             toast,
         );
@@ -338,6 +337,7 @@
     });
 </script>
 
+<!-- <Debug variable={{ mode, canTakeDown, isSubmitting, article }}></Debug> -->
 <div class="editor-container">
     <div class="main-column">
         <EditableInput
