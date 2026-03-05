@@ -346,7 +346,7 @@
             },
         },
         {
-            label: "滚动到顶部",
+            label: "回到顶部",
             icon: "arrow_up",
             onclick: () => {
                 window.scrollTo({ top: 0, behavior: "smooth" });

@@ -92,7 +92,7 @@
     {:else}
         <div class="flex">
             {#each categories as category, i}
-                <CategoryTitle name={category.name} />
+                <CategoryTitle name={category.name} more={true} />
 
                 <div class="flex articles">
                     {#each category.previewArticles as article}

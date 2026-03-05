@@ -8,7 +8,7 @@
         name: string;
     }
 
-    let { laurel = false, more = true, name }: Props = $props();
+    let { laurel = false, more = false, name }: Props = $props();
 </script>
 
 <div class="flex sb category">
@@ -44,4 +44,3 @@
         user-select: none;
     }
 </style>
-

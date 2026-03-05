@@ -131,8 +131,8 @@
     .backdrop {
         position: fixed;
         inset: 0;
-        background: var(--overlay-soft);
-        z-index: 9;
+        background: var(--overlay-default);
+        z-index: 2000;
     }
 
     .toolbar {
@@ -142,14 +142,15 @@
         bottom: 0;
         height: 80px;
         display: flex;
+        justify-content: space-between;
         gap: 0.5rem;
         padding: 0.75rem;
-        background: var(--panel-bg, var(--main-bg-color));
-        border-top: 1px solid var(--border-default);
+        background: var(--control-bg-color);
+        /* border-top: 1px solid var(--border-default); */
         transform: translateY(100%);
         transition: transform 0.1s ease;
         box-shadow: 0 -6px 20px var(--shadow-sm);
-        z-index: 10;
+        z-index: 2100;
     }
 
     .toolbar.show {

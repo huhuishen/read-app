@@ -101,7 +101,7 @@
     }
 
     .book-meta {
-        color: var(--link-disabled);
+        color: var(--text-faint);
         flex-wrap: nowrap;
         white-space: nowrap;
         gap: 15px;
@@ -111,7 +111,7 @@
 
     .summary {
         line-height: 22px;
-        color: var(--link-disabled);
+        color: var(--text-muted);
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
