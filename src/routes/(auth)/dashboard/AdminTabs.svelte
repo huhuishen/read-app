@@ -11,7 +11,8 @@
     tabs={[
         { key: "articles", label: "作品" },
         { key: "users", label: "用户" },
-        { key: "categories", label: "标签" },
+        { key: "categories", label: "期刊" },
+        { key: "tags", label: "标签" },
     ]}
     {active}
     onclick={(active) => {
@@ -20,4 +21,3 @@
 >
     {@render children?.()}
 </Tabs>
-

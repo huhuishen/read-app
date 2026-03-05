@@ -9,7 +9,7 @@ export interface AdminMenuItem {
 
 export const adminMenu: AdminMenuItem[] = [
     {
-        label: "回到主页",
+        label: "回到首页",
         icon: "home",
         href: "/",
     },
@@ -17,7 +17,7 @@ export const adminMenu: AdminMenuItem[] = [
         label: "管理",
         icon: "settings",
         href: "/dashboard/articles",
-        tabs: ["articles", "users", "categories", "stats"]
+        tabs: ["articles", "users", "categories", "tags", "stats"],
         // children: [
         //     {
         //         label: "作品",

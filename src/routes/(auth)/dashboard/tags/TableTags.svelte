@@ -5,7 +5,7 @@
     import Input from "$lib/components/Input.svelte";
     import Drawer from "$lib/components/overlay/Drawer.svelte";
     import Pagination from "$lib/components/Pagination.svelte";
-    import type { Category } from "$lib/models";
+    import type { Tag } from "$lib/models";
     import type { DataPage } from "$lib/mongolite";
     import { toast } from "$lib/stores/toast.svelte";
     import { apiRequest, createApi, safeCall } from "$lib/util/apiRequest";
@@ -14,59 +14,39 @@
     const {
         data,
     }: {
-        data: DataPage<Category>;
+        data: DataPage<Tag>;
     } = $props();
 
-    const columns: Column<Category>[] = [
+    const columns: Column<Tag>[] = [
         {
             name: "名称",
             text: (item) => item.name,
             className: "xlg",
         },
-        // {
-        //     name: "有奖征文",
-        //     text: (item) => (item.award ? "是" : ""),
-        // },
         {
             name: "首页显示",
-            text: (item) => (item.show ? "显示" : ""),
-        },
-        {
-            name: "类型",
-            text: (item) =>
-                item.level == 2
-                    ? "显示封面、标题及作者"
-                    : item.level == 1
-                      ? "显示标题及作者"
-                      : "仅显示数量",
-            className: "lg",
+            text: (item) => (item.show ? "显示" : "不显示"),
         },
         {
             name: "相关文章",
             text: (item) =>
                 item.articleCount ? item.articleCount.toString() : "0",
         },
-        {
-            name: "预览数量",
-            text: (item) =>
-                item.previewSize ? item.previewSize.toString() : "0",
-        },
     ];
 
     const api = createApi();
 
     async function create() {
-        const result = await safeCall(api.post("/api/categories", form), toast);
+        const result = await safeCall(api.post("/api/tags", form), toast);
         if (!result) return;
 
         resetForm();
-
-        // await load();
+        location.reload();
     }
 
     async function update() {
         const result = await safeCall(
-            api.patch("/api/categories", {
+            api.patch("/api/tags", {
                 oldName: editing!.name,
                 ...form,
             }),
@@ -75,18 +55,16 @@
         if (!result) return;
 
         editing = null;
-
         resetForm();
-
-        // await load();
+        location.reload();
     }
 
     async function remove(name?: string) {
         if (!name) return;
-        if (!confirm("确定删除标签？")) return;
+        if (!confirm("确定删除该标签吗？")) return;
 
         const result = await safeCall(
-            apiRequest("/api/categories", {
+            apiRequest("/api/tags", {
                 method: "DELETE",
                 body: { name },
             }),
@@ -94,68 +72,41 @@
         );
         if (!result) return;
 
-        // await load();
+        location.reload();
     }
 
-    // async function move(index: number, dir: number) {
-    //     const target = index + dir;
+    function edit(tag: Tag) {
+        editing = tag;
 
-    //     if (target < 0 || target >= categories.length) return;
+        form.name = tag.name ?? "";
+        form.show = tag.show ?? true;
+        show = true;
+    }
 
-    //     const a = categories[index];
-    //     const b = categories[target];
-
-    //     const result = await safeCall(
-    //         api.patch("/api/categories/order", [
-    //             { name: a.name, order: b.order },
-    //             { name: b.name, order: a.order },
-    //         ]),
-    //         toast,
-    //     );
-    //     if (!result) return;
-
-    //     // await load();
-    // }
-
-    function edit(c: Category) {
-        editing = c;
-
-        form.name = c.name ?? "";
-        form.description = c.description ?? "";
-        form.show = c.show ?? false;
-        form.level = c.level ?? 0;
-        form.previewSize = c.previewSize ?? 0;
+    function newTag() {
+        editing = null;
+        resetForm();
         show = true;
     }
 
     function resetForm() {
         form.name = "";
-        form.description = "";
-        form.award = false;
         form.show = true;
-        form.level = 0;
-        form.previewSize = 6;
-
         show = false;
     }
 
     let show = $state(false);
-
-    let categories = $derived(data.items);
-
-    let editing = $state<Partial<Category> | null>(null);
-
-    let showCreate = $state(false);
+    let editing = $state<Partial<Tag> | null>(null);
 
     let form = $state({
         name: "",
-        description: "",
-        award: false,
-        show: false,
-        level: 0,
-        previewSize: 0,
+        show: true,
     });
 </script>
+
+<div class="mb-3">
+    <Button onclick={newTag}>新建标签</Button>
+</div>
 
 <Table
     items={data.items}
@@ -175,24 +126,6 @@
         {
             name: "",
         },
-        // {
-        //     name: "上移",
-        //     onclick: (row) => {
-        //         move(
-        //             categories.findIndex((c) => c.name === row.name),
-        //             -1,
-        //         );
-        //     },
-        // },
-        // {
-        //     name: "下移",
-        //     onclick: (row) => {
-        //         move(
-        //             categories.findIndex((c) => c.name === row.name),
-        //             1,
-        //         );
-        //     },
-        // },
         {
             name: "删除",
             className: "danger",
@@ -200,7 +133,7 @@
                 remove(row.name);
             },
             disabled: (row) => {
-                return true;
+                return (row.articleCount ?? 0) > 0;
             },
         },
     ]}
@@ -212,7 +145,7 @@
         limit={data.limit}
         page={data.page}
         formatUrl={(n) => {
-            return `/dashboard/categories/?page=${n}&limit=${data.limit}`;
+            return `/dashboard/tags/?page=${n}&limit=${data.limit}`;
         }}
     ></Pagination>
 </div>
@@ -232,36 +165,11 @@
             placeholder="标签名称"
         ></Input>
 
-        <Input
-            bind:value={form.description}
+        <Checkbox
             className="col-12"
-            label="描述"
-            placeholder="描述"
-        ></Input>
-
-        <Checkbox className="col-12" bind:checked={form.award} label="有奖征文"
+            bind:checked={form.show}
+            label="首页显示"
         ></Checkbox>
-        <Checkbox className="col-12" bind:checked={form.show} label="首页显示"
-        ></Checkbox>
-
-        <label class="col-12">
-            <div class="label">类型</div>
-            <select bind:value={form.level}>
-                <option value={2}>显示封面、标题及作者</option>
-                <option value={1}>显示标题及作者</option>
-                <option value={0}>仅显示数量</option>
-            </select>
-        </label>
-
-        <label class="col-12">
-            <div class="label">预览数量</div>
-            <input
-                type="number"
-                bind:value={form.previewSize}
-                min="1"
-                max="20"
-            />
-        </label>
 
         <div class="flex sb mt-3 buttons">
             {#if editing}
@@ -273,7 +181,6 @@
             <Button
                 onclick={() => {
                     editing = null;
-                    showCreate = false;
                     resetForm();
                 }}
             >
@@ -295,6 +202,7 @@
         height: 60px;
         z-index: 2200;
     }
+
     .form {
         font-size: 16px;
         padding: 1rem;

@@ -4,12 +4,10 @@
     import TableCategories from "./TableCategories.svelte";
 
     let { data } = $props();
-
-
 </script>
 
 <svelte:head>
-    <title>鏍囩绠＄悊</title>
+    <title>分类管理</title>
 </svelte:head>
 
 <AdminTabs active="categories">
