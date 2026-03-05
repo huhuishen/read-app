@@ -28,14 +28,14 @@
         left: calc(50% + 410px);
         /* transform: translateX(100%); */
         height: fit-content;
-        width: 300px;
+        min-width: 300px;
         background: var(--main-bg-color);
         padding: 1rem;
     }
 
     @media (max-width: 1420px) {
         .container {
-            padding: 0 5px;
+            padding: 0;
         }
 
         .side {

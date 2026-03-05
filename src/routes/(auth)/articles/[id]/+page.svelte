@@ -59,23 +59,23 @@
     ];
     const FONT_OPTIONS: ReaderOption[] = [
         {
-            label: "宋体书卷",
+            label: "宋体",
             value: '"Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", serif',
         },
         {
-            label: "黑体清晰",
+            label: "黑体",
             value: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif',
         },
         {
-            label: "楷体人文",
+            label: "楷体",
             value: '"Kaiti SC", "STKaiti", "KaiTi", serif',
         },
         {
-            label: "仿宋古雅",
+            label: "仿宋",
             value: '"STFangsong", "FangSong", serif',
         },
         {
-            label: "圆体亲和",
+            label: "圆体",
             value: '"YouYuan", "Arial Rounded MT Bold", "PingFang SC", sans-serif',
         },
         {
@@ -444,7 +444,7 @@
 <!-- 移动端底部浮动工具栏 -->
 <BottomBar {actions} />
 
-<Modal bind:show={showSettingsModal} closeButton size="sm">
+<Modal bind:show={showSettingsModal} closeButton size="md">
     <div class="settings-modal">
         <h3>阅读设置</h3>
 
@@ -476,7 +476,11 @@
                             applyReaderPreferences();
                         }}
                     >
-                        {option.label}
+                        <span
+                            class="font-option-label"
+                            style={`font-family: ${option.value};`}
+                            >{option.label}</span
+                        >
                     </CheckButton>
                 {/each}
             </div>
@@ -556,7 +560,7 @@
     }
 
     .settings-modal {
-        padding: 20px;
+        padding: 40px;
     }
 
     .settings-modal h3 {
@@ -578,5 +582,9 @@
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
+    }
+
+    .font-option-label {
+        line-height: 1.2;
     }
 </style>

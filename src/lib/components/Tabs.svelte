@@ -50,6 +50,7 @@
         border-bottom: 1px solid var(--border-soft);
 
         height: 50px;
+        min-width: 400px;
         z-index: 100;
     }
     .tabs-center {
@@ -77,5 +78,6 @@
         padding: 1rem;
         min-height: calc(100vh - 60px);
         background: var(--main-bg-color);
+        min-width: 400px;
     }
 </style>
