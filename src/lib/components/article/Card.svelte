@@ -120,8 +120,10 @@
 
     .tag {
         color: var(--brand-gold);
-        padding: 0 8px;
+        padding: 4px 8px;
         background: var(--surface-disabled);
+        font-size: 13px;
+        height: 26px;
         /* border: 1px solid var(--brand-gold); */
     }
 

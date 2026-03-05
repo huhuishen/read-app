@@ -58,7 +58,7 @@ async function ensureCanEditArticle(
 ) {
     const target = await Articles.findOne(
         { id: articleId, isLatest: true },
-        { projection: { _id: 0, authorId: 1, status: 1, tags: 1, title: 1, coverImage: 1, category: 1 } }
+        { projection: { _id: 0, authorId: 1, author: 1, status: 1, tags: 1, title: 1, coverImage: 1, category: 1 } }
     );
 
     if (!target) {
@@ -187,6 +187,85 @@ async function syncCategoryPreviewCache(
     );
 }
 
+async function syncCategoryPreviewCacheOnUnpublish(
+    articleId: string,
+    oldStatus: string | undefined,
+    update: Record<string, unknown>
+) {
+    if (!Object.prototype.hasOwnProperty.call(update, 'status')) {
+        return;
+    }
+
+    const currentStatus = normalizeStatus(oldStatus ?? '草稿');
+    const nextStatus = normalizeStatus(update.status);
+
+    if (currentStatus === nextStatus || nextStatus !== '下架') {
+        return;
+    }
+
+    await Categories.updateMany(
+        { 'previewArticles.id': articleId },
+        { $pull: { previewArticles: { id: articleId } } }
+    );
+}
+
+function getCategoryPeriodFromUpdate(update: Record<string, unknown>, fallback?: string) {
+    const category = update.category;
+    if (category && typeof category === 'object' && 'period' in category) {
+        const period = (category as { period?: unknown }).period;
+        if (typeof period === 'string' && period.trim()) {
+            return period.trim();
+        }
+    }
+    return fallback;
+}
+
+async function syncCategoryPreviewCacheOnPublish(
+    articleId: string,
+    target: { status?: string; title?: string; coverImage?: string; author?: string; category?: { period?: string } },
+    update: Record<string, unknown>
+) {
+    if (!Object.prototype.hasOwnProperty.call(update, 'status')) {
+        return;
+    }
+
+    const currentStatus = normalizeStatus(target.status ?? '草稿');
+    const nextStatus = normalizeStatus(update.status);
+
+    if (currentStatus === nextStatus || nextStatus !== '上架') {
+        return;
+    }
+
+    const categoryPeriod = getCategoryPeriodFromUpdate(update, target.category?.period);
+    if (!categoryPeriod) {
+        return;
+    }
+
+    const title = Object.prototype.hasOwnProperty.call(update, 'title')
+        ? String(update.title ?? '')
+        : (target.title ?? '');
+    const coverImage = Object.prototype.hasOwnProperty.call(update, 'coverImage')
+        ? String(update.coverImage ?? '')
+        : (target.coverImage ?? '');
+
+    await Categories.updateOne(
+        { name: categoryPeriod, 'previewArticles.id': { $ne: articleId } },
+        {
+            $push: {
+                previewArticles: {
+                    $each: [{
+                        id: articleId,
+                        title,
+                        coverImage,
+                        author: target.author ?? '',
+                    }],
+                    $position: 0,
+                }
+            }
+        }
+    );
+}
+
 async function syncCategoryCacheOnDelete(
     articleId: string,
     categoryPeriod?: string
@@ -247,6 +326,8 @@ export const POST: RequestHandler = withApi(async (event) => {
     );
 
     await syncCategoryPreviewCache(params.id, target.title, target.coverImage, update);
+    await syncCategoryPreviewCacheOnPublish(params.id, target, update);
+    await syncCategoryPreviewCacheOnUnpublish(params.id, target.status, update);
 
     const oldTags = target.tags ?? [];
     const nextTags = Array.isArray(update.tags) ? (update.tags as string[]) : oldTags;
