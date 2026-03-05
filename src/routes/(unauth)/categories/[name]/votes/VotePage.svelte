@@ -67,10 +67,8 @@
     {/each}
 </div>
 
-<Modal bind:show={showVotersModal} size="sm" closeButton={true}>
+<Modal bind:show={showVotersModal} size="sm" title="投票人员" closeButton={true}>
     <div class="voters-modal">
-        <div class="article-title">投票人员</div>
-
         {#if loadingVoters}
             <p class="hint">加载中...</p>
         {:else if voters.length === 0}
@@ -96,13 +94,7 @@
 
 <style>
     .voters-modal {
-        padding: 1.5rem;
-    }
-
-    .article-title {
-        margin-top: 8px;
-        font-weight: 600;
-        color: var(--text-secondary);
+        padding: 1rem;
     }
 
     .hint {

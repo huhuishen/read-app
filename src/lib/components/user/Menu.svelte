@@ -11,39 +11,31 @@
         user: Partial<User>;
     } = $props();
 
-    const items = $derived<DropdownProps["items"]>(
-        user?.roles?.includes("administrator")
+    type MenuItem = DropdownProps["items"][number];
+
+    const items = $derived<DropdownProps["items"]>([
+        ...(user?.roles?.includes("administrator")
             ? [
-                  {
-                      name: "个人中心",
-                      onclick: () => goto(`/profile/${user.id}/articles`),
-                  },
                   {
                       name: "管理",
                       onclick: () => goto(`/dashboard/articles`),
-                  },
-                  { name: "" },
-                  {
-                      name: "退出登录",
-                      onclick: logout,
-                  },
+                  } satisfies MenuItem,
               ]
-            : [
-                  {
-                      name: "个人中心",
-                      onclick: () => goto(`/profile/${user.id}/articles`),
-                  },
-                  {
-                      name: "发表",
-                      onclick: () => goto(`/articles/write`),
-                  },
-                  { name: "" },
-                  {
-                      name: "退出登录",
-                      onclick: logout,
-                  },
-              ],
-    );
+            : []),
+        {
+            name: "个人中心",
+            onclick: () => goto(`/profile/${user.id}/articles`),
+        },
+        {
+            name: "发表",
+            onclick: () => goto(`/articles/write`),
+        },
+        { name: "" },
+        {
+            name: "退出登录",
+            onclick: logout,
+        },
+    ]);
 </script>
 
 <Dropdown {items}><Avatar name={user.name ?? ""}></Avatar></Dropdown>
