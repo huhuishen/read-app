@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-    <title>分类管理</title>
+    <title>鏈熷垔绠＄悊</title>
 </svelte:head>
 
 <AdminTabs active="categories">
