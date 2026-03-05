@@ -10,7 +10,7 @@
     <title>{data.params.name} - 标签文章</title>
 </svelte:head>
 
-<div class="flex column mt-3">
+<div class="flex column mt-3 content">
     {#if data.totalItems > 0}
         {#each data.items as article, id}
             <Card

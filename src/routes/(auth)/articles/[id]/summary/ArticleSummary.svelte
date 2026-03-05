@@ -53,7 +53,7 @@
         <div
             class="flex g-3"
             onclick={() => {
-                if (article.authorId)
+                if (article.author && article.authorId)
                     goto(`/profile/${article.authorId}/articles`);
             }}
         >

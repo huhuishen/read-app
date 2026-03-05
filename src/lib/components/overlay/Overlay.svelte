@@ -32,10 +32,13 @@
         }
     }
 
-    function handlePointerDown(e: PointerEvent) {
+    function handleClick(e: MouseEvent) {
         // only close when clicking on overlay itself
         if (!clickClose) return;
         if (e.target === e.currentTarget) {
+            // Prevent click-through: modal may unmount before pointerup/click.
+            e.preventDefault();
+            e.stopPropagation();
             show = false;
         }
     }
@@ -45,7 +48,8 @@
 
 {#if show}
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="overlay-mask" onpointerdown={handlePointerDown}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div class="overlay-mask" onclick={handleClick}>
         {@render children?.()}
     </div>
 {/if}

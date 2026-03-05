@@ -16,7 +16,7 @@
         color: var(--main-bg-color);
         background-color: var(--header-color);
         justify-content: center;
-        cursor: pointer;
+        /* cursor: pointer; */
     }
     .size-sm {
         width: 16px;
