@@ -7,7 +7,7 @@
     const { data }: PageProps = $props();
 </script>
 
-<CategoryTabs name={data.params.name}  active="articles">
+<CategoryTabs name={data.category?.alias ?? data.category?.name ?? data.params.name} active="articles">
     <div class="flex column">
         {#each data.items as article, id}
             <Card

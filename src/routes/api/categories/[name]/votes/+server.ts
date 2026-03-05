@@ -5,9 +5,10 @@ import type { RequestHandler } from "./$types";
 
 
 export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
+    const name = await Categories.resolveName(params.name);
 
     const category = await Categories.findOne(
-        { name: params.name },
+        { name },
     );
 
     if (!category || !category.voteEnd) return json({ message: "找不到指定的目录" }, { status: 404 });
@@ -18,7 +19,7 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
     if (!voteEnd) return json(null);
 
     const articles = await Articles.find(
-        { "category.period": params.name, isLatest: true, status: "published" },
+        { "category.period": name, isLatest: true, status: "published" },
         {
             projection: { _id: 0, content: 0, summary: 0 },
         },

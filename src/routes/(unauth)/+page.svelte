@@ -92,7 +92,11 @@
     {:else}
         <div class="flex">
             {#each categories as category, i}
-                <CategoryTitle name={category.name} more={true} />
+                <CategoryTitle
+                    name={category.alias ?? category.name}
+                    slug={category.alias ?? category.name}
+                    more={true}
+                />
 
                 <div class="flex articles">
                     {#each category.previewArticles as article}

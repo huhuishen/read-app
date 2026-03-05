@@ -8,10 +8,11 @@
 {#if !data || data.items.length === 0}
     <p class="empty">暂无作品</p>
 {:else}
-    {#each data.items as article}
-        <Card {article} />
-    {/each}
-
+    <div class="flex column">
+        {#each data.items as article}
+            <Card {article} />
+        {/each}
+    </div>
     {#if data.totalPages > 1}
         <div class="mt-3 mb-3">
             <Pagination

@@ -1,4 +1,4 @@
-import { Articles, Categories,  getContestInfoByDate, Settings, Tags, type Article } from '$lib/models';
+import { Articles, Categories, getContestInfoByDate, Settings, Tags, type Article } from '$lib/models';
 import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -142,6 +142,7 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
             rate: 0,
             rateSum: 0,
             rateCount: 0,
+            readSeconds: 0,
         },
     }
 

@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex category">
-    <CategoryTitle name={data.params.name}></CategoryTitle>
+    <CategoryTitle name={data.category?.alias ?? data.category?.name ?? data.params.name}></CategoryTitle>
 </div>
 
 <style>

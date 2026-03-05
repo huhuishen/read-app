@@ -56,12 +56,10 @@
         width: 100%;
         max-width: 800px;
         min-width: 320px;
-        /* margin: 10px; */
         padding: 0 15px;
         height: 180px;
         align-items: center;
         cursor: pointer;
-        /* min-width: 425px; */
         background-color: var(--main-bg-color);
     }
 

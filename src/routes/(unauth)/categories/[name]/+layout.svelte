@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-    <title>{data.params.name}</title>
+    <title>{data.category?.alias ?? data.category?.name ?? data.params.name}</title>
 </svelte:head>
 
 <div class="container">

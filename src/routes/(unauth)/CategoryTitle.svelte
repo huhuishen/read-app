@@ -6,9 +6,11 @@
         laurel?: boolean;
         more?: boolean;
         name: string;
+        slug?: string;
     }
 
-    let { laurel = false, more = false, name }: Props = $props();
+    let { laurel = false, more = false, name, slug }: Props = $props();
+    let categorySlug = $derived(slug ?? name);
 </script>
 
 <div class="flex sb category">
@@ -29,7 +31,7 @@
         {/if}
     </div>
     {#if more}
-        <a class="flex g-1" href="/categories/{encodeURI(name)}/articles"
+        <a class="flex g-1" href="/categories/{encodeURI(categorySlug)}/articles"
             >查看全部<Icon name="chevron_right" size={16} />
         </a>
     {/if}

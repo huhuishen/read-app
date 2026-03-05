@@ -19,6 +19,7 @@ import { Collection } from "./db";
 // export type Category = Infer<typeof CategorySchema> & Entity
 export type Category = {
     name: string;
+    alias?: string;
     year?: number;
     month?: number;
     // contest?: boolean;
@@ -45,13 +46,15 @@ export class CategoryService extends Collection<Category> {
     constructor() {
         super("categories");
         super.createIndex({ name: 1 }, { unique: true });
+        super.createIndex({ alias: 1 }, { unique: true, sparse: true });
     }
 
     async createAward(year: number, month: number) {
         const { submissionStart, submissionEnd, voteEnd } = getContestTimeline(year, month);
 
         const doc: Category = {
-            name: `${year}-${month.toString().padStart(2, "0")}`,
+            name: getContestPeriodByYearMonth(year, month),
+            alias: getContestAliasByYearMonth(year, month),
             year,
             month,
             // contest: true,
@@ -64,6 +67,20 @@ export class CategoryService extends Collection<Category> {
             voteEnd,
         };
         return await super.insertOne(doc);
+    }
+
+    async resolveName(nameOrAlias: string) {
+        if (!nameOrAlias) return nameOrAlias;
+
+        const direct = await super.findOne({
+            $or: [{ name: nameOrAlias }, { alias: nameOrAlias }],
+        });
+        if (direct?.name) return direct.name;
+
+        const parsed = parseContestAlias(nameOrAlias);
+        if (parsed) return getContestPeriodByYearMonth(parsed.year, parsed.month);
+
+        return nameOrAlias;
     }
 
     async ensureExists(name: string) {
@@ -215,6 +232,9 @@ export const Categories = new CategoryService();
 
 // utils/contest.ts
 
+const CONTEST_START_YEAR = 2017;
+const CONTEST_START_MONTH = 10;
+
 /**
  * 获取当前征文周期时间点
  * - submissionStart: 本月1日
@@ -242,5 +262,46 @@ export function getContestTimeline(year: number, month: number) {
 export function getCurrentContestPeriod(now = new Date()) {
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
+    return getContestPeriodByYearMonth(year, month);
+}
+
+export function getContestPeriodByYearMonth(year: number, month: number) {
     return `${year}-${month.toString().padStart(2, "0")}`;
+}
+
+export function getContestIssueByYearMonth(year: number, month: number) {
+    return (year - CONTEST_START_YEAR) * 12 + (month - CONTEST_START_MONTH) + 1;
+}
+
+export function getYearMonthByContestIssue(issue: number) {
+    if (!Number.isInteger(issue) || issue < 1) return null;
+
+    const offset = issue - 1;
+    const total = (CONTEST_START_MONTH - 1) + offset;
+    const year = CONTEST_START_YEAR + Math.floor(total / 12);
+    const month = (total % 12) + 1;
+
+    return { year, month };
+}
+
+export function getContestAliasByYearMonth(year: number, month: number) {
+    const issue = getContestIssueByYearMonth(year, month);
+    if (!Number.isInteger(issue) || issue < 1) return undefined;
+    return `第 ${issue} 期`;
+}
+
+export function parseContestAlias(alias: string) {
+    const match = alias.trim().match(/^第\s*(\d+)\s*期$/);
+    if (!match) return null;
+
+    const issue = Number(match[1]);
+    if (!Number.isInteger(issue) || issue < 1) return null;
+
+    return getYearMonthByContestIssue(issue);
+}
+
+export function resolveContestAlias(category: Pick<Category, "alias" | "year" | "month">) {
+    if (category.alias) return category.alias;
+    if (!category.year || !category.month) return undefined;
+    return getContestAliasByYearMonth(category.year, category.month);
 }
