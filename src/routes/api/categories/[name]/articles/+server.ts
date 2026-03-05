@@ -10,7 +10,7 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
     const name = await Categories.resolveName(params.name);
 
     const articles = await Articles.findPage(
-        { "category.period": name, isLatest: true, status: "published" },
+        { "category.period": name, isLatest: true, status: "上架" },
         { projection: { _id: 0, content: 0 } },
         { page, limit, sort: { createdAt: -1 } }
     );

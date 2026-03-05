@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
     import { goto } from "$app/navigation";
     import Avatar from "$lib/components/Avatar.svelte";
     import Button from "$lib/components/Button.svelte";
@@ -16,8 +16,12 @@
         underlines: Underline[];
     } = $props();
 
+    const canReview = $derived(
+        !!user.roles?.some((role) => role === "administrator" || role === "editor"),
+    );
+
     function countText(text: string) {
-        var c = text.length;
+        const c = text.length;
         return c > 1000
             ? { value: (c / 1000.0).toFixed(1), unit: "千字" }
             : { value: c, unit: "字" };
@@ -29,8 +33,7 @@
     export function pubDate(date: Date | undefined) {
         if (!date) return "";
         const d = new Date(date);
-        const result = `${d.getFullYear()} 年 ${(d.getMonth() + 1).toString()} 月发表`;
-        return result;
+        return `${d.getFullYear()} 年 ${d.getMonth() + 1} 月发布`;
     }
 </script>
 
@@ -53,21 +56,23 @@
         <div
             class="flex g-3"
             onclick={() => {
-                if (article.author && article.authorId)
+                if (article.author && article.authorId) {
                     goto(`/profile/${article.authorId}/articles`);
+                }
             }}
         >
             <Avatar name={article.author ?? "匿名"}></Avatar>
-            <span> {article.author ?? "匿名"}</span>
+            <span>{article.author ?? "匿名"}</span>
         </div>
         <h2 class="score">
             <span
                 title={article.stats.rateCount > 0
                     ? `来自 ${article.stats.rateCount} 个用户的评分`
                     : "暂无评分"}
-                >{article.stats.rate ? article.stats.rate.toFixed(1) : "-.-"}
-                <small>/ 10</small></span
             >
+                {article.stats.rate ? article.stats.rate.toFixed(1) : "-.-"}
+                <small>/ 10</small>
+            </span>
         </h2>
     </div>
 
@@ -110,13 +115,15 @@
                 }}>编辑</Button
             >
         {/if}
-        <!-- {#if article.status === "pending" && user?.name === "admin"}
+
+        {#if canReview}
             <Button
                 onclick={() => {
                     goto(`/articles/${article.id}/review`);
-                }}>审核</Button
+                }}>审阅</Button
             >
-        {/if} -->
+        {/if}
+
         <Button
             variant="primary"
             onclick={() => {
@@ -137,9 +144,8 @@
     .quote-elegant {
         font-size: 20px;
         position: relative;
-        padding: 1.5rem 0 1.5rem 0;
+        padding: 1.5rem 0;
         margin: 2rem 0;
-        /* background-color: rgba(200, 200, 200, 0.2); */
         font-style: italic;
         line-height: 2;
     }
@@ -163,20 +169,21 @@
 
     .title {
         position: relative;
-        /* justify-content: space-between; */
         color: var(--header-color);
-        /* margin: 20px auto; */
     }
+
     .title h1 {
         font-weight: 600;
         font-size: 32px;
         color: var(--header-color);
         font-family: "Times New Roman", Times, serif;
     }
+
     .score {
         color: brown;
         font-size: 26px;
     }
+
     small {
         font-size: 50%;
     }
@@ -186,35 +193,37 @@
         gap: 8px;
         margin: 1rem 0;
     }
+
     .tag {
-        /* color: brown; */
-        /* border: 1px solid brown; */
-        /* border: 1px solid var(--link-color); */
         border-radius: 5px;
         background-color: var(--overlay-soft);
         color: var(--link-color);
         padding: 4px 8px;
         cursor: pointer;
     }
+
     .tag:hover {
         background-color: var(--overlay-default);
         color: var(--highlight-color);
     }
+
     .tag::before {
         content: "#";
         margin-right: 0.25rem;
     }
+
     .stats {
         margin: 1rem auto;
         padding-top: 4rem;
-        /* display: flex; */
         gap: 40px;
     }
+
     @media (max-width: 567px) {
         .stats {
             gap: 5px;
         }
     }
+
     .start {
         margin: 10rem auto;
         display: flex;

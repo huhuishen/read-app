@@ -14,7 +14,7 @@ type VoteDoc = Pick<ArticleVoteState, "userId" | "updatedAt">;
 
 export const GET: RequestHandler = withApi(async ({ params }) => {
     const article = await Articles.findOne(
-        { id: params.id, isLatest: true, status: "published" },
+        { id: params.id, isLatest: true, status: "上架" },
         { projection: { _id: 0, category: 1 } },
     );
 

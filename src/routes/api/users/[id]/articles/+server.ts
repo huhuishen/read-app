@@ -12,7 +12,7 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
         {
             authorId: params.id,
             isLatest: true,
-            status: "published",
+            status: "上架",
         },
         { projection: { content: 0 } },
         { page, limit, sort: { createdAt: -1 } }

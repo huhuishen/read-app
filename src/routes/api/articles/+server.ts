@@ -125,7 +125,7 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
     let article: Partial<Article> = {
         id: nanoid(),
         version: 0,
-        status: autoPublishWithoutReview ? "published" : "pending",
+        status: autoPublishWithoutReview ? "上架" : "待审核",
         isLatest: true,
         authorId: locals.user.id!,
         author: locals.user.name!,

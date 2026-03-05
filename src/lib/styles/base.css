@@ -242,7 +242,7 @@ input[type="checkbox"][role="switch"]:disabled,
 input[type="radio"]:disabled,
 textarea:disabled,
 select:disabled {
-    background-color: var(--surface-disabled);
+    /* background-color: var(--surface-disabled); */
     border-color: var(--border-default);
     cursor: not-allowed;
 }

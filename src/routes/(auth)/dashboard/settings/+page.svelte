@@ -48,9 +48,9 @@
         </label>
 
         <p class="hint">
-            开启后，你提交文章时将直接进入 <code>published</code>
+            开启后，你提交文章时将直接进入 <code>上架</code>
             状态；关闭后，文章会先进入
-            <code>pending</code> 等待审核。
+            <code>待审核</code> 等待审核。
         </p>
 
         <Button variant="primary" onclick={saveSettings} disabled={isSaving}>

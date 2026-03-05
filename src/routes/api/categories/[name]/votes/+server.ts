@@ -19,7 +19,7 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
     if (!voteEnd) return json(null);
 
     const articles = await Articles.find(
-        { "category.period": name, isLatest: true, status: "published" },
+        { "category.period": name, isLatest: true, status: "上架" },
         {
             projection: { _id: 0, content: 0, summary: 0 },
         },

@@ -20,7 +20,7 @@
         mode,
         initialArticle,
     }: {
-        mode: "create" | "edit";
+        mode: "create" | "edit" | "review";
         initialArticle?: Partial<Article>;
     } = $props();
 
@@ -30,7 +30,9 @@
     const draftKey = $derived.by(() =>
         mode === "create"
             ? "article:create:draft"
-            : `article:edit:${initialArticle?.id ?? "unknown"}:draft`,
+            : mode === "review"
+              ? `article:review:${initialArticle?.id ?? "unknown"}:draft`
+              : `article:edit:${initialArticle?.id ?? "unknown"}:draft`,
     );
 
     function createInitialArticle() {
@@ -49,6 +51,7 @@
 
     let isSubmitting = $state(false);
     let isDeleting = $state(false);
+    let isRejecting = $state(false);
     let isUploading = $state(false);
     let hasHydratedDraft = $state(false);
     let autoSaveTimer: ReturnType<typeof setInterval> | null = null;
@@ -57,10 +60,40 @@
     let contentEditor: EditorHandle | undefined = $state();
 
     const canSubmit = $derived(
-        !!article.title?.trim() && !!article.content?.trim() && !isSubmitting,
+        mode !== "review" &&
+            !!article.title?.trim() &&
+            !!article.content?.trim() &&
+            !isSubmitting,
     );
     const canDelete = $derived(
         mode === "edit" && !!article.id && !isSubmitting && !isDeleting,
+    );
+    const canReject = $derived(
+        mode === "review" &&
+            article.status === "待审核" &&
+            !!article.id &&
+            !isSubmitting &&
+            !isRejecting,
+    );
+    const canApprove = $derived(
+        mode === "review" &&
+            article.status === "待审核" &&
+            !!article.id &&
+            !isSubmitting,
+    );
+    const canSubmitForReview = $derived(
+        mode === "edit" &&
+            !!article.id &&
+            !!article.title?.trim() &&
+            !!article.content?.trim() &&
+            !isSubmitting &&
+            (article.status === "草稿" || article.status === "下架"),
+    );
+    const canTakeDown = $derived(
+        (mode === "edit" || mode === "review") &&
+            !!article.id &&
+            article.status === "上架" &&
+            !isSubmitting,
     );
 
     function normalizedPayload() {
@@ -83,16 +116,18 @@
         if (isSubmitting) return;
         const payload = normalizedPayload();
 
-        if (!payload.title) {
-            toast.show("Title is required", "warn");
-            titleEditor?.focus();
-            return;
-        }
+        if (mode !== "review") {
+            if (!payload.title) {
+                toast.show("Title is required", "warn");
+                titleEditor?.focus();
+                return;
+            }
 
-        if (!payload.content) {
-            toast.show("Content is required", "warn");
-            contentEditor?.focus();
-            return;
+            if (!payload.content) {
+                toast.show("Content is required", "warn");
+                contentEditor?.focus();
+                return;
+            }
         }
 
         isSubmitting = true;
@@ -109,7 +144,7 @@
                 localStorage.removeItem(draftKey);
             }
 
-            toast.show("Published", "success");
+            toast.show("创建成功", "success");
             goto(`/articles/${res.id}`);
             return;
         }
@@ -122,18 +157,99 @@
         }
 
         const res = await safeCall(
-            api.post(`/api/articles/${id}`, payload),
+            api.post(
+                `/api/articles/${id}`,
+                mode === "review"
+                    ? { ...payload, status: "上架" }
+                    : payload,
+            ),
             toast,
         );
         isSubmitting = false;
 
-        if (res) {
-            if (browser) {
-                localStorage.removeItem(draftKey);
-            }
-            toast.show("Saved", "success");
-            goto(`/articles/${id}`);
+        if (!res) return;
+
+        if (browser) {
+            localStorage.removeItem(draftKey);
         }
+
+        toast.show(
+            mode === "review" ? "审核通过，已上架" : "已保存",
+            "success",
+        );
+        goto(mode === "review" ? `/articles/${id}/summary` : `/articles/${id}`);
+    }
+
+    async function rejectArticle() {
+        if (mode !== "review" || isRejecting) return;
+
+        const id = article.id;
+        if (!id) {
+            toast.show("Missing article id", "error");
+            return;
+        }
+
+        isRejecting = true;
+        const payload = normalizedPayload();
+        const res = await safeCall(
+            api.post(`/api/articles/${id}`, { ...payload, status: "草稿" }),
+            toast,
+        );
+        isRejecting = false;
+
+        if (!res) return;
+
+        if (browser) {
+            localStorage.removeItem(draftKey);
+        }
+
+        article.status = "草稿";
+        toast.show("已退回草稿", "success");
+        goto(`/articles/${id}/summary`);
+    }
+
+    async function submitForReview() {
+        if (mode !== "edit" || isSubmitting) return;
+
+        const id = article.id;
+        const payload = normalizedPayload();
+        if (!id || !payload.title || !payload.content) {
+            toast.show("请先完善标题和内容", "warn");
+            return;
+        }
+
+        isSubmitting = true;
+        const res = await safeCall(
+            api.post(`/api/articles/${id}`, { ...payload, status: "待审核" }),
+            toast,
+        );
+        isSubmitting = false;
+
+        if (!res) return;
+        article.status = "待审核";
+        toast.show("投稿成功，等待审核", "success");
+        goto(`/articles/${id}/summary`);
+    }
+
+    async function takeDownArticle() {
+        if (isSubmitting) return;
+        const id = article.id;
+        if (!id) {
+            toast.show("Missing article id", "error");
+            return;
+        }
+
+        isSubmitting = true;
+        const res = await safeCall(
+            api.post(`/api/articles/${id}`, { status: "下架" }),
+            toast,
+        );
+        isSubmitting = false;
+
+        if (!res) return;
+        article.status = "下架";
+        toast.show("已下架", "success");
+        goto(`/articles/${id}/summary`);
     }
 
     async function deleteArticle() {
@@ -161,8 +277,6 @@
         }
 
         toast.show("Deleted", "success");
-        // const authorId = article.authorId?.trim();
-        // goto(authorId ? `/profile/${authorId}/articles` : "/");
         goto("/");
     }
 
@@ -226,10 +340,15 @@
 
 <div class="editor-container">
     <div class="main-column">
-        <EditableInput bind:this={titleEditor} bind:value={article.title} />
+        <EditableInput
+            bind:this={titleEditor}
+            bind:value={article.title}
+            disabled={mode === "review"}
+        />
         <EditableTextArea
             bind:this={contentEditor}
             bind:value={article.content}
+            disabled={mode === "review"}
         />
     </div>
 
@@ -272,17 +391,52 @@
             <Button
                 variant="primary"
                 onclick={submitArticle}
-                disabled={!canSubmit}
+                disabled={mode === "review" ? !canApprove : !canSubmit}
             >
-                {isSubmitting ? "保存中..." : "保存"}
+                {mode === "review"
+                    ? isSubmitting
+                        ? "发布中..."
+                        : "上架"
+                    : isSubmitting
+                      ? "保存中..."
+                      : "保存"}
             </Button>
             {#if mode === "edit"}
+                <Button
+                    variant="primary"
+                    onclick={submitForReview}
+                    disabled={!canSubmitForReview}
+                >
+                    投稿
+                </Button>
+                <Button
+                    variant="light"
+                    onclick={takeDownArticle}
+                    disabled={!canTakeDown}
+                >
+                    下架
+                </Button>
                 <Button
                     variant="danger"
                     onclick={deleteArticle}
                     disabled={!canDelete}
                 >
                     {isDeleting ? "删除中..." : "删除"}
+                </Button>
+            {:else if mode === "review"}
+                <Button
+                    variant="light"
+                    onclick={takeDownArticle}
+                    disabled={!canTakeDown}
+                >
+                    下架
+                </Button>
+                <Button
+                    variant="danger"
+                    onclick={rejectArticle}
+                    disabled={!canReject}
+                >
+                    {isRejecting ? "处理中..." : "退回草稿"}
                 </Button>
             {/if}
         </div>
@@ -314,7 +468,6 @@
         height: fit-content;
         width: 300px;
         background: var(--main-bg-color);
-        /* border: 1px solid var(--border-default); */
         padding: 1rem;
     }
 

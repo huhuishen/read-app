@@ -35,7 +35,7 @@
         <div class="flex book-details">
             <div class="flex row sb">
                 <span class="title">{article.title}</span>
-                {#if article.status != "published"}
+                {#if article.status != "上架"}
                     <span class="tag">{article.status}</span>
                 {/if}
             </div>

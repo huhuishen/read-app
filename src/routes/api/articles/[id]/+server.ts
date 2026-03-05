@@ -13,6 +13,9 @@ const ARTICLE_UPDATE_FIELDS = [
     'category',
 ] as const;
 
+const ARTICLE_STATUSES = ["草稿", "待审核", "上架", "下架"] as const;
+type ArticleStatus = (typeof ARTICLE_STATUSES)[number];
+
 function pickArticleUpdate(body: Record<string, unknown>, requireTitleAndContent: boolean) {
     const update: Record<string, unknown> = {};
 
@@ -41,10 +44,21 @@ function pickArticleUpdate(body: Record<string, unknown>, requireTitleAndContent
     return update;
 }
 
-async function ensureCanEditArticle(user: any, articleId: string) {
+function normalizeStatus(value: unknown): ArticleStatus {
+    if (typeof value !== "string" || !ARTICLE_STATUSES.includes(value as ArticleStatus)) {
+        apiError(400, "Invalid article status");
+    }
+    return value as ArticleStatus;
+}
+
+async function ensureCanEditArticle(
+    user: any,
+    articleId: string,
+    { allowReviewer = false }: { allowReviewer?: boolean } = {}
+) {
     const target = await Articles.findOne(
         { id: articleId, isLatest: true },
-        { projection: { _id: 0, authorId: 1, tags: 1, title: 1, coverImage: 1, category: 1 } }
+        { projection: { _id: 0, authorId: 1, status: 1, tags: 1, title: 1, coverImage: 1, category: 1 } }
     );
 
     if (!target) {
@@ -52,11 +66,77 @@ async function ensureCanEditArticle(user: any, articleId: string) {
     }
 
     const isAdmin = user.roles?.includes('administrator');
-    if (!isAdmin && target.authorId !== user.id) {
+    const isEditor = user.roles?.includes('editor');
+    const canReview = allowReviewer && isEditor;
+
+    if (!isAdmin && !canReview && target.authorId !== user.id) {
         apiError(403, 'Forbidden');
     }
 
     return target;
+}
+
+function enforceStatusTransition(
+    user: any,
+    target: { authorId?: string; status?: string },
+    update: Record<string, unknown>
+) {
+    if (!Object.prototype.hasOwnProperty.call(update, "status")) {
+        return;
+    }
+
+    const currentStatus = normalizeStatus(target.status ?? "草稿");
+    const nextStatus = normalizeStatus(update.status);
+
+    if (currentStatus === nextStatus) {
+        return;
+    }
+
+    const isAdmin = user.roles?.includes("administrator");
+    const isEditor = user.roles?.includes("editor");
+    const isOwner = target.authorId === user.id;
+    const hasEditorPermission = isAdmin || isEditor;
+
+    const canSubmitForReview =
+        isOwner &&
+        (currentStatus === "草稿" || currentStatus === "下架") &&
+        nextStatus === "待审核";
+    const canReviewDecision =
+        hasEditorPermission &&
+        currentStatus === "待审核" &&
+        (nextStatus === "草稿" || nextStatus === "上架");
+    const canTakeDown =
+        (isOwner || hasEditorPermission) &&
+        currentStatus === "上架" &&
+        nextStatus === "下架";
+
+    if (!canSubmitForReview && !canReviewDecision && !canTakeDown) {
+        apiError(403, "Invalid status transition");
+    }
+}
+
+function sanitizeUpdateByRole(
+    user: any,
+    target: { authorId?: string },
+    update: Record<string, unknown>
+) {
+    const isAdmin = user.roles?.includes('administrator');
+    const isOwner = target.authorId === user.id;
+    const isEditor = user.roles?.includes('editor');
+
+    if (isAdmin || isOwner || !isEditor) {
+        return update;
+    }
+
+    // Editors in review flow can adjust metadata and status only.
+    delete update.title;
+    delete update.content;
+
+    if (Object.keys(update).length === 0) {
+        apiError(400, 'No permitted fields for reviewer');
+    }
+
+    return update;
 }
 
 async function syncCategoryPreviewCache(
@@ -140,10 +220,12 @@ export const POST: RequestHandler = withApi(async (event) => {
     const user = requireUser(event);
     const { request, params } = event;
 
-    const target = await ensureCanEditArticle(user, params.id);
+    const target = await ensureCanEditArticle(user, params.id, { allowReviewer: true });
 
     const body = await request.json() as Record<string, unknown>;
-    const update = pickArticleUpdate(body, false);
+    const rawUpdate = pickArticleUpdate(body, false);
+    enforceStatusTransition(user, target, rawUpdate);
+    const update = sanitizeUpdateByRole(user, target, rawUpdate);
 
     const res = await Articles.updateOne(
         { id: params.id, isLatest: true },
