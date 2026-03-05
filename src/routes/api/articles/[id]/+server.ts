@@ -96,15 +96,17 @@ function enforceStatusTransition(
     target: { status?: string },
     update: Record<string, unknown>
 ): boolean {
+    // 允许无状态转换
     if (!Object.prototype.hasOwnProperty.call(update, 'status')) {
-        return false;
+        return true;
     }
 
     const currentStatus = normalizeStatus(target.status ?? '草稿');
     const nextStatus = normalizeStatus(update.status);
 
+    // 允许状态转换到相同状态
     if (currentStatus === nextStatus) {
-        return false;
+        return true;
     }
 
     const userRoles: string[] = Array.isArray(user.roles) ? user.roles : [];
@@ -114,8 +116,9 @@ function enforceStatusTransition(
             return false;
         }
 
+        // roles = [] 时，无权限要求
         if (rule.roles.length === 0) {
-            return false;
+            return true;
         }
 
         return rule.roles.some((role) => userRoles.includes(role));

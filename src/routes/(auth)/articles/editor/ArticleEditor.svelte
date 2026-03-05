@@ -78,7 +78,7 @@
     );
     const canApprove = $derived(
         mode === "review" &&
-            article.status === "待审核" &&
+            (article.status === "待审核" || article.status === "下架") &&
             !!article.id &&
             !isSubmitting,
     );
@@ -410,7 +410,6 @@
                     投稿
                 </Button>
                 <Button
-                    variant="light"
                     onclick={takeDownArticle}
                     disabled={!canTakeDown}
                 >
@@ -425,18 +424,17 @@
                 </Button>
             {:else if mode === "review"}
                 <Button
-                    variant="light"
                     onclick={takeDownArticle}
                     disabled={!canTakeDown}
                 >
-                    下架{canTakeDown}
+                    下架
                 </Button>
                 <Button
                     variant="danger"
                     onclick={rejectArticle}
                     disabled={!canReject}
                 >
-                    {isRejecting ? "处理中..." : "退回草稿"}
+                    {isRejecting ? "处理中..." : "撤稿"}
                 </Button>
             {/if}
         </div>
