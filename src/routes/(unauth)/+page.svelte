@@ -96,7 +96,7 @@
 
                 <div class="flex articles">
                     {#each category.previewArticles as article}
-                        <ArticleCard {article} showCover={i < 3}></ArticleCard>
+                        <ArticleCard {article} showCover={i < 1}></ArticleCard>
                     {/each}
                 </div>
             {/each}

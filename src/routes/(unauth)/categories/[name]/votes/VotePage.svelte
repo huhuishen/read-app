@@ -86,6 +86,7 @@
                                 {toLocalDateString(user.votedAt)}
                             </div>
                         </div>
+                        <div class="vote-count">+1</div>
                     </li>
                 {/each}
             </ul>
@@ -130,7 +131,12 @@
     }
 
     .info {
+        flex: 1;
         min-width: 0;
+    }
+
+    .vote-count {
+        margin-left: auto;
     }
 
     .time {

@@ -130,6 +130,7 @@
         display: flex;
         width: 100%;
         flex-wrap: nowrap;
+        padding: 0.5rem;
     }
 
     .card-sm {
@@ -169,15 +170,17 @@
 
     .vote-trigger {
         background: var(--surface-ghost);
-        padding: 0.5rem;
+        padding: 5px;
     }
 
     .value {
-        font-size: 20px;
+        /* font-size: 20px; */
+        font-weight: bold;
         text-align: center;
     }
 
     .label {
+        font-size: 13px;
         text-align: center;
     }
 
