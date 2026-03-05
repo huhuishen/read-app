@@ -170,11 +170,15 @@ export class ArticleService extends Collection<Article> {
 
 
     private buildAccessFilter(articleId: string, user: Partial<User>) {
+        const isPrivileged =
+            user.roles?.includes('administrator') ||
+            user.roles?.includes('editor');
 
-        if (user.roles?.includes('administrator')) {
+        if (isPrivileged) {
             return {
                 id: articleId,
-                isLatest: true
+                isLatest: true,
+                status: { $in: ["上架", "待审核", "下架"] }
             };
         }
 

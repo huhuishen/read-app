@@ -13,7 +13,7 @@ const ARTICLE_UPDATE_FIELDS = [
     'category',
 ] as const;
 
-const ARTICLE_STATUSES = ["草稿", "待审核", "上架", "下架"] as const;
+const ARTICLE_STATUSES = ['草稿', '待审核', '上架', '下架'] as const;
 type ArticleStatus = (typeof ARTICLE_STATUSES)[number];
 
 function pickArticleUpdate(body: Record<string, unknown>, requireTitleAndContent: boolean) {
@@ -76,52 +76,50 @@ async function ensureCanEditArticle(
     return target;
 }
 
+type statusRule = {
+    current: ArticleStatus;
+    next: ArticleStatus;
+    roles: string[];
+};
+
+const STATUS_RULES: statusRule[] = [
+    { current: '草稿', next: '待审核', roles: [] },
+    { current: '待审核', next: '草稿', roles: ['administrator', 'editor'] },
+    { current: '待审核', next: '上架', roles: ['administrator', 'editor'] },
+    { current: '上架', next: '下架', roles: ['administrator', 'editor'] },
+    { current: '下架', next: '上架', roles: ['administrator', 'editor'] },
+    { current: '下架', next: '待审核', roles: [] },
+];
+
 function enforceStatusTransition(
     user: any,
-    target: { authorId?: string; status?: string },
+    target: { status?: string },
     update: Record<string, unknown>
-) {
-    if (!Object.prototype.hasOwnProperty.call(update, "status")) {
-        return;
+): boolean {
+    if (!Object.prototype.hasOwnProperty.call(update, 'status')) {
+        return false;
     }
 
-    const currentStatus = normalizeStatus(target.status ?? "草稿");
+    const currentStatus = normalizeStatus(target.status ?? '草稿');
     const nextStatus = normalizeStatus(update.status);
 
     if (currentStatus === nextStatus) {
-        return;
+        return false;
     }
 
-    const isAdmin = user.roles?.includes("administrator");
-    const isEditor = user.roles?.includes("editor");
-    const isOwner = target.authorId === user.id;
-    const hasEditorPermission = isAdmin || isEditor;
+    const userRoles: string[] = Array.isArray(user.roles) ? user.roles : [];
 
-    const canSubmitForReview =
-        isOwner &&
-        (currentStatus === "草稿" || currentStatus === "下架") &&
-        nextStatus === "待审核";
-    const canReviewDecision =
-        hasEditorPermission &&
-        currentStatus === "待审核" &&
-        (nextStatus === "草稿" || nextStatus === "上架");
-    const canTakeDown =
-        (isOwner || hasEditorPermission) &&
-        currentStatus === "上架" &&
-        nextStatus === "下架";
-    const canRepublish =
-        hasEditorPermission &&
-        currentStatus === "下架" &&
-        nextStatus === "上架";
+    return STATUS_RULES.some((rule) => {
+        if (rule.current !== currentStatus || rule.next !== nextStatus) {
+            return false;
+        }
 
-    if (
-        !canSubmitForReview &&
-        !canReviewDecision &&
-        !canTakeDown &&
-        !canRepublish
-    ) {
-        apiError(403, "Invalid status transition");
-    }
+        if (rule.roles.length === 0) {
+            return false;
+        }
+
+        return rule.roles.some((role) => userRoles.includes(role));
+    });
 }
 
 function sanitizeUpdateByRole(
@@ -233,7 +231,9 @@ export const POST: RequestHandler = withApi(async (event) => {
 
     const body = await request.json() as Record<string, unknown>;
     const rawUpdate = pickArticleUpdate(body, false);
-    enforceStatusTransition(user, target, rawUpdate);
+    if (!enforceStatusTransition(user, target, rawUpdate)) {
+        apiError(403, 'Invalid status transition');
+    }
     const update = sanitizeUpdateByRole(user, target, rawUpdate);
 
     const res = await Articles.updateOne(

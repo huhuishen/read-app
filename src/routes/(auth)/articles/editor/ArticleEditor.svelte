@@ -313,22 +313,22 @@
     onMount(() => {
         if (!browser) return;
 
-        const raw = localStorage.getItem(draftKey);
-        if (raw) {
-            try {
-                const draft = JSON.parse(raw) as Partial<Article>;
-                article = {
-                    ...article,
-                    ...draft,
-                    tags: draft.tags ?? article.tags ?? [],
-                };
-            } catch {
-                localStorage.removeItem(draftKey);
-            }
-        }
+        // const raw = localStorage.getItem(draftKey);
+        // if (raw) {
+        //     try {
+        //         const draft = JSON.parse(raw) as Partial<Article>;
+        //         article = {
+        //             ...article,
+        //             ...draft,
+        //             tags: draft.tags ?? article.tags ?? [],
+        //         };
+        //     } catch {
+        //         localStorage.removeItem(draftKey);
+        //     }
+        // }
 
-        hasHydratedDraft = true;
-        autoSaveTimer = setInterval(saveDraft, autoSaveIntervalMs);
+        // hasHydratedDraft = true;
+        // autoSaveTimer = setInterval(saveDraft, autoSaveIntervalMs);
     });
 
     onDestroy(() => {
@@ -429,7 +429,7 @@
                     onclick={takeDownArticle}
                     disabled={!canTakeDown}
                 >
-                    下架
+                    下架{canTakeDown}
                 </Button>
                 <Button
                     variant="danger"
