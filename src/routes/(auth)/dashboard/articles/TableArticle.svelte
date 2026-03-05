@@ -29,7 +29,11 @@
             text: (item) => item.status,
         },
         {
-            name: "栏目标签",
+            name: "期刊",
+            text: (item) => item.category.period,
+        },
+        {
+            name: "标签",
             text: (item) => item.tags?.join(","),
             className: "lg",
         },
@@ -51,7 +55,11 @@
         },
         {
             name: "读者用时",
-            text: (item) => formatDuration((item as Article & { readSeconds?: number }).readSeconds ?? 0),
+            text: (item) =>
+                formatDuration(
+                    (item as Article & { readSeconds?: number }).readSeconds ??
+                        0,
+                ),
         },
         {
             name: "创建",

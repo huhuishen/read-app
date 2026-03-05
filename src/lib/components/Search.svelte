@@ -52,7 +52,7 @@
     .input-wrap {
         position: relative;
         /* display: inline-block; */
-        width: 240px;
+        /* width: 240px; */
     }
 
     .cross-icon {

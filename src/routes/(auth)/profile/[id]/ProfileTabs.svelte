@@ -23,8 +23,9 @@
     {tabs}
     {active}
     onclick={(key) => {
-        goto(`/profile/${user.id}/${key}`);
+        goto(`/profile/${user.id}/${key}`, { replaceState: true });
     }}
 >
     {@render children?.()}
 </Tabs>
+

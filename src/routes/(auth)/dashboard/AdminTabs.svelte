@@ -15,8 +15,9 @@
     ]}
     {active}
     onclick={(active) => {
-        goto(`/dashboard/${active}`);
+        goto(`/dashboard/${active}`, { replaceState: true });
     }}
 >
     {@render children?.()}
 </Tabs>
+

@@ -36,8 +36,7 @@ export class MongoConverter {
             }
 
             // 处理日期格式
-            const isDate = key.includes('At');
-            if (isDate && typeof value === 'string') {
+            if (typeof value === 'string' && this.isIsoDate(value)) {
                 result[key] = new Date(value);
             }
         }
@@ -45,6 +44,15 @@ export class MongoConverter {
         return result;
     }
 
+    static isIsoDate(str: string) {
+        if (str.length !== 24) return false
+        if (str.charCodeAt(10) !== 84) return false // 'T'
+        if (str.charCodeAt(4) !== 45 || str.charCodeAt(7) !== 45) return false // '-'
+        if (str.charCodeAt(13) !== 58 || str.charCodeAt(16) !== 58) return false // ':'
+        if (str.charCodeAt(19) !== 46) return false // '.'
+
+        return true;
+    }
     /**
      * 检查字符串是否为有效的 ObjectId
      */

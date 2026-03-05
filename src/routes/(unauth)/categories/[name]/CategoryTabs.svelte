@@ -23,8 +23,9 @@
     {tabs}
     {active}
     onclick={(key) => {
-        goto(`/categories/${name}/${key}`);
+        goto(`/categories/${name}/${key}`, { replaceState: true });
     }}
 >
     {@render children?.()}
 </Tabs>
+
