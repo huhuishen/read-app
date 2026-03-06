@@ -18,7 +18,7 @@ export const GET: RequestHandler = withApi(async ({ }) => {
 
     const sanitizedCategories = categories.map((category) => sanitizeCategoryPreviewAuthors({
         ...category,
-        alias: resolveContestAlias(category),
+        // alias: resolveContestAlias(category),
     }));
 
     return json({ categories: sanitizedCategories, tags });

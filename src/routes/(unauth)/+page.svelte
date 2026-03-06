@@ -122,8 +122,12 @@
     {/if}
 </div>
 
-<div class="flex footer">
-    <a href="/about">简介</a>
+<div class="flex center g-3 footer">
+    <a class="link" href="/about">简介</a>
+    <a class="link" href="https://github.com/huhuishen/read-app"
+        ><Icon name="github" size={16}></Icon></a
+    >
+
     <span>&copy2025</span>
 </div>
 
@@ -151,11 +155,14 @@
     }
 
     .footer {
-        height: 300px;
-        justify-content: center;
         color: var(--link-color);
-        gap: 10px;
-        font-size: 90%;
+        font-size: 16px;
+        margin: 150px 0;
+    }
+
+    .footer a {
+        font-size: 14px;
+        display: flex;
     }
 
     .searchbar {

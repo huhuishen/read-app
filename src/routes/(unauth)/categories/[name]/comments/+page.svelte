@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import CheckButton from "$lib/components/CheckButton.svelte";
+    import CheckButton from "$lib/components/controls/CheckButton.svelte";
     import CommentItem from "$lib/components/article/CommentItem.svelte";
     import Pagination from "$lib/components/Pagination.svelte";
     import CategoryTabs from "../CategoryTabs.svelte";
@@ -21,11 +21,11 @@
     <div class="mode-switch">
         <CheckButton
             selected={data.mode === "user"}
-            onclick={() => switchMode("user")}>按用户分组</CheckButton
+            onclick={() => switchMode("user")}>按用户</CheckButton
         >
         <CheckButton
             selected={data.mode === "article"}
-            onclick={() => switchMode("article")}>按文章分组</CheckButton
+            onclick={() => switchMode("article")}>按文章</CheckButton
         >
     </div>
 

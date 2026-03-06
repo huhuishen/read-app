@@ -13,5 +13,14 @@ export const GET: RequestHandler = withApi(async ({ params, url }) => {
         { page, limit, sort: { createdAt: -1 } },
     );
 
+    const now = Date.now();
+
+    articles.items.forEach(article => {
+        if (now < article.category.voteEnd.getTime()) {
+            delete article.author;
+            delete article.authorId;
+        }
+    });
+
     return json(articles);
 });

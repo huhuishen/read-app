@@ -13,7 +13,7 @@
     import type { PageProps } from "./$types";
     import ArticleSegment from "./ArticleSegment.svelte";
     import BottomBar from "./BottomBar.svelte";
-    import CheckButton from "./CheckButton.svelte";
+    import CheckButton from "$lib/components/controls/CheckButton.svelte";
     import CommentDrawer from "./CommentDrawer.svelte";
     import FloatBar from "./FloatBar.svelte";
     import { ReadTimer } from "./realTimer";
