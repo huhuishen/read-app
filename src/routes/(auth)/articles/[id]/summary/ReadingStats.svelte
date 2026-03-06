@@ -24,25 +24,36 @@
     }
 </script>
 
-<div class="flex column g-2 state">
+<div class="flex column g-2">
     <span class="title">{title}</span>
-    <div class="title">
+    <div class=" value">
         <span class="strong">{value}</span>
         <span class="">{unit}</span>
     </div>
-    <span class="title">{subtitle}</span>
+    <span class="subtitle">{subtitle}</span>
 </div>
 
 <style>
-    .state {
+    /* .state {
         min-width: 110px;
         min-height: 150px;
         font-size: 16px;
-    }
-    .title {
+    } 
+    .f-0 {
         flex: 0;
+    } */
+
+    .title,
+    .subtitle {
+        color: var(--text-faint);
+        white-space: nowrap;
     }
+
+    .value {
+        white-space: nowrap;
+    }
+
     .strong {
-        font-size: 28px;
+        font-size: 24px;
     }
 </style>

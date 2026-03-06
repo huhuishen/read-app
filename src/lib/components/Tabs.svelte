@@ -6,12 +6,55 @@
         active = $bindable(),
         children,
         onclick,
+        enableSwipe = false,
     }: {
         tabs: { key: string; label: string }[];
         active: string;
         children: Snippet;
         onclick?: (active: string) => void;
+        enableSwipe?: boolean;
     } = $props();
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const SWIPE_THRESHOLD = 60;
+    const VERTICAL_TOLERANCE = 40;
+
+    const selectTab = (key: string) => {
+        active = key;
+        onclick?.(active);
+    };
+
+    const onTouchStart = (event: TouchEvent) => {
+        if (!enableSwipe || event.touches.length !== 1) return;
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+        if (!enableSwipe || event.changedTouches.length !== 1) return;
+
+        const deltaX = event.changedTouches[0].clientX - touchStartX;
+        const deltaY = event.changedTouches[0].clientY - touchStartY;
+
+        if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+        if (Math.abs(deltaY) > VERTICAL_TOLERANCE) return;
+        if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+        const currentIndex = tabs.findIndex((tab) => tab.key === active);
+        if (currentIndex === -1) return;
+
+        if (deltaX < 0 && currentIndex < tabs.length - 1) {
+            selectTab(tabs[currentIndex + 1].key);
+        } else if (deltaX > 0 && currentIndex > 0) {
+            selectTab(tabs[currentIndex - 1].key);
+        }
+    };
+
+    const onTouchCancel = () => {
+        touchStartX = 0;
+        touchStartY = 0;
+    };
 </script>
 
 <div class="tabs">
@@ -20,8 +63,7 @@
             <button
                 class:selected={active === tab.key}
                 onclick={() => {
-                    active = tab.key;
-                    onclick?.(active);
+                    selectTab(tab.key);
                 }}
             >
                 {tab.label}
@@ -30,7 +72,12 @@
     </div>
 </div>
 
-<div class="tab-content">
+<div
+    class="tab-content"
+    ontouchstart={onTouchStart}
+    ontouchend={onTouchEnd}
+    ontouchcancel={onTouchCancel}
+>
     {@render children()}
 </div>
 

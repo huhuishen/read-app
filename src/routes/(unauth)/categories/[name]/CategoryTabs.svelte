@@ -15,6 +15,7 @@
 
     let tabs = [
         { key: "articles", label: "作品" },
+        { key: "comments", label: "评论" },
         { key: "votes", label: "投票" },
     ];
 </script>
@@ -22,6 +23,7 @@
 <Tabs
     {tabs}
     {active}
+    enableSwipe
     onclick={(key) => {
         goto(`/categories/${name}/${key}`, { replaceState: true });
     }}

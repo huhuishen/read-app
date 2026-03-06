@@ -23,9 +23,19 @@
     {tabs}
     {active}
     onclick={(key) => {
-        goto(`/profile/${user.id}/${key}`, { replaceState: true });
+        goto(`/profile/${user.id}/${key}`, {
+            replaceState: true,
+            noScroll: true,
+        });
     }}
 >
-    {@render children?.()}
+    <div class="tab-content">
+        {@render children?.()}
+    </div>
 </Tabs>
 
+<style>
+    .tab-content {
+        min-height: calc(100vh - 50px);
+    }
+</style>

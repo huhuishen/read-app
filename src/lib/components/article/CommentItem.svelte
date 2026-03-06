@@ -12,6 +12,7 @@
     let {
         comment,
         user,
+        readonly = false,
         onRemove,
         onLike,
         onReply,
@@ -19,6 +20,7 @@
     }: {
         comment: Partial<Comment>;
         user: Partial<User> | null;
+        readonly?: boolean;
         onRemove?: ((comment: Partial<Comment>) => void) | null;
         onLike?: ((comment: Partial<Comment>) => void) | null;
         onReply?: ((comment: Partial<Comment>) => void) | null;
@@ -80,40 +82,42 @@
     {/if}
 
     <!-- 点赞及回复按�?-->
-    <div class="flex g-4 mt-1">
-        <Button
-            variant="link"
-            onclick={() => {
-                // toggleLike(comment);
-                onLike?.(comment);
-            }}
-        >
-            <Icon
-                name="thumbs_up"
-                size={16}
-                color={comment.liked
-                    ? "var(--danger-hover)"
-                    : "var(--text-faint)"}
-            ></Icon>
-            <span>{comment.likes ? comment.likes : ""}</span>
-        </Button>
-        {#if user?.id !== comment.userId}
+    {#if !readonly}
+        <div class="flex g-4 mt-1">
             <Button
                 variant="link"
                 onclick={() => {
-                    onReply?.(comment);
-                }}><span>回复</span></Button
+                    // toggleLike(comment);
+                    onLike?.(comment);
+                }}
             >
-        {:else}
-            <Button
-                variant="link"
-                onclick={async () => {
-                    onRemove?.(comment);
-                }}>[删除]</Button
-            >
-        {/if}
-        {@render children?.()}
-    </div>
+                <Icon
+                    name="thumbs_up"
+                    size={16}
+                    color={comment.liked
+                        ? "var(--danger-hover)"
+                        : "var(--text-faint)"}
+                ></Icon>
+                <span>{comment.likes ? comment.likes : ""}</span>
+            </Button>
+            {#if user?.id !== comment.userId}
+                <Button
+                    variant="link"
+                    onclick={() => {
+                        onReply?.(comment);
+                    }}><span>回复</span></Button
+                >
+            {:else}
+                <Button
+                    variant="link"
+                    onclick={async () => {
+                        onRemove?.(comment);
+                    }}>[删除]</Button
+                >
+            {/if}
+            {@render children?.()}
+        </div>
+    {/if}
 </div>
 
 <style>

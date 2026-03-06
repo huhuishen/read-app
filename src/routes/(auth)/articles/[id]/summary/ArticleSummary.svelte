@@ -17,7 +17,9 @@
     } = $props();
 
     const canReview = $derived(
-        !!user.roles?.some((role) => role === "administrator" || role === "editor"),
+        !!user.roles?.some(
+            (role) => role === "administrator" || role === "editor",
+        ),
     );
 
     function countText(text: string) {
@@ -54,7 +56,7 @@
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
-            class="flex g-3"
+            class="flex g-3 author"
             onclick={() => {
                 if (article.author && article.authorId) {
                     goto(`/profile/${article.authorId}/articles`);
@@ -76,7 +78,7 @@
         </h2>
     </div>
 
-    <div class="flex stats">
+    <div class="flex center stats">
         <ReadingStats
             title="阅读"
             value={article.stats.view ?? 0}
@@ -180,12 +182,16 @@
     }
 
     .score {
-        color: brown;
+        color: var(--danger-hover);
         font-size: 26px;
     }
 
     small {
         font-size: 50%;
+    }
+
+    .author {
+        color: var(--text-faint);
     }
 
     .tags {
@@ -197,14 +203,14 @@
     .tag {
         border-radius: 5px;
         background-color: var(--overlay-soft);
-        color: var(--link-color);
+        color: var(--text-muted);
         padding: 4px 8px;
         cursor: pointer;
     }
 
     .tag:hover {
-        background-color: var(--overlay-default);
-        color: var(--highlight-color);
+        /* background-color: var(--overlay-default); */
+        color: var(--text-secondary);
     }
 
     .tag::before {
@@ -216,13 +222,16 @@
         margin: 1rem auto;
         padding-top: 4rem;
         gap: 40px;
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto;
     }
 
-    @media (max-width: 567px) {
+    /* @media (max-width: 567px) {
         .stats {
             gap: 5px;
         }
-    }
+    } */
 
     .start {
         margin: 10rem auto;

@@ -15,13 +15,13 @@
 </svelte:head>
 
 <div class="profile-container">
-    {@render children?.()}
     <aside class="side flex column center g-3">
         <ProfileHeader {user} />
         <ProfileStats {user} />
         <!-- <ProfileActions {user} /> -->
-        <Button variant="link" onclick={logout}>[退出登录]</Button>
+        <!-- <Button variant="link" onclick={logout}>[退出登录]</Button> -->
     </aside>
+    {@render children?.()}
 </div>
 
 <style>
@@ -49,7 +49,8 @@
         .side {
             position: static;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 0;
+            margin-bottom: 20px;
         }
     }
 </style>

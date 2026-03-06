@@ -129,6 +129,9 @@ export class ReadTimer {
         // console.log(`${this.readSeconds}`);
         if (this.readSeconds <= this.interval && !force) return;
 
+        // 点进去一下不进行记录 < 10s
+        if (this.readSeconds <= 10000) return;
+
         const duration = Math.floor(this.readSeconds / 1000);
         if (duration > 0) {
             // console.log(`accumulateAndSend ${duration} seconds`);
