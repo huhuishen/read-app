@@ -13,6 +13,9 @@
         comment,
         user,
         readonly = false,
+        showAvatar = true,
+        showUser = true,
+        ratingDisplay = "stars",
         onRemove,
         onLike,
         onReply,
@@ -21,6 +24,9 @@
         comment: Partial<Comment>;
         user: Partial<User> | null;
         readonly?: boolean;
+        showAvatar?: boolean;
+        showUser?: boolean;
+        ratingDisplay?: "stars" | "single" | "none";
         onRemove?: ((comment: Partial<Comment>) => void) | null;
         onLike?: ((comment: Partial<Comment>) => void) | null;
         onReply?: ((comment: Partial<Comment>) => void) | null;
@@ -49,17 +55,35 @@
 <div class="comment" bind:this={container}>
     <!-- 头像及发表日期，评分（如果有�?-->
     <div class="flex g-3 mb-1 gray">
-        <div class="flex g-2">
-            <Avatar name={comment.user!}></Avatar>
-            <a class="ml1" href={`/profile/${comment.userId}/articles`}
-                >{comment.user}</a
-            >
-        </div>
+        {#if showAvatar || showUser}
+            <div class="flex g-2">
+                {#if showAvatar}
+                    <Avatar name={comment.user!}></Avatar>
+                {/if}
+                {#if showUser}
+                    <a class="ml1" href={`/profile/${comment.userId}/articles`}
+                        >{comment.user}</a
+                    >
+                {/if}
+            </div>
+        {/if}
         <div class="">
             {toLocalDateString(comment.createdAt)}
         </div>
-        {#if comment.rating}
-            <StarRating value={comment.rating} size={17} readonly />
+        {#if comment.rating && ratingDisplay !== "none"}
+            {#if ratingDisplay === "single"}
+                <span class="single-rating">
+                    <Icon
+                        name="star"
+                        size={14}
+                        fill="var(--warning)"
+                        color="var(--warning)"
+                    />
+                    <span>{comment.rating.toFixed(1)}</span>
+                </span>
+            {:else}
+                <StarRating value={comment.rating} size={17} readonly />
+            {/if}
         {/if}
     </div>
 
@@ -149,5 +173,10 @@
     }
     .gray {
         color: var(--text-faint);
+    }
+    .single-rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
     }
 </style>

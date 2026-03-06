@@ -5,9 +5,12 @@ import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 type GroupedComments = {
-    userId: string;
-    user: string;
+    mode: "user" | "article";
     count: number;
+    userId?: string;
+    user?: string;
+    articleId?: string;
+    articleTitle?: string;
     comments: Partial<Comment>[];
 };
 
@@ -15,7 +18,87 @@ export const GET: RequestHandler = withApi(async ({ params, url }) => {
     const page = Number(url.searchParams.get("page") ?? 1);
     const limit = Number(url.searchParams.get("limit") ?? 20);
     const skip = (page - 1) * limit;
+    const mode =
+        url.searchParams.get("mode") === "article" ? "article" : "user";
     const name = await Categories.resolveName(params.name);
+
+    const groupStage =
+        mode === "article"
+            ? {
+                $group: {
+                    _id: "$articleId",
+                    articleTitle: {
+                        $first: { $ifNull: ["$articleTitle", "$article.title"] },
+                    },
+                    count: { $sum: 1 },
+                    comments: {
+                        $push: {
+                            _id: "$_id",
+                            articleId: "$articleId",
+                            articleTitle: {
+                                $ifNull: ["$articleTitle", "$article.title"],
+                            },
+                            userId: "$userId",
+                            user: "$user",
+                            content: "$content",
+                            rating: "$rating",
+                            likes: "$likes",
+                            liked: "$liked",
+                            replyTo: "$replyTo",
+                            quote: "$quote",
+                            createdAt: "$createdAt",
+                        },
+                    },
+                },
+            }
+            : {
+                $group: {
+                    _id: "$userId",
+                    user: { $first: "$user" },
+                    count: { $sum: 1 },
+                    comments: {
+                        $push: {
+                            _id: "$_id",
+                            articleId: "$articleId",
+                            articleTitle: {
+                                $ifNull: ["$articleTitle", "$article.title"],
+                            },
+                            userId: "$userId",
+                            user: "$user",
+                            content: "$content",
+                            rating: "$rating",
+                            likes: "$likes",
+                            liked: "$liked",
+                            replyTo: "$replyTo",
+                            quote: "$quote",
+                            createdAt: "$createdAt",
+                        },
+                    },
+                },
+            };
+
+    const projectStage =
+        mode === "article"
+            ? {
+                $project: {
+                    _id: 0,
+                    mode: { $literal: "article" },
+                    articleId: "$_id",
+                    articleTitle: 1,
+                    count: 1,
+                    comments: 1,
+                },
+            }
+            : {
+                $project: {
+                    _id: 0,
+                    mode: { $literal: "user" },
+                    userId: "$_id",
+                    user: 1,
+                    count: 1,
+                    comments: 1,
+                },
+            };
 
     const result = await Comments.aggregate<{
         items: GroupedComments[];
@@ -38,38 +121,9 @@ export const GET: RequestHandler = withApi(async ({ params, url }) => {
             },
         },
         { $sort: { createdAt: -1 } },
-        {
-            $group: {
-                _id: "$userId",
-                user: { $first: "$user" },
-                count: { $sum: 1 },
-                comments: {
-                    $push: {
-                        _id: "$_id",
-                        articleId: "$articleId",
-                        userId: "$userId",
-                        user: "$user",
-                        content: "$content",
-                        rating: "$rating",
-                        likes: "$likes",
-                        liked: "$liked",
-                        replyTo: "$replyTo",
-                        quote: "$quote",
-                        createdAt: "$createdAt",
-                    },
-                },
-            },
-        },
-        {
-            $project: {
-                _id: 0,
-                userId: "$_id",
-                user: 1,
-                count: 1,
-                comments: 1,
-            },
-        },
-        { $sort: { count: -1, "comments.0.createdAt": -1, user: 1 } },
+        groupStage,
+        projectStage,
+        { $sort: { count: -1, "comments.0.createdAt": -1 } },
         {
             $facet: {
                 items: [{ $skip: skip }, { $limit: limit }],

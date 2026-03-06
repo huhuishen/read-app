@@ -34,7 +34,7 @@
 
         <div class="flex book-details">
             <div class="flex row sb">
-                <span class="title">{article.title}</span>
+                <span class="article-title">{article.title}</span>
                 {#if article.status != "上架"}
                     <span class="tag">{article.status}</span>
                 {/if}
@@ -88,14 +88,6 @@
         justify-content: center;
         align-items: start;
         cursor: pointer;
-    }
-
-    .title {
-        /* width: 100%; */
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--header-color);
-        font-family: "Times New Roman", Times, serif;
     }
 
     .book-meta {

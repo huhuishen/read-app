@@ -112,3 +112,11 @@ button[data-variant="link"]:hover:not(:disabled) {
     text-align: center;
     padding: 3rem 1rem;
 }
+
+.article-title {
+    /* width: 100%; */
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--header-color);
+    font-family: "Times New Roman", Times, serif;
+}

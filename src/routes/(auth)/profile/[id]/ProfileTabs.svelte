@@ -21,6 +21,7 @@
 
 <Tabs
     {tabs}
+    enableSwipe
     {active}
     onclick={(key) => {
         goto(`/profile/${user.id}/${key}`, {

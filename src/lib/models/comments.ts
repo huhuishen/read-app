@@ -33,6 +33,7 @@ import { Users, type User } from "./users";
 
 export type Comment = {
     articleId: string,
+    articleTitle?: string,
     parentId: ObjectId | string | null, // null = 一级评论
     userId: string,
     user: string,
@@ -63,6 +64,15 @@ export class CommentService extends Collection<Comment> {
         doc.userId = user.id!;
         doc.user = user.name!;
         if (doc.parentId) doc.parentId = super.id(doc.parentId);
+        if (!doc.articleTitle) {
+            const article = await Articles.findOne(
+                { id: doc.articleId, isLatest: true },
+                { projection: { title: 1 } }
+            );
+            if (article?.title) {
+                doc.articleTitle = article.title;
+            }
+        }
 
         const r = await super.insertOne(doc);
 

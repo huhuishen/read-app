@@ -63,7 +63,7 @@
                         show = false;
                     }}
                 >
-                    <Icon name="cross" size={16} strokeWidth={1} />
+                    <Icon name="cross" size={20} strokeWidth={2} />
                 </button>
             {/if}
         </div>
@@ -116,14 +116,11 @@
 
     /* 默认全屏关闭按钮 */
     .modal-close {
-        /* position: absolute;
-        top: 12px;
-        right: 12px; */
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
         border: none;
         background: var(--overlay-soft);
-        color: var(--main-bg-color);
+        color: var(--text-faint);
         border-radius: 50%;
         display: flex;
         align-items: center;
