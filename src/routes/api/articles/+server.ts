@@ -119,8 +119,7 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
             ? req.tags.map((item: unknown) => String(item).trim()).filter(Boolean)
             : [];
 
-    const systemSettings = await Settings.getSystemSettings();
-    const autoPublishWithoutReview = !!systemSettings?.autoPublishWithoutReview;
+    const autoPublishWithoutReview = await Settings.getByName("autoPublishWithoutReview");
 
     let article: Partial<Article> = {
         id: nanoid(),

@@ -20,8 +20,13 @@
         isSaving = true;
 
         const res = await safeCall<{ autoPublishWithoutReview: boolean }>(
-            api.post("/api/settings/publish", {
-                autoPublishWithoutReview,
+            api.post("/api/settings", {
+                items: [
+                    {
+                        key: "autoPublishWithoutReview",
+                        value: autoPublishWithoutReview,
+                    },
+                ],
             }),
             toast,
         );
@@ -44,14 +49,11 @@
 
         <label class="option">
             <input type="checkbox" bind:checked={autoPublishWithoutReview} />
-            <span>发表文章时跳过编辑审核，直接发布</span>
+            <span>无编辑模式</span>
         </label>
 
-        <p class="hint">
-            开启后，你提交文章时将直接进入 <code>上架</code>
-            状态；关闭后，文章会先进入
-            <code>待审核</code> 等待审核。
-        </p>
+        <p class="hint">选中时，你提交文章时将直接上架</p>
+        <p class="hint">关闭后，文章会先进入<code>待审核</code> 等待审核。</p>
 
         <Button variant="primary" onclick={saveSettings} disabled={isSaving}>
             {isSaving ? "保存中..." : "保存设置"}

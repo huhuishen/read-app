@@ -28,7 +28,7 @@
 </script>
 
 <svelte:head>
-    <title>零重力阅</title>
+    <title>科幻阅评</title>
 </svelte:head>
 
 <div class="flex top">

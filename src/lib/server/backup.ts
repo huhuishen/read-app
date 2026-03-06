@@ -1,4 +1,4 @@
-import { db } from '$lib/models';
+import { getDb } from '$lib/models';
 import fs from 'fs';
 import path from 'path';
 import type { BackupOptions, BackupResult } from './types';
@@ -15,6 +15,7 @@ export class BackupService {
     }
 
     static async getCollections(): Promise<string[]> {
+        const db = getDb();
         const collections = await db.listCollections().toArray();
         return collections
             .map(col => col.name)
@@ -63,6 +64,7 @@ export class BackupService {
             };
 
             let totalDocuments = 0;
+            const db = getDb();
 
             // 备份每个集合
             for (const collectionName of collectionsToBackup) {

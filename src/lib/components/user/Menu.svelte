@@ -38,4 +38,4 @@
     ]);
 </script>
 
-<Dropdown {items}><Avatar name={user.name ?? ""}></Avatar></Dropdown>
+<Dropdown {items}><Avatar name={user.email ?? ""}></Avatar></Dropdown>

@@ -39,7 +39,7 @@
 </script>
 
 <svelte:head>
-    <title>关于我们 | 零重力阅读</title>
+    <title>关于我们 | 科幻阅评</title>
 </svelte:head>
 
 <div class="about-page">

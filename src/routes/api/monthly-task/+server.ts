@@ -1,9 +1,10 @@
-import { db } from '$lib/models';
+import { getDb } from '$lib/models';
 import { requireRole, withApi } from '$lib/util/apiHandler';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = withApi(async (event) => {
     requireRole(event, 'administrator');
+    const db = getDb();
 
     const today = new Date().toISOString().slice(0, 7);
 

@@ -14,7 +14,3 @@ export const secret = env.JWT_SECRET ?? "5ujWTuGOSGKDl50mYXsyS1";
 
 
 export const backupDir = (!env.PATH_BACKUP || env.PATH_BACKUP === '') ? `${process.cwd()}\\backup` : env.PATH_BACKUP;
-
-export const systemSettings = {
-    autoPublishWithoutReview: false,
-};

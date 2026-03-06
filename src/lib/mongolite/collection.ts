@@ -44,12 +44,39 @@ export interface DataPage<T> {
 };
 
 export class CollectionWrapper<T extends Entity> {
-    private collection: Collection<T>;
+    private collection?: Collection<T>;
     private client: MongoLiteClient;
+    private name: string;
+    private pendingIndexes: Array<{ indexSpec: IndexSpecification; options?: CreateIndexesOptions }> = [];
 
     constructor(client: MongoLiteClient, name: string) {
         this.client = client;
-        this.collection = client.collection<T>(name);
+        this.name = name;
+    }
+
+    private getCollection(): Collection<T> {
+        if (!this.collection) {
+            this.collection = this.client.collection<T>(this.name);
+        }
+        return this.collection;
+    }
+
+    private isNotConnectedError(e: unknown): boolean {
+        return e instanceof MongoLiteError && e.code === "not_connected";
+    }
+
+    private async flushPendingIndexes() {
+        if (this.pendingIndexes.length === 0) return;
+        const pending = [...this.pendingIndexes];
+        this.pendingIndexes = [];
+        const collection = this.getCollection();
+        for (const { indexSpec, options } of pending) {
+            await collection.createIndex(indexSpec, options);
+        }
+    }
+
+    async ensureIndexes() {
+        await this.flushPendingIndexes();
     }
 
     /**
@@ -58,15 +85,19 @@ export class CollectionWrapper<T extends Entity> {
      */
     createIndex(indexSpec: IndexSpecification, options?: CreateIndexesOptions) {
         try {
-            return this.collection.createIndex(indexSpec, options);
+            return this.getCollection().createIndex(indexSpec, options);
         } catch (e: any) {
+            if (this.isNotConnectedError(e)) {
+                this.pendingIndexes.push({ indexSpec, options });
+                return Promise.resolve("__deferred__");
+            }
             throw new MongoLiteError("createIndex_failed", e.message || String(e), { cause: e });
         }
     }
 
     countDocuments(filter?: Filter<T> | undefined, options?: CountDocumentsOptions & Abortable) {
         try {
-            return this.collection.countDocuments(filter, options);
+            return this.getCollection().countDocuments(filter, options);
         } catch (e: any) {
             throw new MongoLiteError("countDocuments_failed", e.message || String(e), { cause: e });
         }
@@ -77,6 +108,7 @@ export class CollectionWrapper<T extends Entity> {
      */
     async insertOne(doc: Partial<T>, options?: InsertOneOptions | undefined, validate = true) {
         try {
+            await this.flushPendingIndexes();
             // if (validate)
             //     this.schema.validate(doc);
 
@@ -84,7 +116,7 @@ export class CollectionWrapper<T extends Entity> {
             const documents = { ...doc, createdAt: now } as unknown as OptionalUnlessRequiredId<T>;
             // doc = stripUndefined(doc);
 
-            const res = await this.collection.insertOne(documents, options);
+            const res = await this.getCollection().insertOne(documents, options);
             return res;
         } catch (e: any) {
             throw new MongoLiteError("insertOne_failed", e.message || String(e), { cause: e });
@@ -96,6 +128,7 @@ export class CollectionWrapper<T extends Entity> {
      */
     async insertMany(docs: readonly T[], options?: BulkWriteOptions | undefined, validate = true) {
         try {
+            await this.flushPendingIndexes();
             // if (validate)
             //     docs.forEach(doc => {
             //         this.schema.validate(doc);
@@ -107,7 +140,7 @@ export class CollectionWrapper<T extends Entity> {
                 createdAt: now,
             })) as unknown as OptionalUnlessRequiredId<T>[];
 
-            const res = await this.collection.insertMany(documents, options);
+            const res = await this.getCollection().insertMany(documents, options);
             return res;
         } catch (e: any) {
             throw new MongoLiteError("insertMany_failed", e.message || String(e), { cause: e });
@@ -120,7 +153,7 @@ export class CollectionWrapper<T extends Entity> {
      */
     async findOne(filter: Filter<T>, options?: Omit<FindOneOptions, "timeoutMode"> & Abortable) {
         try {
-            return await this.collection.findOne(filter, options);
+            return await this.getCollection().findOne(filter, options);
         } catch (e: any) {
             throw new MongoLiteError("findOne_failed", e.message || String(e), { cause: e });
         }
@@ -129,9 +162,9 @@ export class CollectionWrapper<T extends Entity> {
     async findOneAndUpdate(filter: Filter<T>, update: UpdateFilter<T> | Document[], options?: FindOneAndUpdateOptions) {
         try {
             if (options)
-                return await this.collection.findOneAndUpdate(filter, update, options);
+                return await this.getCollection().findOneAndUpdate(filter, update, options);
             else {
-                return await this.collection.findOneAndUpdate(filter, update);
+                return await this.getCollection().findOneAndUpdate(filter, update);
             }
         } catch (e: any) {
             throw new MongoLiteError("findOneAndUpdate_failed", e.message || String(e), { cause: e });
@@ -151,13 +184,13 @@ export class CollectionWrapper<T extends Entity> {
             const skip = (page - 1) * limit;
 
             const [data, total] = await Promise.all([
-                this.collection
+                this.getCollection()
                     .find(filter, options)
                     .sort(sort || { createdAt: -1 })
                     .skip(skip)
                     .limit(limit)
                     .toArray(),
-                this.collection.countDocuments(filter),
+                this.getCollection().countDocuments(filter),
             ]);
 
             const pages = Math.ceil(total / limit);
@@ -181,7 +214,7 @@ export class CollectionWrapper<T extends Entity> {
      */
     find(filter: Filter<T>, options?: FindOptions & Abortable) {
         try {
-            const res = this.collection.find(filter, options);
+            const res = this.getCollection().find(filter, options);
             return res;
         } catch (e: any) {
             throw new MongoLiteError("find_failed", e.message || String(e), { cause: e });
@@ -221,9 +254,10 @@ export class CollectionWrapper<T extends Entity> {
         sort?: Sort;
     }, validate = true) {
         try {
+            await this.flushPendingIndexes();
             update = this.checkUpdate(update, validate);
 
-            return await this.collection.updateOne(filter, update, options);
+            return await this.getCollection().updateOne(filter, update, options);
         } catch (e: any) {
             throw new MongoLiteError("updateOne_failed", e.message || String(e), { cause: e });
         }
@@ -242,9 +276,10 @@ export class CollectionWrapper<T extends Entity> {
         sort?: Sort;
     }, validate = true) {
         try {
+            await this.flushPendingIndexes();
             update = this.checkUpdate(update, validate);
 
-            return await this.collection.updateMany(filter, update, options);
+            return await this.getCollection().updateMany(filter, update, options);
         } catch (e: any) {
             throw new MongoLiteError("updateMany_failed", e.message || String(e), { cause: e });
         }
@@ -255,7 +290,7 @@ export class CollectionWrapper<T extends Entity> {
      */
     async deleteOne(filter?: Filter<T> | undefined, options?: DeleteOptions) {
         try {
-            return await this.collection.deleteOne(filter, options);
+            return await this.getCollection().deleteOne(filter, options);
         } catch (e: any) {
             throw new MongoLiteError("deleteOne_failed", e.message || String(e), { cause: e });
         }
@@ -267,7 +302,7 @@ export class CollectionWrapper<T extends Entity> {
 
     async deleteMany(filter?: Filter<any> | undefined, options?: DeleteOptions) {
         try {
-            return await this.collection.deleteMany(filter, options);
+            return await this.getCollection().deleteMany(filter, options);
         } catch (e: any) {
             throw new MongoLiteError("deleteMany_failed", e.message || String(e), { cause: e });
         }
@@ -299,7 +334,7 @@ export class CollectionWrapper<T extends Entity> {
      */
     async aggregate<P extends Document>(pipeline?: Document[] | undefined, options?: AggregateOptions & Abortable) {
         try {
-            return await this.collection.aggregate<P>(pipeline, options).toArray();
+            return await this.getCollection().aggregate<P>(pipeline, options).toArray();
         } catch (e: any) {
             throw new MongoLiteError("aggregate_failed", e.message || String(e), { cause: e });
         }
@@ -328,7 +363,8 @@ export class CollectionWrapper<T extends Entity> {
      */
     async bulkWrite(operations: readonly AnyBulkWriteOperation<T>[], options?: BulkWriteOptions) {
         try {
-            return await this.collection.bulkWrite(operations, options);
+            await this.flushPendingIndexes();
+            return await this.getCollection().bulkWrite(operations, options);
         } catch (e: any) {
             throw new MongoLiteError("bulkWrite_failed", e.message || String(e), { cause: e });
         }
@@ -337,7 +373,7 @@ export class CollectionWrapper<T extends Entity> {
     async renameField(oldField: string, newField: string) {
         try {
             // 重命名所有文档的字段
-            await this.collection.updateMany(
+            await this.getCollection().updateMany(
                 {}, // 空条件 = 所有文档
                 { $rename: { [oldField]: newField } }
             );

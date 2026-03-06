@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { ObjectId } from 'mongodb';
 import path from 'path';
-import { db } from '$lib/models';
+import { getDb } from '$lib/models';
 import type { BackupOptions, RestoreOptions, RestoreResult } from './types';
 import { backupDir } from '$lib/config';
 
@@ -115,6 +115,7 @@ export class RestoreService {
 
             let totalRestored = 0;
             const restoredCollections: string[] = [];
+            const db = getDb();
 
             // 恢复每个集合
             for (const collectionName of collectionsToRestore) {

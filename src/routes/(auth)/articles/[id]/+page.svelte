@@ -479,9 +479,7 @@
                             applyReaderPreferences();
                         }}
                     >
-                        <span
-                            class="font-option-label"
-                            style={`font-family: ${option.value};`}
+                        <span style={`font-family: ${option.value};`}
                             >{option.label}</span
                         >
                     </CheckButton>
@@ -580,9 +578,5 @@
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-    }
-
-    .font-option-label {
-        line-height: 1.2;
     }
 </style>

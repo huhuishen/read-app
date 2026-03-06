@@ -11,7 +11,7 @@
 
 <section class="flex column header g-3">
     <div class="flex row center g-3">
-        <Avatar name={user.name} size="md"></Avatar>
+        <Avatar name={user.email} size="md"></Avatar>
         <h1 class="name">{user.name}</h1>
     </div>
 

@@ -30,6 +30,11 @@ import { Users, type User } from "./users";
 // export type Reply = Infer<typeof ReplySchema>;
 // export type Comment = Infer<typeof CommentSchema> & Entity & { liked: boolean };
 
+/**
+ * 分数分布(总人数少时意义不大)
+
+
+ */
 
 export type Comment = {
     articleId: string,

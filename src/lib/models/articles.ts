@@ -37,6 +37,11 @@ import type { User } from "./users";
 
 // export type Article = Infer<typeof ArticleSchema> & Entity & { voted: boolean }
 
+/**
+ * 章节号及索引导航
+
+ */
+
 export type Article = {
     id: string;
     version: number;
