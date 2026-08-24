@@ -3,12 +3,10 @@
     import Button from "$lib/components/Button.svelte";
     import Input from "$lib/components/Input.svelte";
     import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import type { PageProps } from "./$types";
 
     const { params }: PageProps = $props();
-
-    const api = createApi();
 
     let password = $state("");
     let password2 = $state("");
@@ -24,22 +22,18 @@
 
         loading = true;
 
-        const result = await safeCall(
-            api.post<{ message: string }, { token: string; password: string }>(
-                "/api/users/password-reset",
-                {
-                    token: params.token,
-                    password,
-                },
-            ),
-            toast,
-        );
-
-        loading = false;
-        if (!result) return;
-
-        toast.show("密码已重置，请重新登录", "success");
-        await goto("/login");
+        try {
+            await api.post<{ message: string }>("users/password-reset", {
+                token: params.token,
+                password,
+            });
+            toast.show("密码已重置，请重新登录", "success");
+            await goto("/login");
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
+            loading = false;
+        }
     }
 </script>
 

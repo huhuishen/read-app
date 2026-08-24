@@ -1,10 +1,9 @@
-import { requireUser, withApi } from '$lib/util/apiHandler';
 import { handleFileUpload, validateFile } from '$lib/util/server';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = withApi(async (event) => {
-    requireUser(event);
+export const POST: RequestHandler = async (event) => {
+    if (!event.locals.user) return json({ message: "Unauthorized" }, { status: 401 });
 
     const formData = await event.request.formData();
     const file = formData.get('file');
@@ -17,4 +16,4 @@ export const POST: RequestHandler = withApi(async (event) => {
     const url = await handleFileUpload(file, 'covers');
 
     return json({ url });
-});
+};

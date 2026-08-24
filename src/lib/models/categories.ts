@@ -116,7 +116,8 @@ export class CategoryService extends Collection<Category> {
                     name: article.category?.period,
                     year,
                     month,
-                    contest: true,
+                    show: true,
+                    voteEnd: article.category.voteEnd,
                 },
 
                 // 每次执行都增加文章数

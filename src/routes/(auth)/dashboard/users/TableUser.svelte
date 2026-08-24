@@ -8,7 +8,7 @@
     import type { DataPage } from "$lib/mongolite";
     import { toast } from "$lib/stores/toast.svelte";
     import { toLocalDateString } from "$lib/util/client";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import { formatDuration } from "../../../util";
     import type { Role } from "../permissions";
     import Table, { type Column } from "../Table.svelte";
@@ -50,8 +50,6 @@
         },
     ];
 
-    const api = createApi();
-
     const roleOptions: { value: Role; label: string }[] = [
         { value: "administrator", label: "管理员" },
         { value: "editor", label: "编辑" },
@@ -68,9 +66,10 @@
 
     function openSettings(user: User) {
         editing = user;
-        selectedRoles = Array.isArray(user.roles) && user.roles.length
-            ? [...(user.roles as Role[])]
-            : ["user"];
+        selectedRoles =
+            Array.isArray(user.roles) && user.roles.length
+                ? [...(user.roles as Role[])]
+                : ["user"];
         show = true;
     }
 
@@ -97,16 +96,16 @@
         }
 
         loading = true;
-        const res = await safeCall(
-            api.patch(`/api/users/${editing.id}`, { roles: selectedRoles }),
-            toast,
-        );
-        loading = false;
-        if (!res) return;
-
-        toast.show("用户权限已更新", "success");
-        show = false;
-        location.reload();
+        try {
+            await api.patch(`users/${editing.id}`, { roles: selectedRoles });
+            toast.show("用户权限已更新", "success");
+            show = false;
+            location.reload();
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
+            loading = false;
+        }
     }
 
     async function sendPasswordResetRequest(user?: User) {
@@ -114,20 +113,23 @@
         if (!target || loading) return;
 
         loading = true;
-        const res = await safeCall<{ resetUrl?: string; message?: string }>(
-            api.post(`/api/users/${target.id}/password-reset-request`),
-            toast,
-        );
-        loading = false;
-        if (!res) return;
+        try {
+            const res = await api.post<{ resetUrl?: string; message?: string }>(
+                `users/${target.id}/password-reset-request`,
+            );
 
-        if (res.resetUrl && navigator?.clipboard) {
-            await navigator.clipboard.writeText(res.resetUrl);
-            toast.show("重置链接已复制到剪贴板", "success");
-            return;
+            if (res.resetUrl && navigator?.clipboard) {
+                await navigator.clipboard.writeText(res.resetUrl);
+                toast.show("重置链接已复制到剪贴板", "success");
+                return;
+            }
+
+            toast.show(res.message ?? "密码重置请求已发送", "success");
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
+            loading = false;
         }
-
-        toast.show(res.message ?? "密码重置请求已发送", "success");
     }
 </script>
 
@@ -204,7 +206,10 @@
 
             <div class="buttons">
                 <Button disabled={loading} onclick={saveRoles}>保存权限</Button>
-                <Button disabled={loading} onclick={() => sendPasswordResetRequest()}>
+                <Button
+                    disabled={loading}
+                    onclick={() => sendPasswordResetRequest()}
+                >
                     发送密码重置请求
                 </Button>
                 <Button

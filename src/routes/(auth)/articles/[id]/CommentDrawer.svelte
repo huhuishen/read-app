@@ -5,10 +5,11 @@
     import StarRating from "$lib/components/StarRating.svelte";
     import type { Comment, User } from "$lib/models";
     import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import { onMount } from "svelte";
     import CommentItem from "$lib/components/article/CommentItem.svelte";
     import Reply from "./Reply.svelte";
+    import { loading } from "$lib/stores/loading.svelte";
 
     /* ---------------- props ---------------- */
 
@@ -20,39 +21,37 @@
 
     /* ---------------- state ---------------- */
 
-    let loading = $state(true);
+    let isLoading = $state(true);
     let comments = $state<Comment[]>([]);
     let content = $state("");
     let rating = $state(0);
 
-    const api = createApi();
-
     async function load() {
-        loading = true;
+        loading.start();
+        isLoading = true;
 
-        comments = await api.get<Comment[]>(
-            `/api/articles/${articleId}/comments`,
-        );
+        comments = await api.get<Comment[]>(`articles/${articleId}/comments`);
 
-        loading = false;
+        loading.stop();
+        isLoading = false;
     }
 
     async function submitRoot() {
         if (!content.trim()) return toast.show("请输入评论", "warn");
         if (rating === 0) return toast.show("请评分", "warn");
 
-        await safeCall(
-            api.post(`/api/articles/${articleId}/comments`, {
+        try {
+            await api.post(`articles/${articleId}/comments`, {
                 articleId,
                 content,
                 rating,
-            }),
-            toast,
-        );
-
-        content = "";
-        rating = 0;
-        await load();
+            });
+            content = "";
+            rating = 0;
+            await load();
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
 
     async function submitReply(root: Partial<Comment>) {
@@ -70,27 +69,28 @@
             replyTo: activeReply?.user ?? undefined,
         };
 
-        const data = await safeCall(
-            api.post<{ insertedId: string }, typeof newReply>(
-                `/api/articles/${articleId}/comments`,
+        try {
+            const data = await api.post<{ insertedId: string }>(
+                `articles/${articleId}/comments`,
                 newReply,
-            ),
-            toast,
-        );
+            );
 
-        if (!data?.insertedId) return;
+            if (!data?.insertedId) return;
 
-        root.replies = root.replies ?? [];
-        root.replies = [
-            {
-                _id: data.insertedId,
-                ...newReply,
-            },
-            ...root.replies,
-        ];
+            root.replies = root.replies ?? [];
+            root.replies = [
+                {
+                    _id: data.insertedId,
+                    ...newReply,
+                },
+                ...root.replies,
+            ];
 
-        replyContent = "";
-        activeComment = null;
+            replyContent = "";
+            activeComment = null;
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
 
     function toggleOpen(comment: Partial<Comment>) {
@@ -108,19 +108,24 @@
     let activeReply = $state<Partial<Comment> | null>();
 
     async function toggleLike(c: Partial<Comment>) {
-        const data = await safeCall<{ liked: boolean }>(
-            api.post(`/api/comments/${c._id}/toggle`),
-            toast,
-        );
+        try {
+            const data = await api.post<{ liked: boolean }>(
+                `comments/${c._id}/toggle`,
+            );
 
-        if (!data) return;
-
-        c.liked = data.liked;
-        c.likes = c.likes ?? 0;
-        c.likes += c.liked ? 1 : -1;
+            c.liked = data.liked;
+            c.likes = c.likes ?? 0;
+            c.likes += c.liked ? 1 : -1;
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
     async function removeComment(c: Partial<Comment>) {
-        await safeCall(api.delete(`/api/comments/${c._id}`), toast);
+        try {
+            await api.del(`comments/${c._id}`);
+        } catch {
+            /* 错误已自动弹出 */
+        }
 
         return true;
     }
@@ -128,7 +133,7 @@
 </script>
 
 <Drawer bind:show size="lg">
-    {#if loading}
+    {#if isLoading}
         <p class="gray">加载中...</p>
     {:else}
         <header class="drawer-header">

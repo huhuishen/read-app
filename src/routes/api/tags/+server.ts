@@ -1,18 +1,17 @@
 import { Tags } from '$lib/models';
-import { apiError, requireRole, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 function normalizeName(value: unknown, field = '标签名称') {
     if (typeof value !== 'string' || !value.trim()) {
-        apiError(400, `${field}不能为空`);
+        return json({ message: `${field}不能为空` }, { status: 400 });
     }
 
     return value.trim();
 }
 
-export const GET: RequestHandler = withApi(async ({ url, ...event }) => {
-    requireRole(event, 'administrator');
+export const GET: RequestHandler = async ({ url, ...event }) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const page = Number(url.searchParams.get('page') ?? 1);
     const limit = Number(url.searchParams.get('limit') ?? 20);
@@ -25,19 +24,20 @@ export const GET: RequestHandler = withApi(async ({ url, ...event }) => {
     );
 
     return json(res);
-});
+};
 
-export const POST: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const POST: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const body = (await event.request.json()) as Record<string, unknown>;
 
     const name = normalizeName(body.name);
+    if (name instanceof Response) return name;
     const show = body.show === undefined ? true : Boolean(body.show);
 
     const exists = await Tags.findOne({ name });
     if (exists) {
-        apiError(400, '标签已存在');
+        return json({ message: '标签已存在' }, { status: 400 });
     }
 
     const res = await Tags.insertOne({
@@ -47,18 +47,21 @@ export const POST: RequestHandler = withApi(async (event) => {
     });
 
     return json(res);
-});
+};
 
-export const PATCH: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const PATCH: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const body = (await event.request.json()) as Record<string, unknown>;
     const oldName = normalizeName(body.oldName, '旧标签名称');
+    if (oldName instanceof Response) return oldName;
 
     const update: Record<string, unknown> = {};
 
     if (body.name !== undefined) {
-        update.name = normalizeName(body.name);
+        const normalizedName = normalizeName(body.name);
+        if (normalizedName instanceof Response) return normalizedName;
+        update.name = normalizedName;
     }
 
     if (body.show !== undefined) {
@@ -66,35 +69,36 @@ export const PATCH: RequestHandler = withApi(async (event) => {
     }
 
     if (Object.keys(update).length === 0) {
-        apiError(400, '没有可更新字段');
+        return json({ message: '没有可更新字段' }, { status: 400 });
     }
 
     const res = await Tags.updateOne({ name: oldName }, { $set: update });
 
     if (res.matchedCount === 0) {
-        apiError(404, '标签不存在');
+        return json({ message: '标签不存在' }, { status: 404 });
     }
 
     return json(res);
-});
+};
 
-export const DELETE: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const DELETE: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const body = (await event.request.json()) as Record<string, unknown>;
     const name = normalizeName(body.name);
+    if (name instanceof Response) return name;
 
     const tag = await Tags.findOne({ name });
 
     if (!tag) {
-        apiError(404, '标签不存在');
+        return json({ message: '标签不存在' }, { status: 404 });
     }
 
     if ((tag.articleCount ?? 0) > 0) {
-        apiError(400, '标签有关联文章，无法删除');
+        return json({ message: '标签有关联文章，无法删除' }, { status: 400 });
     }
 
     const res = await Tags.deleteOne({ name });
 
     return json(res);
-});
+};

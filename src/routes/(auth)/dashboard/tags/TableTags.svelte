@@ -7,8 +7,7 @@
     import Pagination from "$lib/components/Pagination.svelte";
     import type { Tag } from "$lib/models";
     import type { DataPage } from "$lib/mongolite";
-    import { toast } from "$lib/stores/toast.svelte";
-    import { apiRequest, createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import Table, { type Column } from "../Table.svelte";
 
     const {
@@ -34,45 +33,43 @@
         },
     ];
 
-    const api = createApi();
-
     async function create() {
-        const result = await safeCall(api.post("/api/tags", form), toast);
-        if (!result) return;
-
-        resetForm();
-        location.reload();
+        try {
+            await api.post("tags", form);
+            resetForm();
+            location.reload();
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
 
     async function update() {
-        const result = await safeCall(
-            api.patch("/api/tags", {
+        try {
+            await api.patch("tags", {
                 oldName: editing!.name,
                 ...form,
-            }),
-            toast,
-        );
-        if (!result) return;
-
-        editing = null;
-        resetForm();
-        location.reload();
+            });
+            editing = null;
+            resetForm();
+            location.reload();
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
 
     async function remove(name?: string) {
         if (!name) return;
         if (!confirm("确定删除该标签吗？")) return;
 
-        const result = await safeCall(
-            apiRequest("/api/tags", {
+        try {
+            await api.request("tags", {
                 method: "DELETE",
                 body: { name },
-            }),
-            toast,
-        );
-        if (!result) return;
-
-        location.reload();
+            });
+            location.reload();
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
 
     function edit(tag: Tag) {
@@ -165,10 +162,7 @@
             placeholder="标签名称"
         ></Input>
 
-        <Checkbox
-            className="col-12"
-            bind:checked={form.show}
-            label="首页显示"
+        <Checkbox className="col-12" bind:checked={form.show} label="首页显示"
         ></Checkbox>
 
         <div class="flex sb mt-3 buttons">

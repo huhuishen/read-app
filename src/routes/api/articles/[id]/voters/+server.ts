@@ -1,5 +1,4 @@
 import { ArticleVoteStats, Articles, Users, type ArticleVoteState } from "$lib/models";
-import { apiError, withApi } from "$lib/util/apiHandler";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
@@ -12,14 +11,14 @@ type VoteUser = {
 
 type VoteDoc = Pick<ArticleVoteState, "userId" | "updatedAt">;
 
-export const GET: RequestHandler = withApi(async ({ params }) => {
+export const GET: RequestHandler = async ({ params }) => {
     const article = await Articles.findOne(
         { id: params.id, isLatest: true, status: "上架" },
         { projection: { _id: 0, category: 1 } },
     );
 
     if (!article) {
-        apiError(404, "Article not found");
+        return json({ message: "Article not found" }, { status: 404 });
     }
 
     // if (Date.now() < new Date(article.category.voteEnd).getTime()) {
@@ -70,4 +69,4 @@ export const GET: RequestHandler = withApi(async ({ params }) => {
     });
 
     return json(result);
-});
+};

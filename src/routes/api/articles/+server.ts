@@ -1,11 +1,10 @@
 import { Articles, Categories, getContestInfoByDate, Settings, Tags, type Article } from '$lib/models';
-import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { nanoid } from '$lib/util/client';
 
 
-export const GET: RequestHandler = withApi(async ({ url, locals }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
 
     if (!locals.user) {
         return json({ message: "未登录" }, { status: 401 });
@@ -49,7 +48,7 @@ export const GET: RequestHandler = withApi(async ({ url, locals }) => {
     );
 
     return json(res);
-});
+};
 
 
 // 创建新书籍
@@ -103,7 +102,7 @@ export const GET: RequestHandler = withApi(async ({ url, locals }) => {
 //     }
 // };
 
-export const POST: RequestHandler = withApi(async ({ request, params, locals }) => {
+export const POST: RequestHandler = async ({ request, params, locals }) => {
     if (!locals.user) {
         return json({ error: '未登录' }, { status: 400 });
     }
@@ -158,4 +157,4 @@ export const POST: RequestHandler = withApi(async ({ request, params, locals }) 
     } catch (error) {
         return json({ error: JSON.stringify(error) }, { status: 500 });
     }
-});
+};

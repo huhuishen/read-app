@@ -11,6 +11,7 @@
 
 import {
     Collection, type FindOneAndUpdateOptions,
+    MongoNotConnectedError,
     ObjectId,
 } from "mongodb";
 
@@ -19,7 +20,6 @@ import type {
 } from "mongodb";
 
 import MongoLiteClient from "./client.js";
-import { MongoLiteError } from "./errors.js";
 import { ensureObjectId } from "./helpers.js";
 
 
@@ -33,6 +33,7 @@ export interface Entity {
     _id?: ObjectId | string;
     createdAt?: Date;
     updatedAt?: Date;
+    version?: number;
 }
 
 export interface DataPage<T> {
@@ -62,7 +63,7 @@ export class CollectionWrapper<T extends Entity> {
     }
 
     private isNotConnectedError(e: unknown): boolean {
-        return e instanceof MongoLiteError && e.code === "not_connected";
+        return e instanceof MongoNotConnectedError;
     }
 
     private async flushPendingIndexes() {
@@ -91,60 +92,39 @@ export class CollectionWrapper<T extends Entity> {
                 this.pendingIndexes.push({ indexSpec, options });
                 return Promise.resolve("__deferred__");
             }
-            throw new MongoLiteError("createIndex_failed", e.message || String(e), { cause: e });
+            throw e;
         }
     }
 
     countDocuments(filter?: Filter<T> | undefined, options?: CountDocumentsOptions & Abortable) {
-        try {
-            return this.getCollection().countDocuments(filter, options);
-        } catch (e: any) {
-            throw new MongoLiteError("countDocuments_failed", e.message || String(e), { cause: e });
-        }
+        return this.getCollection().countDocuments(filter, options);
     }
 
     /**
      * 插入单个文档
      */
     async insertOne(doc: Partial<T>, options?: InsertOneOptions | undefined, validate = true) {
-        try {
-            await this.flushPendingIndexes();
-            // if (validate)
-            //     this.schema.validate(doc);
+        await this.flushPendingIndexes();
 
-            const now = new Date();
-            const documents = { ...doc, createdAt: now } as unknown as OptionalUnlessRequiredId<T>;
-            // doc = stripUndefined(doc);
+        const now = new Date();
+        const documents = { ...doc, createdAt: now } as unknown as OptionalUnlessRequiredId<T>;
 
-            const res = await this.getCollection().insertOne(documents, options);
-            return res;
-        } catch (e: any) {
-            throw new MongoLiteError("insertOne_failed", e.message || String(e), { cause: e });
-        }
+        return await this.getCollection().insertOne(documents, options);
     }
 
     /**
      * 插入多个文档
      */
-    async insertMany(docs: readonly T[], options?: BulkWriteOptions | undefined, validate = true) {
-        try {
-            await this.flushPendingIndexes();
-            // if (validate)
-            //     docs.forEach(doc => {
-            //         this.schema.validate(doc);
-            //     });
+    async insertMany(docs: readonly Partial<T>[], options?: BulkWriteOptions | undefined, validate = true) {
+        await this.flushPendingIndexes();
 
-            const now = new Date();
-            const documents = docs.map(doc => ({
-                ...doc,
-                createdAt: now,
-            })) as unknown as OptionalUnlessRequiredId<T>[];
+        const now = new Date();
+        const documents = docs.map(doc => ({
+            ...doc,
+            createdAt: now,
+        })) as unknown as OptionalUnlessRequiredId<T>[];
 
-            const res = await this.getCollection().insertMany(documents, options);
-            return res;
-        } catch (e: any) {
-            throw new MongoLiteError("insertMany_failed", e.message || String(e), { cause: e });
-        }
+        return await this.getCollection().insertMany(documents, options);
     }
 
 
@@ -152,23 +132,11 @@ export class CollectionWrapper<T extends Entity> {
      * 查找单个文档
      */
     async findOne(filter: Filter<T>, options?: Omit<FindOneOptions, "timeoutMode"> & Abortable) {
-        try {
-            return await this.getCollection().findOne(filter, options);
-        } catch (e: any) {
-            throw new MongoLiteError("findOne_failed", e.message || String(e), { cause: e });
-        }
+        return await this.getCollection().findOne(filter, options);
     }
 
     async findOneAndUpdate(filter: Filter<T>, update: UpdateFilter<T> | Document[], options?: FindOneAndUpdateOptions) {
-        try {
-            if (options)
-                return await this.getCollection().findOneAndUpdate(filter, update, options);
-            else {
-                return await this.getCollection().findOneAndUpdate(filter, update);
-            }
-        } catch (e: any) {
-            throw new MongoLiteError("findOneAndUpdate_failed", e.message || String(e), { cause: e });
-        }
+        return await this.getCollection().findOneAndUpdate(filter, update, options ?? {});
     }
 
     async findOneById(id: string, options?: Omit<FindOneOptions, "timeoutMode"> & Abortable) {
@@ -178,73 +146,53 @@ export class CollectionWrapper<T extends Entity> {
     /**
      * 分页查询
      */
-    async findPage(filter: Filter<T>, options: FindOptions & Abortable, pageOptions: PaginationOptions) {
-        try {
-            const { page, limit, sort } = pageOptions;
-            const skip = (page - 1) * limit;
+    async findPage(filter: Filter<T>, options: Omit<FindOptions, "sort"> & Abortable, pageOptions: PaginationOptions) {
+        const { page, limit, sort } = pageOptions;
+        const skip = (page - 1) * limit;
 
-            const [data, total] = await Promise.all([
-                this.getCollection()
-                    .find(filter, options)
-                    .sort(sort || { createdAt: -1 })
-                    .skip(skip)
-                    .limit(limit)
-                    .toArray(),
-                this.getCollection().countDocuments(filter),
-            ]);
+        const [data, total] = await Promise.all([
+            this.getCollection()
+                .find(filter, options)
+                .sort(sort || { createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .toArray(),
+            this.getCollection().countDocuments(filter),
+        ]);
 
-            const pages = Math.ceil(total / limit);
+        const pages = Math.ceil(total / limit);
 
-            return {
-                items: data,
-                page,
-                limit,
-                totalItems: total,
-                totalPages: pages,
-                // hasNext: page < pageCount,
-                // hasPrev: page > 1,
-            };
-        } catch (e: any) {
-            throw new MongoLiteError("findPage_failed", e.message || String(e), { cause: e });
-        }
+        return {
+            items: data,
+            page,
+            limit,
+            totalItems: total,
+            totalPages: pages,
+        };
     }
 
     /**
-     * 查找多个文档
+     * 查找多个文档，返回惰性游标。
+     * 注意：try/catch 不覆盖后续游标迭代的异步错误，调用方需在 toArray() 等处自行处理。
      */
     find(filter: Filter<T>, options?: FindOptions & Abortable) {
-        try {
-            const res = this.getCollection().find(filter, options);
-            return res;
-        } catch (e: any) {
-            throw new MongoLiteError("find_failed", e.message || String(e), { cause: e });
-        }
+        return this.getCollection().find(filter, options);
     }
 
     checkUpdate(update: UpdateFilter<T>, validate = true) {
-        // if (!update.$set) {
-        // $inc
-        // throw new Error(`Missing $set in update document`); 
-        // }
-        // if (update.$set && validate) {
-        //     this.schema.validate(update.$set);
-        // }
         const now = new Date();
+        const result = { ...update };
 
-        update = {
-            ...update,
+        // 仅在已有 $set 时注入 updatedAt
+        if ("$set" in result) {
+            (result as any).$set = { ...(result as any).$set, updatedAt: now };
+        }
+        // 仅在已有 $setOnInsert 时注入 createdAt
+        if ("$setOnInsert" in result) {
+            (result as any).$setOnInsert = { ...(result as any).$setOnInsert, createdAt: now };
+        }
 
-            $set: {
-                ...(update as any).$set,
-                updatedAt: now,
-            },
-
-            $setOnInsert: {
-                ...(update as any).$setOnInsert,
-                createdAt: now,
-            },
-        };
-        return update;
+        return result;
     }
 
     /**
@@ -253,14 +201,10 @@ export class CollectionWrapper<T extends Entity> {
     async updateOne(filter: Filter<T>, update: UpdateFilter<T>, options?: UpdateOptions & {
         sort?: Sort;
     }, validate = true) {
-        try {
-            await this.flushPendingIndexes();
-            update = this.checkUpdate(update, validate);
+        await this.flushPendingIndexes();
+        update = this.checkUpdate(update, validate);
 
-            return await this.getCollection().updateOne(filter, update, options);
-        } catch (e: any) {
-            throw new MongoLiteError("updateOne_failed", e.message || String(e), { cause: e });
-        }
+        return await this.getCollection().updateOne(filter, update, options);
     }
 
     async updateOneById(id: string, update: UpdateFilter<T>, options?: UpdateOptions & {
@@ -275,73 +219,50 @@ export class CollectionWrapper<T extends Entity> {
     async updateMany(filter: Filter<T>, update: UpdateFilter<T>, options?: UpdateOptions & {
         sort?: Sort;
     }, validate = true) {
-        try {
-            await this.flushPendingIndexes();
-            update = this.checkUpdate(update, validate);
+        await this.flushPendingIndexes();
+        update = this.checkUpdate(update, validate);
 
-            return await this.getCollection().updateMany(filter, update, options);
-        } catch (e: any) {
-            throw new MongoLiteError("updateMany_failed", e.message || String(e), { cause: e });
-        }
+        return await this.getCollection().updateMany(filter, update, options);
     }
 
     /**
      * 删除单个文档
      */
-    async deleteOne(filter?: Filter<T> | undefined, options?: DeleteOptions) {
-        try {
-            return await this.getCollection().deleteOne(filter, options);
-        } catch (e: any) {
-            throw new MongoLiteError("deleteOne_failed", e.message || String(e), { cause: e });
-        }
+    async deleteOne(filter: Filter<T>, options?: DeleteOptions) {
+        return await this.getCollection().deleteOne(filter, options);
     }
 
     async deleteOneById(id: string, options?: DeleteOptions) {
         return this.deleteOne({ _id: this.id(id) } as any, options);
     }
 
-    async deleteMany(filter?: Filter<any> | undefined, options?: DeleteOptions) {
-        try {
-            return await this.getCollection().deleteMany(filter, options);
-        } catch (e: any) {
-            throw new MongoLiteError("deleteMany_failed", e.message || String(e), { cause: e });
-        }
+    async deleteMany(filter: Filter<any>, options?: DeleteOptions) {
+        return await this.getCollection().deleteMany(filter, options);
     }
 
     /**
      * 判断文档是否存在
      */
     async exists(filter: Filter<T>): Promise<boolean> {
-        try {
-            const count = await this.countDocuments(filter, { limit: 1 });
-            return count > 0;
-        } catch (e: any) {
-            throw new MongoLiteError("exists_failed", e.message || String(e), { cause: e });
-        }
+        const count = await this.countDocuments(filter, { limit: 1 });
+        return count > 0;
     }
 
     // convenience to convert id string -> ObjectId
     id(val: string | ObjectId) {
-        try {
-            return typeof val === "string" ? ensureObjectId(val) : val;
-        } catch (e: any) {
-            throw new MongoLiteError("id_failed", e.message || String(e), { cause: e });
-        }
+        return typeof val === "string" ? ensureObjectId(val) : val;
     }
 
     /**
      * 聚合查询
      */
     async aggregate<P extends Document>(pipeline?: Document[] | undefined, options?: AggregateOptions & Abortable) {
-        try {
-            return await this.getCollection().aggregate<P>(pipeline, options).toArray();
-        } catch (e: any) {
-            throw new MongoLiteError("aggregate_failed", e.message || String(e), { cause: e });
-        }
+        return await this.getCollection().aggregate<P>(pipeline, options).toArray();
     }
 
     /**
      * 事务操作
+     * @deprecated 不推荐使用事务，请使用乐观锁（updateOneWithVersionLock）替代方案
      */
     async withTransaction<TResult = void>(
         operation: (session: any) => Promise<TResult>
@@ -351,8 +272,6 @@ export class CollectionWrapper<T extends Entity> {
             return await session.withTransaction(async () => {
                 return await operation(session);
             });
-        } catch (e: any) {
-            throw new MongoLiteError("withTransaction_failed", e.message || String(e), { cause: e });
         } finally {
             await session.endSession();
         }
@@ -362,23 +281,37 @@ export class CollectionWrapper<T extends Entity> {
      * 批量写入操作
      */
     async bulkWrite(operations: readonly AnyBulkWriteOperation<T>[], options?: BulkWriteOptions) {
-        try {
-            await this.flushPendingIndexes();
-            return await this.getCollection().bulkWrite(operations, options);
-        } catch (e: any) {
-            throw new MongoLiteError("bulkWrite_failed", e.message || String(e), { cause: e });
-        }
+        await this.flushPendingIndexes();
+        return await this.getCollection().bulkWrite(operations, options);
     }
 
     async renameField(oldField: string, newField: string) {
-        try {
-            // 重命名所有文档的字段
-            await this.getCollection().updateMany(
-                {}, // 空条件 = 所有文档
-                { $rename: { [oldField]: newField } }
-            );
-        } catch (e: any) {
-            throw new MongoLiteError("renameField_failed", e.message || String(e), { cause: e });
-        }
+        return await this.getCollection().updateMany(
+            {},
+            { $rename: { [oldField]: newField } }
+        );
+    }
+
+    /**
+     * 带乐观锁的更新。
+     * 文档需包含 `version: number` 字段。
+     * 更新条件中追加 version 匹配，更新操作中对 version 执行 $inc。
+     * 返回 false 表示版本冲突（文档已被其他操作修改）或文档不存在。
+     */
+    async updateOneWithVersionLock(
+        id: string,
+        update: UpdateFilter<T>,
+    ): Promise<boolean> {
+        const doc = await this.findOneById(id);
+        if (!doc) return false;
+
+        const currentVersion = (doc as any).version ?? 0;
+
+        const result = await this.updateOne(
+            { _id: this.id(id), version: currentVersion } as any,
+            { ...update, $inc: { ...(update as any).$inc, version: 1 } } as any,
+        );
+
+        return result.modifiedCount === 1;
     }
 }

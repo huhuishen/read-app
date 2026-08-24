@@ -2,12 +2,11 @@ import {
     type ArticleStatsSetRequest,
     ArticleUserStats,
 } from '$lib/models/articleStats';
-import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 
-export const POST: RequestHandler = withApi(async ({ request, locals, params }) => {
+export const POST: RequestHandler = async ({ request, locals, params }) => {
     const body = await request.json();
     let req: ArticleStatsSetRequest;
 
@@ -32,7 +31,7 @@ export const POST: RequestHandler = withApi(async ({ request, locals, params }) 
     );
 
     return json({ ok: true });
-});
+};
 
 // api.post(`/api/articles/${article.id}/stats`, {
 //     action: "vote",

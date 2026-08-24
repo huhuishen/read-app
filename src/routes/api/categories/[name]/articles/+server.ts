@@ -1,10 +1,9 @@
 import { Articles, Categories, type Article } from "$lib/models";
-import { withApi } from "$lib/util/apiHandler";
 import { json } from "@sveltejs/kit";
 import type { Filter } from "mongodb";
 import type { RequestHandler } from "./$types";
 
-export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
+export const GET: RequestHandler = async ({ params, locals, url }) => {
     const page = Number(url.searchParams.get("page") ?? 1);
     const limit = Number(url.searchParams.get("limit") ?? 20);
     const name = await Categories.resolveName(params.name);
@@ -42,4 +41,4 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
     });
 
     return json(articles);
-});
+};

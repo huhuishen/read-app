@@ -4,7 +4,7 @@
     import type { User } from "$lib/models";
     import { session } from "$lib/stores/session.svelte";
     import { toast } from "$lib/stores/toast.svelte.js";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import Avatar from "./Avatar.svelte";
 
     let {
@@ -21,7 +21,6 @@
     let password = $state("");
     let nickname = $state("");
     let register = $state(false);
-    const api = createApi();
 
     async function invalidate() {
         // await invalidateAll();
@@ -50,35 +49,30 @@
     bind:register
     onSubmit={async () => {
         if (register) {
-            const r = await safeCall(
-                api.post("/api/users/register", {
+            try {
+                await api.post("users/register", {
                     account,
                     name: nickname,
                     password,
-                }),
-                toast,
-            );
-
-            if (r) {
+                });
                 password = "";
                 toast.show("注册成功！", "success");
                 register = false;
+            } catch {
+                /* 错误已自动弹出 */
             }
         } else {
             // const fp = await FingerprintJS.load();
             // const result = await fp.get();
             // console.log(result);
 
-            const r = await safeCall<User>(
-                api.post("/api/users/auth", {
+            try {
+                const r = await api.post<User>("users/auth", {
                     account,
                     password,
                     // visitorId: result.visitorId,
-                }),
-                toast,
-            );
+                });
 
-            if (r) {
                 showLogin = false;
                 account = "";
                 password = "";
@@ -88,6 +82,8 @@
 
                 toast.show("登录成功！", "success");
                 await invalidate();
+            } catch {
+                /* 错误已自动弹出 */
             }
         }
     }}

@@ -62,7 +62,7 @@ export function stringSegment(content: string | undefined) {
 
 
 import { goto, invalidateAll } from '$app/navigation';
-import { createApi, safeCall } from '$lib/util/apiRequest';
+import { api } from '$lib/api/client';
 import { toast } from '$lib/stores/toast.svelte';
 import { customAlphabet } from 'nanoid';
 // const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -71,41 +71,19 @@ import { customAlphabet } from 'nanoid';
 const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
 // ~35 years or 308M IDs
 export const nanoid = customAlphabet(alphabet, 12);
-const api = createApi();
 // nanoid() //=> "5KCLQ6RK4ues"
-
-
-export function errorMessage(e: any) {
-    let msg = "未知错误";
-
-    if (e instanceof Error) {
-        const anyErr = e as any;
-
-        if (typeof anyErr.original === "string") {
-            try {
-                msg = JSON.parse(anyErr.original)?.error ?? e.message;
-            } catch {
-                msg = anyErr.original;
-            }
-        } else {
-            msg = e.message;
-        }
-    }
-    return msg;
-}
 
 
 export async function logout() {
     try {
         // session.user = null;
-        const r = await safeCall(api.post('/api/users/logout'), toast);
-
-        if (r) {
-            toast.show("已退出登录！", "success");
-        }
+        await api.post('users/logout');
+        toast.show("已退出登录！", "success");
         await goto("/");
         invalidateAll();
-    } catch (error) {
-        toast.show("与服务器通讯异常", "error");
+    } catch {
+        // 错误已由 apiFetch 自动弹出
+        await goto("/");
+        invalidateAll();
     }
 }

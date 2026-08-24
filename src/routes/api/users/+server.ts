@@ -1,10 +1,9 @@
 import { Articles, Users, type Article } from '$lib/models';
-import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 
-export const GET: RequestHandler = withApi(async ({ url, locals }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
     const page = parseInt(url.searchParams.get('page') || '1');
     const limit = parseInt(url.searchParams.get('limit') || '12');
 
@@ -18,4 +17,4 @@ export const GET: RequestHandler = withApi(async ({ url, locals }) => {
         { page, limit, sort: { createdAt: -1 } }
     );
     return json(res);
-});
+};

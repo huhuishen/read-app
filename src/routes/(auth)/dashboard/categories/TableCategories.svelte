@@ -7,8 +7,7 @@
     import Pagination from "$lib/components/Pagination.svelte";
     import type { Category } from "$lib/models";
     import type { DataPage } from "$lib/mongolite";
-    import { toast } from "$lib/stores/toast.svelte";
-    import { apiRequest, createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import Table, { type Column } from "../Table.svelte";
 
     const {
@@ -53,46 +52,45 @@
         },
     ];
 
-    const api = createApi();
-
     async function create() {
-        const result = await safeCall(api.post("/api/categories", form), toast);
-        if (!result) return;
+        try {
+            await api.post("categories", form);
+            resetForm();
 
-        resetForm();
-
-        // await load();
+            // await load();
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
 
     async function update() {
-        const result = await safeCall(
-            api.patch("/api/categories", {
+        try {
+            await api.patch("categories", {
                 oldName: editing!.name,
                 ...form,
-            }),
-            toast,
-        );
-        if (!result) return;
+            });
+            editing = null;
 
-        editing = null;
+            resetForm();
 
-        resetForm();
-
-        // await load();
+            // await load();
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
 
     async function remove(name?: string) {
         if (!name) return;
         if (!confirm("确定删除标签？")) return;
 
-        const result = await safeCall(
-            apiRequest("/api/categories", {
+        try {
+            await api.request("categories", {
                 method: "DELETE",
                 body: { name },
-            }),
-            toast,
-        );
-        if (!result) return;
+            });
+        } catch {
+            /* 错误已自动弹出 */
+        }
 
         // await load();
     }

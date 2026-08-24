@@ -1,6 +1,7 @@
 <script lang="ts">
     import { navigating } from "$app/state";
     import { browser } from "$app/environment";
+    import { loading } from "$lib/stores/loading.svelte";
 
     let visible = $state(false);
     let progress = $state(0);
@@ -37,11 +38,7 @@
     }
 
     $effect(() => {
-        const nav = navigating;
-
-        const active = nav !== null ;
-
-        if (active) {
+        if (loading.active || navigating.to) {
             start();
         } else {
             finish();
@@ -73,7 +70,12 @@
     .bar {
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+        background: linear-gradient(
+            90deg,
+            var(--accent-primary),
+            var(--accent-secondary),
+            var(--accent-tertiary)
+        );
 
         transform-origin: left;
         transition: transform 180ms ease;

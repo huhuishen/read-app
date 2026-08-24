@@ -16,5 +16,5 @@
 {@html icons}
 <Toast></Toast>
 
-<!-- <ProgressBar /> -->
+<ProgressBar />
 {@render children()}

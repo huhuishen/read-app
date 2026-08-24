@@ -1,12 +1,12 @@
 import type { User } from '$lib/models';
-import { createApi } from '$lib/util/apiRequest';
+import { createApiClient } from '$lib/api/client';
 import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async ({ fetch, params }) => {
-    const api = createApi(fetch);
+    const api = createApiClient(fetch, { baseUrl: "/api" });
 
     const userState = await api.get(
-        `/api/users/${params.id}`,
+        `users/${params.id}`,
     ) as User;
 
     return { userState };

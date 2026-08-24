@@ -1,10 +1,9 @@
 import { Users } from '$lib/models';
-import { apiError, requireRole, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const POST: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const user = await Users.findOne(
         { id: event.params.id },
@@ -12,7 +11,7 @@ export const POST: RequestHandler = withApi(async (event) => {
     );
 
     if (!user) {
-        apiError(404, '用户不存在');
+        return json({ message: '用户不存在' }, { status: 404 });
     }
 
     const token = crypto.randomUUID().replaceAll('-', '');
@@ -36,4 +35,4 @@ export const POST: RequestHandler = withApi(async (event) => {
         expireAt: expireAt.toISOString(),
         email: user.email,
     });
-});
+};

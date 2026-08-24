@@ -1,11 +1,19 @@
 import { cookieOptions } from '$lib/config';
 import { Users, type User } from '$lib/models';
-import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import {
+    SESSION_COOKIE,
+    SESSION_TTL_SECONDS,
+    createSession,
+    SESSION_TTL_MS,
+} from '$lib/auth/session';
+import { extractClientIp } from '$lib/auth/ip';
+import { nanoid } from '$lib/util/client';
+import type { User as AuthUser, UserRole } from '$lib/auth/types';
 
 
-export const POST: RequestHandler = withApi(async ({ request, cookies }) => {
+export const POST: RequestHandler = async ({ request, cookies, getClientAddress }) => {
     const req = await request.json();
 
     const email = req.email;
@@ -31,7 +39,7 @@ export const POST: RequestHandler = withApi(async ({ request, cookies }) => {
     //     return json({ message: "请先激活邮箱" }, { status: 403 });
     // }
 
-    // 生成JWT token
+    // 构造返回给前端 / 存入 session 的 user 对象
     const sessionUser: Partial<User> = {
         id: user.id!.toString(),
         email: user.email,
@@ -39,20 +47,33 @@ export const POST: RequestHandler = withApi(async ({ request, cookies }) => {
         title: user.title,
         award: user.award,
         roles: user.roles,
-        // visitorId: visitorId
+        profile: user.profile,
     };
 
-    const token = Users.generateToken(sessionUser);
+    // 生成 sessionId 并创建会话（存入存储时转换为 auth/types 的 User 结构）
+    const sessionId = nanoid(32);
+    const now = Date.now();
+    const ip = extractClientIp(request.headers, getClientAddress());
+    const userAgent = request.headers.get("user-agent") ?? undefined;
 
-    // const event = {
-    //     uid: user.id, event: "login"
-    // };
-    // Logs.add(event as Log);
+    await createSession(sessionId, {
+        id: sessionId,
+        user: sessionUser as unknown as AuthUser & { roles: UserRole[] },
+        createdAt: now,
+        lastSeenAt: now,
+        expiresAt: now + SESSION_TTL_MS,
+        ip,
+        userAgent,
+    });
 
-    // 设置cookie
-    cookies.set('token', token, {
-        ...cookieOptions, maxAge: 60 * 60 * 24 * 7 // 7天
+    // 更新最后登录时间
+    // await Users.updateLastLogin(user.id!);
+
+    // 设置 cookie：session_id
+    cookies.set(SESSION_COOKIE, sessionId, {
+        ...cookieOptions,
+        maxAge: SESSION_TTL_SECONDS,
     });
 
     return json(sessionUser);
-});
+};

@@ -1,5 +1,5 @@
 import { type Entity } from "$lib/mongolite";
-import { SafeError } from "$lib/util/safe";
+import { error } from "@sveltejs/kit";
 import { ArticleUserStats } from "./articleStats";
 import { Categories } from "./categories";
 import { Comments } from "./comments";
@@ -142,7 +142,7 @@ export class ArticleService extends Collection<Article> {
             { page, limit }
         );
 
-        if (data.totalItems <= 0) throw new SafeError(404, "找不到指定的分类目录");
+        if (data.totalItems <= 0) throw error(404, "找不到指定的分类目录");
 
         return {
             ...data
@@ -154,7 +154,7 @@ export class ArticleService extends Collection<Article> {
         const article = await this.findOne(filter as any);
 
         if (!article) {
-            throw new SafeError(404, "找不到文章");
+            throw error(404, "找不到文章");
         }
 
         // ensureArticleStats(article);

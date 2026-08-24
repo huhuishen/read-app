@@ -1,5 +1,4 @@
 import { Articles, Categories, Tags } from '$lib/models';
-import { apiError, requireUser, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
@@ -33,20 +32,20 @@ function pickArticleUpdate(body: Record<string, unknown>, requireTitleAndContent
 
     if (requireTitleAndContent) {
         if (!update.title || !update.content) {
-            apiError(400, 'Missing required fields');
+            return json({ message: 'Missing required fields' }, { status: 400 });
         }
     }
 
     if (Object.keys(update).length === 0) {
-        apiError(400, 'No updatable fields');
+        return json({ message: 'No updatable fields' }, { status: 400 });
     }
 
     return update;
 }
 
-function normalizeStatus(value: unknown): ArticleStatus {
+function normalizeStatus(value: unknown): ArticleStatus | Response {
     if (typeof value !== "string" || !ARTICLE_STATUSES.includes(value as ArticleStatus)) {
-        apiError(400, "Invalid article status");
+        return json({ message: "Invalid article status" }, { status: 400 });
     }
     return value as ArticleStatus;
 }
@@ -62,7 +61,7 @@ async function ensureCanEditArticle(
     );
 
     if (!target) {
-        apiError(404, 'Article not found');
+        return json({ message: 'Article not found' }, { status: 404 });
     }
 
     const isAdmin = user.roles?.includes('administrator');
@@ -70,7 +69,7 @@ async function ensureCanEditArticle(
     const canReview = allowReviewer && isEditor;
 
     if (!isAdmin && !canReview && target.authorId !== user.id) {
-        apiError(403, 'Forbidden');
+        return json({ message: 'Forbidden' }, { status: 403 });
     }
 
     return target;
@@ -95,14 +94,16 @@ function enforceStatusTransition(
     user: any,
     target: { status?: string },
     update: Record<string, unknown>
-): boolean {
+): boolean | Response {
     // 允许无状态转换
     if (!Object.prototype.hasOwnProperty.call(update, 'status')) {
         return true;
     }
 
     const currentStatus = normalizeStatus(target.status ?? '草稿');
+    if (currentStatus instanceof Response) return currentStatus;
     const nextStatus = normalizeStatus(update.status);
+    if (nextStatus instanceof Response) return nextStatus;
 
     // 允许状态转换到相同状态
     if (currentStatus === nextStatus) {
@@ -143,7 +144,7 @@ function sanitizeUpdateByRole(
     delete update.content;
 
     if (Object.keys(update).length === 0) {
-        apiError(400, 'No permitted fields for reviewer');
+        return json({ message: 'No permitted fields for reviewer' }, { status: 400 });
     }
 
     return update;
@@ -197,7 +198,9 @@ async function syncCategoryPreviewCacheOnUnpublish(
     }
 
     const currentStatus = normalizeStatus(oldStatus ?? '草稿');
+    if (currentStatus instanceof Response) return currentStatus;
     const nextStatus = normalizeStatus(update.status);
+    if (nextStatus instanceof Response) return nextStatus;
 
     if (currentStatus === nextStatus || nextStatus !== '下架') {
         return;
@@ -230,7 +233,9 @@ async function syncCategoryPreviewCacheOnPublish(
     }
 
     const currentStatus = normalizeStatus(target.status ?? '草稿');
+    if (currentStatus instanceof Response) return currentStatus;
     const nextStatus = normalizeStatus(update.status);
+    if (nextStatus instanceof Response) return nextStatus;
 
     if (currentStatus === nextStatus || nextStatus !== '上架') {
         return;
@@ -293,7 +298,7 @@ async function syncTags(oldTags: string[] = [], nextTags: string[] = []) {
     await Promise.all(affectedTags.map((tag) => Tags.buildCount(tag)));
 }
 
-export const GET: RequestHandler = withApi(async ({ params, locals }) => {
+export const GET: RequestHandler = async ({ params, locals }) => {
     const data = await Articles.getByArticleId(params.id, locals.user!);
     const now = Date.now();
 
@@ -303,20 +308,25 @@ export const GET: RequestHandler = withApi(async ({ params, locals }) => {
     }
 
     return json(data);
-});
+};
 
-export const POST: RequestHandler = withApi(async (event) => {
-    const user = requireUser(event);
+export const POST: RequestHandler = async (event) => {
+    if (!event.locals.user) return json({ message: "Unauthorized" }, { status: 401 });
     const { request, params } = event;
 
-    const target = await ensureCanEditArticle(user, params.id, { allowReviewer: true });
+    const target = await ensureCanEditArticle(event.locals.user, params.id, { allowReviewer: true });
+    if (target instanceof Response) return target;
 
     const body = await request.json() as Record<string, unknown>;
     const rawUpdate = pickArticleUpdate(body, false);
-    if (!enforceStatusTransition(user, target, rawUpdate)) {
-        apiError(403, 'Invalid status transition');
+    if (rawUpdate instanceof Response) return rawUpdate;
+    const transition = enforceStatusTransition(event.locals.user, target, rawUpdate);
+    if (transition instanceof Response) return transition;
+    if (!transition) {
+        return json({ message: 'Invalid status transition' }, { status: 403 });
     }
-    const update = sanitizeUpdateByRole(user, target, rawUpdate);
+    const update = sanitizeUpdateByRole(event.locals.user, target, rawUpdate);
+    if (update instanceof Response) return update;
 
     const res = await Articles.updateOne(
         { id: params.id, isLatest: true },
@@ -334,16 +344,18 @@ export const POST: RequestHandler = withApi(async (event) => {
     await syncTags(oldTags, nextTags);
 
     return json(res);
-});
+};
 
-export const PUT: RequestHandler = withApi(async (event) => {
-    const user = requireUser(event);
+export const PUT: RequestHandler = async (event) => {
+    if (!event.locals.user) return json({ message: "Unauthorized" }, { status: 401 });
     const { request, params } = event;
 
-    const target = await ensureCanEditArticle(user, params.id);
+    const target = await ensureCanEditArticle(event.locals.user, params.id);
+    if (target instanceof Response) return target;
 
     const body = await request.json() as Record<string, unknown>;
     const update = pickArticleUpdate(body, true);
+    if (update instanceof Response) return update;
 
     const res = await Articles.updateOne(
         { id: params.id, isLatest: true },
@@ -357,13 +369,14 @@ export const PUT: RequestHandler = withApi(async (event) => {
     await syncTags(oldTags, nextTags);
 
     return json(res);
-});
+};
 
-export const DELETE: RequestHandler = withApi(async (event) => {
-    const user = requireUser(event);
+export const DELETE: RequestHandler = async (event) => {
+    if (!event.locals.user) return json({ message: "Unauthorized" }, { status: 401 });
     const { params } = event;
 
-    const target = await ensureCanEditArticle(user, params.id);
+    const target = await ensureCanEditArticle(event.locals.user, params.id);
+    if (target instanceof Response) return target;
 
     const res = await Articles.deleteMany({ id: params.id });
 
@@ -371,4 +384,4 @@ export const DELETE: RequestHandler = withApi(async (event) => {
     await syncTags(target.tags ?? [], []);
 
     return json(res);
-});
+};

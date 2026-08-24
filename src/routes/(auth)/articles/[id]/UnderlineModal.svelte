@@ -6,7 +6,7 @@
     import type { UnderlineRange, UnderlineSel } from "$lib/models/underline";
     import type { UnderlineComment } from "$lib/models/underlineComments";
     import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import { onMount } from "svelte";
     import Reply from "./Reply.svelte";
 
@@ -43,24 +43,25 @@
             quote: activeReply?.content ?? undefined,
             replyTo: activeReply?.user ?? undefined,
         };
-        const data = await safeCall(
-            api.post<{ insertedId: string }, typeof newReply>(
-                `/api/articles/${articleId}/underline-replies`,
+        try {
+            const data = await api.post<{ insertedId: string }>(
+                `articles/${articleId}/underline-replies`,
                 newReply,
-            ),
-            toast,
-        );
-        if (!data?.insertedId) return;
-        root.replies = root.replies ?? [];
-        root.replies = [
-            {
-                _id: data.insertedId,
-                ...newReply,
-            },
-            ...root.replies,
-        ];
-        replyContent = "";
-        activeComment = null;
+            );
+            if (!data?.insertedId) return;
+            root.replies = root.replies ?? [];
+            root.replies = [
+                {
+                    _id: data.insertedId,
+                    ...newReply,
+                },
+                ...root.replies,
+            ];
+            replyContent = "";
+            activeComment = null;
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
 
     async function submitRoot() {
@@ -74,22 +75,23 @@
             content,
         };
 
-        const ranges = await safeCall(
-            api.post<UnderlineRange[], Partial<UnderlineComment>>(
-                `/api/articles/${articleId}/underlines`,
+        try {
+            const ranges = await api.post<UnderlineRange[]>(
+                `articles/${articleId}/underlines`,
                 doc,
-            ),
-            toast,
-        );
-        // console.log(JSON.stringify(underlines));
-        if (underline?.segment && ranges) {
-            underlines = {
-                ...underlines,
-                [underline.segment]: ranges,
-            };
+            );
+            // console.log(JSON.stringify(underlines));
+            if (underline?.segment && ranges) {
+                underlines = {
+                    ...underlines,
+                    [underline.segment]: ranges,
+                };
+            }
+            content = "";
+            await load();
+        } catch {
+            /* 错误已自动弹出 */
         }
-        content = "";
-        await load();
     }
 
     function toggleOpen(comment: Partial<Comment>) {
@@ -107,7 +109,6 @@
 
     let loading = $state(true);
     let showCreate = $state(false);
-    const api = createApi();
 
     onMount(load);
 
@@ -117,37 +118,37 @@
         loading = true;
 
         comments = await api.get<UnderlineComment[]>(
-            `/api/articles/${articleId}/underlines?segment=${underline?.segment}&start=${underline?.start}&end=${underline?.end}`,
+            `articles/${articleId}/underlines?segment=${underline?.segment}&start=${underline?.start}&end=${underline?.end}`,
         );
         // console.log($state.snapshot(comments));
 
         loading = false;
     }
     async function toggleLike(c: Partial<Comment>, reply = false) {
-        const data = await safeCall<{ liked: boolean }>(
-            api.post(
+        try {
+            const data = await api.post<{ liked: boolean }>(
                 reply
-                    ? `/api/underline-replies/${c._id}/toggle`
-                    : `/api/underline-comments/${c._id}/toggle`,
-            ),
-            toast,
-        );
+                    ? `underline-replies/${c._id}/toggle`
+                    : `underline-comments/${c._id}/toggle`,
+            );
 
-        if (!data) return;
-
-        c.liked = data.liked;
-        c.likes = c.likes ?? 0;
-        c.likes += c.liked ? 1 : -1;
+            c.liked = data.liked;
+            c.likes = c.likes ?? 0;
+            c.likes += c.liked ? 1 : -1;
+        } catch {
+            /* 错误已自动弹出 */
+        }
     }
     async function removeComment(c: Partial<Comment>, reply = false) {
-        await safeCall(
-            api.delete(
+        try {
+            await api.del(
                 reply
-                    ? `/api/underline-replies/${c._id}`
-                    : `/api/underline-comments/${c._id}`,
-            ),
-            toast,
-        );
+                    ? `underline-replies/${c._id}`
+                    : `underline-comments/${c._id}`,
+            );
+        } catch {
+            /* 错误已自动弹出 */
+        }
 
         return true;
     }

@@ -1,10 +1,9 @@
 import { Articles, Categories } from "$lib/models";
-import { withApi } from "$lib/util/apiHandler";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 
-export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
+export const GET: RequestHandler = async ({ params, locals, url }) => {
     const name = await Categories.resolveName(params.name);
 
     const category = await Categories.findOne(
@@ -30,4 +29,4 @@ export const GET: RequestHandler = withApi(async ({ params, locals, url }) => {
     //     .sort((a, b) => b.stats.vote - a.stats.vote);
 
     return json(articles);
-});
+};

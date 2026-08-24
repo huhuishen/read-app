@@ -2,8 +2,7 @@
     import { goto } from "$app/navigation";
     import Pagination from "$lib/components/Pagination.svelte";
     import type { Article } from "$lib/models";
-    import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import type { DataPage } from "$lib/mongolite";
     import { toLocalDateString } from "$lib/util/client";
     import { formatDuration } from "../../../util";
@@ -14,7 +13,6 @@
     }: {
         data: DataPage<Article>;
     } = $props();
-    const api = createApi();
 
     const columns: Column<Article>[] = [
         {
@@ -94,31 +92,24 @@
             onclick: async (row) => {
                 if (!row?.id) return;
 
-                let res;
-                if (row.status === "下架") {
-                    res = await safeCall(
-                        api.post(`/api/articles/${row.id}`, {
+                try {
+                    if (row.status === "下架") {
+                        await api.post(`articles/${row.id}`, {
                             status: "上架",
-                        }),
-                        toast,
-                    );
-
-                    if (!res) return;
-                    row.status = "上架";
-                } else if (row.status === "上架") {
-                    res = await safeCall(
-                        api.post(`/api/articles/${row.id}`, {
+                        });
+                        row.status = "上架";
+                    } else if (row.status === "上架") {
+                        await api.post(`articles/${row.id}`, {
                             status: "下架",
-                        }),
-                        toast,
-                    );
+                        });
+                        row.status = "下架";
+                    }
 
-                    if (!res) return;
-                    row.status = "下架";
+                    data.items = [...data.items];
+                    // toast.show("已下架", "success");
+                } catch {
+                    /* 错误已自动弹出 */
                 }
-
-                data.items = [...data.items];
-                // toast.show("已下架", "success");
             },
         },
         {

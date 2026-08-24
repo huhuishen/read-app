@@ -1,11 +1,11 @@
 import type { Article } from '$lib/models';
 import type { ArticleReadState } from '$lib/models/articleStats';
 import type { DataPage } from '$lib/mongolite';
-import { createApi } from '$lib/util/apiRequest';
+import { createApiClient } from '$lib/api/client';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch, params, url }) => {
-    const api = createApi(fetch);
+    const api = createApiClient(fetch, { baseUrl: "/api" });
     const page = parseInt(url.searchParams.get('page') || '1');
     const limit = parseInt(url.searchParams.get('limit') || '20');
 
@@ -14,7 +14,7 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
         articles: Article[];
     }
     const data = await api.get<ResponseData>(
-        `/api/users/${params.id}/read?page=${page}&limit=${limit}`,
+        `users/${params.id}/read?page=${page}&limit=${limit}`,
     );
 
     return data;

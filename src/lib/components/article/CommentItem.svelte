@@ -5,7 +5,6 @@
     import StarRating from "$lib/components/StarRating.svelte";
     import type { User } from "$lib/models";
     import { type Comment } from "$lib/models";
-    import { createApi } from "$lib/util/apiRequest";
     import { stringSegment, toLocalDateString } from "$lib/util/client";
     import { onMount, type Snippet } from "svelte";
 

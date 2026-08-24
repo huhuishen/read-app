@@ -1,9 +1,8 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { RestoreService } from '$lib/server/restore';
-import { requireRole, withApi } from '$lib/util/apiHandler';
 
-export const POST: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const POST: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const data = await event.request.json();
     const { backupFile, collections, dropExisting } = data;
@@ -23,4 +22,4 @@ export const POST: RequestHandler = withApi(async (event) => {
     });
 
     return json(result);
-});
+};

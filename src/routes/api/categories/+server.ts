@@ -1,5 +1,4 @@
-﻿import { Categories } from '$lib/models';
-import { apiError, requireRole, withApi } from '$lib/util/apiHandler';
+import { Categories } from '$lib/models';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
@@ -25,14 +24,14 @@ function pickCategoryUpdate(body: Record<string, unknown>) {
     }
 
     if (Object.keys(update).length === 0) {
-        apiError(400, 'No updatable fields');
+        return json({ message: 'No updatable fields' }, { status: 400 });
     }
 
     return update;
 }
 
-export const GET: RequestHandler = withApi(async ({ url, ...event }) => {
-    requireRole(event, 'administrator');
+export const GET: RequestHandler = async ({ url, ...event }) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const page = Number(url.searchParams.get('page') ?? 1);
     const limit = Number(url.searchParams.get('limit') ?? 12);
@@ -45,19 +44,20 @@ export const GET: RequestHandler = withApi(async ({ url, ...event }) => {
     );
 
     return json(res);
-});
+};
 
-export const PATCH: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const PATCH: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const body = await event.request.json() as Record<string, unknown>;
     const name = body.name;
 
     if (typeof name !== 'string' || !name.trim()) {
-        apiError(400, 'Category name is required');
+        return json({ message: 'Category name is required' }, { status: 400 });
     }
 
     const update = pickCategoryUpdate(body);
+    if (update instanceof Response) return update;
 
     const res = await Categories.updateOne(
         { name },
@@ -65,12 +65,12 @@ export const PATCH: RequestHandler = withApi(async (event) => {
     );
 
     return json(res);
-});
+};
 
-export const POST: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const POST: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const res = await Categories.createAward(2026, 2);
 
     return json(res);
-});
+};

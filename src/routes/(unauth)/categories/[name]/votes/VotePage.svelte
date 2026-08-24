@@ -2,8 +2,7 @@
     import Avatar from "$lib/components/Avatar.svelte";
     import Modal from "$lib/components/overlay/Modal.svelte";
     import type { Article } from "$lib/models";
-    import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import { toLocalDateString } from "$lib/util/client";
     import Card from "./Card.svelte";
     import { rankByVotes, type RankedArticle } from "./rank";
@@ -17,7 +16,6 @@
 
     const { items }: { items: Partial<Article>[] } = $props();
 
-    const api = createApi();
     let rankedArticles = $derived(rankByVotes(items));
 
     let showVotersModal = $state(false);
@@ -43,13 +41,13 @@
         loadingVoters = true;
         voters = [];
 
-        const data = await safeCall(
-            api.get<VoteUser[]>(`/api/articles/${article.id}/voters`),
-            toast,
-        );
-
-        if (data) {
+        try {
+            const data = await api.get<VoteUser[]>(
+                `articles/${article.id}/voters`,
+            );
             voters = data;
+        } catch {
+            /* 错误已自动弹出 */
         }
 
         loadingVoters = false;
@@ -67,7 +65,12 @@
     {/each}
 </div>
 
-<Modal bind:show={showVotersModal} size="sm" title="投票人员" closeButton={true}>
+<Modal
+    bind:show={showVotersModal}
+    size="sm"
+    title="投票人员"
+    closeButton={true}
+>
     <div class="voters-modal">
         {#if loadingVoters}
             <p class="hint">加载中...</p>

@@ -1,19 +1,18 @@
-﻿import { Users } from '$lib/models';
-import { apiError, withApi } from '$lib/util/apiHandler';
+import { Users } from '$lib/models';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = withApi(async ({ request }) => {
+export const POST: RequestHandler = async ({ request }) => {
     const { token } = await request.json() as { token?: string };
 
     if (!token) {
-        apiError(400, 'Invalid token');
+        return json({ message: 'Invalid token' }, { status: 400 });
     }
 
     const user = await Users.findOne({ activateToken: token });
 
     if (!user) {
-        apiError(400, 'Activation link is invalid');
+        return json({ message: 'Activation link is invalid' }, { status: 400 });
     }
 
     if (user.activated) {
@@ -21,7 +20,7 @@ export const POST: RequestHandler = withApi(async ({ request }) => {
     }
 
     if (new Date(user.activateExpireAt) < new Date()) {
-        apiError(400, 'Activation link has expired');
+        return json({ message: 'Activation link has expired' }, { status: 400 });
     }
 
     await Users.updateOne(
@@ -38,4 +37,4 @@ export const POST: RequestHandler = withApi(async ({ request }) => {
     );
 
     return json({ message: 'Activation successful' }, { status: 200 });
-});
+};

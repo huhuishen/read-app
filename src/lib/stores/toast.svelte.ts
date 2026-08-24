@@ -55,4 +55,10 @@ export const toast = $state<ToastState>({
         this.visible = false;
         timer = null;
     },
+
 });
+
+
+export function showError(msg: string) {
+    toast.show(msg, "error");
+}

@@ -1,5 +1,4 @@
 import { Users } from '$lib/models';
-import { apiError, requireRole, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
@@ -14,7 +13,7 @@ const roleValues = [
 type Role = (typeof roleValues)[number];
 const allowedRoles = new Set<Role>(roleValues);
 
-export const GET: RequestHandler = withApi(async ({ params }) => {
+export const GET: RequestHandler = async ({ params }) => {
     const user = await Users.findOne(
         {
             id: params.id,
@@ -23,15 +22,15 @@ export const GET: RequestHandler = withApi(async ({ params }) => {
     );
 
     return json(user);
-});
+};
 
-export const PATCH: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const PATCH: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const body = (await event.request.json()) as { roles?: unknown };
 
     if (!Array.isArray(body.roles)) {
-        apiError(400, 'roles must be an array');
+        return json({ message: 'roles must be an array' }, { status: 400 });
     }
 
     const roles = [
@@ -39,11 +38,11 @@ export const PATCH: RequestHandler = withApi(async (event) => {
     ] as Role[];
 
     if (roles.length === 0) {
-        apiError(400, '至少保留一个角色');
+        return json({ message: '至少保留一个角色' }, { status: 400 });
     }
 
     if (roles.some((role) => !allowedRoles.has(role))) {
-        apiError(400, '包含不支持的角色');
+        return json({ message: '包含不支持的角色' }, { status: 400 });
     }
 
     const res = await Users.updateOne(
@@ -52,13 +51,13 @@ export const PATCH: RequestHandler = withApi(async (event) => {
     );
 
     if (res.matchedCount === 0) {
-        apiError(404, '用户不存在');
+        return json({ message: '用户不存在' }, { status: 404 });
     }
 
     return json(res);
-});
+};
 
-export const POST: RequestHandler = withApi(async () => {
+export const POST: RequestHandler = async () => {
     // historical migration endpoint placeholder
     return json({});
-});
+};

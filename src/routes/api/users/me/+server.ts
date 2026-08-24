@@ -1,8 +1,7 @@
-import { requireUser, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = withApi(async (event) => {
-    const user = requireUser(event);
-    return json(user, { status: 200 });
-});
+export const POST: RequestHandler = async (event) => {
+    if (!event.locals.user) return json({ message: "Unauthorized" }, { status: 401 });
+    return json(event.locals.user, { status: 200 });
+};

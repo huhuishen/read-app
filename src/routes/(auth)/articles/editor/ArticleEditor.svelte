@@ -5,7 +5,7 @@
     import TagsManager from "$lib/components/Tags.svelte";
     import type { Article } from "$lib/models";
     import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import { onDestroy, onMount } from "svelte";
     import EditableInput from "./EditableInput.svelte";
     import EditableTextArea from "./EditableTextArea.svelte";
@@ -25,7 +25,6 @@
         initialArticle?: Partial<Article>;
     } = $props();
 
-    const api = createApi();
     const autoSaveIntervalMs = 3000;
 
     const draftKey = $derived.by(() =>
@@ -133,50 +132,49 @@
 
         isSubmitting = true;
 
-        if (mode === "create") {
-            const res = await safeCall<{ id: string }>(
-                api.post("/api/articles", payload),
-                toast,
+        try {
+            if (mode === "create") {
+                const res = await api.post<{ id: string }>("articles", payload);
+                if (!res?.id) return;
+
+                if (browser) {
+                    localStorage.removeItem(draftKey);
+                }
+
+                toast.show("创建成功", "success");
+                goto(`/articles/${res.id}`);
+                return;
+            }
+
+            const id = article.id;
+            if (!id) {
+                toast.show("Missing article id", "error");
+                return;
+            }
+
+            await api.post(
+                `articles/${id}`,
+                mode === "review" ? { ...payload, status: "上架" } : payload,
             );
-            isSubmitting = false;
-            if (!res?.id) return;
 
             if (browser) {
                 localStorage.removeItem(draftKey);
             }
 
-            toast.show("创建成功", "success");
-            goto(`/articles/${res.id}`);
-            return;
-        }
-
-        const id = article.id;
-        if (!id) {
+            toast.show(
+                mode === "review" ? "审核通过，已上架" : "已保存",
+                "success",
+            );
+            goto(
+                mode === "review"
+                    ? `/articles/${id}/summary`
+                    : `/articles/${id}`,
+            );
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
             isSubmitting = false;
-            toast.show("Missing article id", "error");
-            return;
         }
-
-        const res = await safeCall(
-            api.post(
-                `/api/articles/${id}`,
-                mode === "review" ? { ...payload, status: "上架" } : payload,
-            ),
-            toast,
-        );
-        isSubmitting = false;
-
-        if (!res) return;
-
-        if (browser) {
-            localStorage.removeItem(draftKey);
-        }
-
-        toast.show(
-            mode === "review" ? "审核通过，已上架" : "已保存",
-            "success",
-        );
-        goto(mode === "review" ? `/articles/${id}/summary` : `/articles/${id}`);
     }
 
     async function rejectArticle() {
@@ -190,21 +188,21 @@
 
         isRejecting = true;
         const payload = normalizedPayload();
-        const res = await safeCall(
-            api.post(`/api/articles/${id}`, { ...payload, status: "草稿" }),
-            toast,
-        );
-        isRejecting = false;
+        try {
+            await api.post(`articles/${id}`, { ...payload, status: "草稿" });
 
-        if (!res) return;
+            if (browser) {
+                localStorage.removeItem(draftKey);
+            }
 
-        if (browser) {
-            localStorage.removeItem(draftKey);
+            article.status = "草稿";
+            toast.show("已退回草稿", "success");
+            goto(`/articles/${id}/summary`);
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
+            isRejecting = false;
         }
-
-        article.status = "草稿";
-        toast.show("已退回草稿", "success");
-        goto(`/articles/${id}/summary`);
     }
 
     async function submitForReview() {
@@ -218,16 +216,16 @@
         }
 
         isSubmitting = true;
-        const res = await safeCall(
-            api.post(`/api/articles/${id}`, { ...payload, status: "待审核" }),
-            toast,
-        );
-        isSubmitting = false;
-
-        if (!res) return;
-        article.status = "待审核";
-        toast.show("投稿成功，等待审核", "success");
-        goto(`/articles/${id}/summary`);
+        try {
+            await api.post(`articles/${id}`, { ...payload, status: "待审核" });
+            article.status = "待审核";
+            toast.show("投稿成功，等待审核", "success");
+            goto(`/articles/${id}/summary`);
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
+            isSubmitting = false;
+        }
     }
 
     async function takeDownArticle() {
@@ -239,16 +237,16 @@
         }
 
         isSubmitting = true;
-        const res = await safeCall(
-            api.post(`/api/articles/${id}`, { status: "下架" }),
-            toast,
-        );
-        isSubmitting = false;
-
-        if (!res) return;
-        article.status = "下架";
-        toast.show("已下架", "success");
-        goto(`/articles/${id}/summary`);
+        try {
+            await api.post(`articles/${id}`, { status: "下架" });
+            article.status = "下架";
+            toast.show("已下架", "success");
+            goto(`/articles/${id}/summary`);
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
+            isSubmitting = false;
+        }
     }
 
     async function deleteArticle() {
@@ -266,17 +264,20 @@
         }
 
         isDeleting = true;
-        const res = await safeCall(api.delete(`/api/articles/${id}`), toast);
-        isDeleting = false;
+        try {
+            await api.del(`articles/${id}`);
 
-        if (!res) return;
+            if (browser) {
+                localStorage.removeItem(draftKey);
+            }
 
-        if (browser) {
-            localStorage.removeItem(draftKey);
+            toast.show("Deleted", "success");
+            goto("/");
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
+            isDeleting = false;
         }
-
-        toast.show("Deleted", "success");
-        goto("/");
     }
 
     async function uploadCover(event: Event) {
@@ -409,10 +410,7 @@
                 >
                     投稿
                 </Button>
-                <Button
-                    onclick={takeDownArticle}
-                    disabled={!canTakeDown}
-                >
+                <Button onclick={takeDownArticle} disabled={!canTakeDown}>
                     下架
                 </Button>
                 <Button
@@ -423,10 +421,7 @@
                     {isDeleting ? "删除中..." : "删除"}
                 </Button>
             {:else if mode === "review"}
-                <Button
-                    onclick={takeDownArticle}
-                    disabled={!canTakeDown}
-                >
+                <Button onclick={takeDownArticle} disabled={!canTakeDown}>
                     下架
                 </Button>
                 <Button

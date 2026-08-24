@@ -1,8 +1,8 @@
 
-@host = http://127.0.0.1:5174/api
+@host = http://127.0.0.1:5173/api
 
 ###
-POST {{host}}/users/auth
+POST {{host}}/users/login
 Content-Type: application/json
 
 {

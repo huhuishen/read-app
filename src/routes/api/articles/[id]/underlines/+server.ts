@@ -1,5 +1,4 @@
 import { UnderlineComments, type UnderlineComment } from '$lib/models/underlineComments';
-import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { UnderlineReplies } from '$lib/models/underlineReply';
@@ -7,7 +6,7 @@ import { CommentLikes } from '$lib/models/commentLike';
 
 
 
-export const GET: RequestHandler = withApi(async ({ params, url, locals }) => {
+export const GET: RequestHandler = async ({ params, url, locals }) => {
     const segment = url.searchParams.get('segment');
     const start = url.searchParams.get('start');
     const end = url.searchParams.get('end');
@@ -86,12 +85,12 @@ export const GET: RequestHandler = withApi(async ({ params, url, locals }) => {
     // }
 
     // return json(underlines);
-});
+};
 
-export const POST = withApi(async ({ request, locals }) => {
+export const POST = async ({ request, locals }) => {
     const req = await request.json() as UnderlineComment;
     const res = await UnderlineComments.add(req);
 
     return json(res);
-});
+};
 

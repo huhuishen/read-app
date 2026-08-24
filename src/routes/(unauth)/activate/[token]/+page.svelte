@@ -2,27 +2,22 @@
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
     import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import type { PageProps } from "./$types";
 
     const { params }: PageProps = $props();
 
     onMount(async () => {
-        const r = await safeCall(
-            api.post<{ message: string }, { token: string }>(
-                "/api/users/activate",
-                { token: params.token },
-            ),
-            toast,
-        );
-
-        if (r) {
+        try {
+            await api.post<{ message: string }>("users/activate", {
+                token: params.token,
+            });
             toast.show("账号激活成功，请登录！", "success");
             await goto("/login");
+        } catch {
+            /* 错误已自动弹出 */
         }
     });
-
-    const api = createApi();
 </script>
 
 <div class="flex main">

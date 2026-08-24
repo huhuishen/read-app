@@ -1,9 +1,8 @@
 import { Articles } from "$lib/models";
-import { withApi } from "$lib/util/apiHandler";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
-export const GET: RequestHandler = withApi(async ({ params, url }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
     const page = Number(url.searchParams.get("page") ?? 1);
     const limit = Number(url.searchParams.get("limit") ?? 20);
 
@@ -23,4 +22,4 @@ export const GET: RequestHandler = withApi(async ({ params, url }) => {
     });
 
     return json(articles);
-});
+};

@@ -1,9 +1,8 @@
 import { getDb } from '$lib/models';
-import { requireRole, withApi } from '$lib/util/apiHandler';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
-export const POST: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const POST: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
     const db = getDb();
 
     const today = new Date().toISOString().slice(0, 7);
@@ -24,4 +23,4 @@ export const POST: RequestHandler = withApi(async (event) => {
     });
 
     return json({ ok: true });
-});
+};

@@ -12,7 +12,8 @@ export const isObjectIdLike = (v: any) =>
 export function ensureObjectId(v: any) {
     if (v instanceof ObjectId) return v;
     if (typeof v === "string" && /^[0-9a-fA-F]{24}$/.test(v)) return new ObjectId(v);
-    throw new Error("Invalid ObjectId");
+    // 参数校验失败，抛出标准 TypeError，调用方可用 instanceof TypeError 识别
+    throw new TypeError(`Cannot convert "${v}" to ObjectId`);
 }
 
 export function stripUndefined<T extends Record<string, any>>(obj: T): T {
@@ -27,6 +28,9 @@ export function stripUndefined<T extends Record<string, any>>(obj: T): T {
  * 深度替换所有 ObjectId 为 string 形式
  * 支持 Object / Array / 混合结构
  * 不进行额外的 JSON 拷贝，因此性能更高
+ *
+ * 注意：就地修改（mutates in-place），会修改传入的原始对象。
+ * 如需保留原始对象，请先深拷贝后再传入。
  */
 export function convertObjectIds<T>(value: T): T {
     const stack = [value as any];

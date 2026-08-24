@@ -3,28 +3,20 @@
     import Button from "$lib/components/Button.svelte";
     import TextBox from "$lib/components/Input.svelte";
     import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import type { PageProps } from "./$types";
 
     const { data }: PageProps = $props();
 
     let userState = $state({ email: "", password: "" });
 
-    const api = createApi();
-
     async function onlogin() {
-        const user = await safeCall(
-            api.post<
-                { roles: string[] },
-                {
-                    email: string;
-                    password: string;
-                }
-            >("/api/users/login", userState),
-            toast,
-        );
+        try {
+            const user = await api.post<{ roles: string[] }>(
+                "users/login",
+                userState,
+            );
 
-        if (user) {
             const url = user.roles?.includes("administrator")
                 ? "/dashboard"
                 : "/";
@@ -32,6 +24,8 @@
             invalidateAll();
             await goto(data.home ?? url);
             toast.show("登录成功！", "success");
+        } catch {
+            /* 错误已自动弹出 */
         }
     }
 

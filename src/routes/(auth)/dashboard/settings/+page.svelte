@@ -2,12 +2,11 @@
     import { onMount } from "svelte";
     import Button from "$lib/components/Button.svelte";
     import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
     import AdminTabs from "../AdminTabs.svelte";
 
     const { data } = $props<{ data: { autoPublishWithoutReview: boolean } }>();
 
-    const api = createApi();
     let autoPublishWithoutReview = $state(false);
     let isSaving = $state(false);
 
@@ -19,23 +18,25 @@
         if (isSaving) return;
         isSaving = true;
 
-        const res = await safeCall<{ autoPublishWithoutReview: boolean }>(
-            api.post("/api/settings", {
-                items: [
-                    {
-                        key: "autoPublishWithoutReview",
-                        value: autoPublishWithoutReview,
-                    },
-                ],
-            }),
-            toast,
-        );
-
-        isSaving = false;
-        if (!res) return;
-
-        autoPublishWithoutReview = !!res.autoPublishWithoutReview;
-        toast.show("设置已保存", "success");
+        try {
+            const res = await api.post<{ autoPublishWithoutReview: boolean }>(
+                "settings",
+                {
+                    items: [
+                        {
+                            key: "autoPublishWithoutReview",
+                            value: autoPublishWithoutReview,
+                        },
+                    ],
+                },
+            );
+            autoPublishWithoutReview = !!res.autoPublishWithoutReview;
+            toast.show("设置已保存", "success");
+        } catch {
+            /* 错误已自动弹出 */
+        } finally {
+            isSaving = false;
+        }
     }
 </script>
 

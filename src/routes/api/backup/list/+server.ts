@@ -1,9 +1,8 @@
 import { BackupService } from '$lib/server/backup';
-import { requireRole, withApi } from '$lib/util/apiHandler';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
-export const GET: RequestHandler = withApi(async (event) => {
-    requireRole(event, 'administrator');
+export const GET: RequestHandler = async (event) => {
+    if (!event.locals.user?.roles?.includes('administrator')) return json({ message: "Forbidden" }, { status: 403 });
 
     const backupService = new BackupService();
     const backups = await backupService.listBackups();
@@ -28,4 +27,4 @@ export const GET: RequestHandler = withApi(async (event) => {
         success: true,
         backups: backupDetails
     });
-});
+};

@@ -1,6 +1,5 @@
 import { Comments, Categories, type Comment } from "$lib/models";
 import type { DataPage } from "$lib/mongolite";
-import { withApi } from "$lib/util/apiHandler";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
@@ -14,7 +13,7 @@ type GroupedComments = {
     comments: Partial<Comment>[];
 };
 
-export const GET: RequestHandler = withApi(async ({ params, url }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
     const page = Number(url.searchParams.get("page") ?? 1);
     const limit = Number(url.searchParams.get("limit") ?? 20);
     const skip = (page - 1) * limit;
@@ -145,4 +144,4 @@ export const GET: RequestHandler = withApi(async ({ params, url }) => {
     };
 
     return json(response);
-});
+};

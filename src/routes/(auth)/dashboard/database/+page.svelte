@@ -3,7 +3,7 @@
     import Card from "./Card.svelte";
     import Status from "./Status.svelte";
     import { onMount } from "svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
 
     interface BackupItem {
         fileName: string;
@@ -37,12 +37,10 @@
     } | null>(null);
     let dropExisting = $state(false);
 
-    const api = createApi();
-
     // 获取可用集合
     async function fetchCollections() {
         try {
-            const result = await safeCall(api.get<BackupListResponse>("/api/backup/list"));
+            const result = await api.get<BackupListResponse>("backup/list");
             if (!result) return;
 
             if (result.success && result.backups.length > 0) {
@@ -58,7 +56,7 @@
     // 刷新备份列表
     async function refreshBackups() {
         try {
-            const result = await safeCall(api.get<BackupListResponse>("/api/backup/list"));
+            const result = await api.get<BackupListResponse>("backup/list");
             if (!result) return;
 
             if (result.success) {
@@ -77,18 +75,13 @@
         message = null;
 
         try {
-            const result = await safeCall(
-                api.post<any, { collections?: string[]; backupName?: string }>(
-                    "/api/backup",
-                    {
-                        collections:
-                            selectedCollections.length > 0
-                                ? selectedCollections
-                                : undefined,
-                        backupName: backupName || undefined,
-                    },
-                ),
-            );
+            const result = await api.post<any>("backup", {
+                collections:
+                    selectedCollections.length > 0
+                        ? selectedCollections
+                        : undefined,
+                backupName: backupName || undefined,
+            });
             if (!result) {
                 message = {
                     type: "error",
@@ -129,26 +122,14 @@
         message = null;
 
         try {
-            const result = await safeCall(
-                api.post<
-                    any,
-                    {
-                        backupFile: string;
-                        collections?: string[];
-                        dropExisting: boolean;
-                    }
-                >(
-                    "/api/restore",
-                    {
-                        backupFile: selectedBackup,
-                        collections:
-                            selectedCollections.length > 0
-                                ? selectedCollections
-                                : undefined,
-                        dropExisting,
-                    },
-                ),
-            );
+            const result = await api.post<any>("restore", {
+                backupFile: selectedBackup,
+                collections:
+                    selectedCollections.length > 0
+                        ? selectedCollections
+                        : undefined,
+                dropExisting,
+            });
             if (!result) {
                 message = {
                     type: "error",
@@ -188,7 +169,6 @@
 <svelte:head>
     <title>数据库</title>
 </svelte:head>
-
 
 <Card title="MongoDB Backup & Restore">
     {#if message}
@@ -273,7 +253,9 @@
                         <p>
                             <strong>Total Documents:</strong>
                             {(
-                                Object.values(backup.documentCounts ?? {}) as number[]
+                                Object.values(
+                                    backup.documentCounts ?? {},
+                                ) as number[]
                             ).reduce((a, b) => a + b, 0)}
                         </p>
                     </div>

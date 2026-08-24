@@ -1,19 +1,18 @@
 import { Comments, type Comment } from '$lib/models';
-import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 
-export const GET: RequestHandler = withApi(async ({ params, url, locals }) => {
+export const GET: RequestHandler = async ({ params, url, locals }) => {
     const res = await Comments.get(params.id, locals.user?.id!);
     return json(res);
-});
+};
 
-export const POST = withApi(async ({ request, locals }) => {
+export const POST = async ({ request, locals }) => {
     const req = await request.json() as Comment;
-    const res = await Comments.add(req, locals.user);
+    const res = await Comments.add(req, locals.user!);
     return json(res);
-});
+};
 
 // const cursor = Comments.find({})
 // while (await cursor.hasNext()) {

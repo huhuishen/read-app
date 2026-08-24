@@ -1,6 +1,6 @@
 import type { Comment } from "$lib/models";
 import type { DataPage } from "$lib/mongolite";
-import { createApi } from "$lib/util/apiRequest";
+import { createApiClient } from "$lib/api/client";
 import type { PageLoad } from "./$types";
 
 type GroupedComments = {
@@ -19,10 +19,10 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
     const mode = url.searchParams.get("mode") === "article"
         ? "article"
         : "user";
-    const api = createApi(fetch);
+    const api = createApiClient(fetch, { baseUrl: "/api" });
 
     const groups = await api.get<DataPage<GroupedComments>>(
-        `/api/categories/${params.name}/comments?page=${page}&limit=${limit}&mode=${mode}`,
+        `categories/${params.name}/comments?page=${page}&limit=${limit}&mode=${mode}`,
     );
 
     return {

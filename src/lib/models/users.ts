@@ -85,11 +85,11 @@ export class UserService extends Collection<User> {
     /**
      * 更新用户最后登录时间
      */
-    async updateLastLogin(userId: string) {
-        return await this.updateOne({ id: userId }, {
-            $set: { lastLogin: new Date() },
-        });
-    }
+    // async updateLastLogin(userId: string) {
+    //     return await this.updateOne({ id: userId }, {
+    //         $set: { lastLogin: new Date() },
+    //     });
+    // }
 
     async add(email: string, name: string, password: string) {
         const exist = await this.findOne({ email });

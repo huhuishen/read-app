@@ -1,9 +1,8 @@
 import { Users } from '$lib/models';
-import { apiError, withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = withApi(async ({ request }) => {
+export const POST: RequestHandler = async ({ request }) => {
     const body = (await request.json()) as {
         token?: unknown;
         password?: unknown;
@@ -13,11 +12,11 @@ export const POST: RequestHandler = withApi(async ({ request }) => {
     const password = String(body.password ?? '');
 
     if (!token) {
-        apiError(400, '重置令牌不能为空');
+        return json({ message: '重置令牌不能为空' }, { status: 400 });
     }
 
     if (password.length < 6) {
-        apiError(400, '密码至少 6 位');
+        return json({ message: '密码至少 6 位' }, { status: 400 });
     }
 
     const user = await Users.findOne(
@@ -26,12 +25,12 @@ export const POST: RequestHandler = withApi(async ({ request }) => {
     );
 
     if (!user) {
-        apiError(400, '重置链接无效');
+        return json({ message: '重置链接无效' }, { status: 400 });
     }
 
     const expireAt = new Date((user as any).resetPasswordExpireAt ?? 0);
     if (!expireAt.getTime() || expireAt.getTime() < Date.now()) {
-        apiError(400, '重置链接已过期');
+        return json({ message: '重置链接已过期' }, { status: 400 });
     }
 
     const passwordHash = await Users.hashPassword(password);
@@ -48,4 +47,4 @@ export const POST: RequestHandler = withApi(async ({ request }) => {
     );
 
     return json({ message: '密码重置成功' });
-});
+};

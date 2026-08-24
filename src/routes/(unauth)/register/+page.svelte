@@ -3,7 +3,7 @@
     import Button from "$lib/components/Button.svelte";
     import TextBox from "$lib/components/Input.svelte";
     import { toast } from "$lib/stores/toast.svelte";
-    import { createApi, safeCall } from "$lib/util/apiRequest";
+    import { api } from "$lib/api/client";
 
     let registerState = $state({
         email: "",
@@ -12,8 +12,6 @@
     });
 
     let loading = $state(false);
-
-    const api = createApi();
 </script>
 
 <div class="flex main">
@@ -43,19 +41,17 @@
             onclick={async () => {
                 loading = true;
 
-                const r = await safeCall(
-                    api.post<
-                        { message: string },
-                        { email: string; password: string; name: string }
-                    >("/api/users/register", registerState),
-                    toast,
-                );
-
-                loading = false;
-
-                if (r) {
+                try {
+                    await api.post<{ message: string }>(
+                        "users/register",
+                        registerState,
+                    );
                     toast.show("注册成功，请查收邮箱激活账号！", "success");
                     await goto("/login");
+                } catch {
+                    /* 错误已自动弹出 */
+                } finally {
+                    loading = false;
                 }
             }}
         >

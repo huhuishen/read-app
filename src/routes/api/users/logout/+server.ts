@@ -1,9 +1,13 @@
 import { cookieOptions } from '$lib/config';
-import { withApi } from '$lib/util/apiHandler';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { SESSION_COOKIE, deleteSession } from '$lib/auth/session';
 
-export const POST: RequestHandler = withApi(async ({ cookies }) => {
-    cookies.delete('token', cookieOptions);
+export const POST: RequestHandler = async ({ cookies }) => {
+    const sessionId = cookies.get(SESSION_COOKIE);
+    if (sessionId) {
+        await deleteSession(sessionId);
+    }
+    cookies.delete(SESSION_COOKIE, cookieOptions);
     return json({}, { status: 200 });
-});
+};
