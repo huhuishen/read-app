@@ -1,6 +1,7 @@
 import { ApiError } from "./error";
 import { showError } from "$lib/stores/toast.svelte";
 import { loading } from '$lib/stores/loading.svelte';
+import { error as kitError } from "@sveltejs/kit";
 
 /** 判断是否在浏览器环境 */
 const isBrowser = typeof window !== "undefined" && typeof document !== "undefined";
@@ -182,6 +183,22 @@ export async function apiFetch<T>(
     }
 
     return data as T;
+}
+
+/**
+ * 在 SvelteKit load 函数中包装 API 调用：将 ApiError 转换为 SvelteKit HttpError，
+ * 以保留 HTTP 状态码（如 404）并渲染对应的错误页面，避免被 SvelteKit 当作 500 意外错误。
+ * 网络层错误（status === 0）映射为 503。
+ */
+export async function loadApi<T>(promise: Promise<T>): Promise<T> {
+    try {
+        return await promise;
+    } catch (err) {
+        if (err instanceof ApiError) {
+            throw kitError(err.isNetworkError ? 503 : err.status, err.message);
+        }
+        throw err;
+    }
 }
 
 /**

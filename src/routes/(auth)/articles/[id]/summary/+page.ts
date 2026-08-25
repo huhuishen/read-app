@@ -1,6 +1,6 @@
 import type { Article } from '$lib/models';
 import type { Underline } from '$lib/models/underline';
-import { createApiClient } from '$lib/api/client';
+import { createApiClient, loadApi } from '$lib/api/client';
 import type { PageLoad } from './$types';
 
 interface ArticleData {
@@ -11,9 +11,5 @@ interface ArticleData {
 export const load: PageLoad = async ({ fetch, params }) => {
     const api = createApiClient(fetch, { baseUrl: "/api" });
 
-    const res = await api.get<ArticleData>(
-        `articles/${params.id}`,
-    );
-
-    return res;
+    return loadApi(api.get<ArticleData>(`articles/${params.id}`));
 };

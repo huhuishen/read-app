@@ -6,7 +6,7 @@
     import icons from "$lib/assets/icons.svg?raw";
     import ProgressBar from "$lib/components/ProgressBar.svelte";
 
-    let { data, children } = $props();
+    let { children } = $props();
 </script>
 
 <svelte:head>
@@ -14,7 +14,6 @@
 </svelte:head>
 
 {@html icons}
-<Toast></Toast>
-
+<Toast />
 <ProgressBar />
 {@render children()}
