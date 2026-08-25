@@ -123,7 +123,7 @@ export const POST: RequestHandler = async ({ request, params, locals }) => {
     let article: Partial<Article> = {
         id: nanoid(),
         version: 0,
-        status: autoPublishWithoutReview ? "上架" : "待审核",
+        status: autoPublishWithoutReview ? "published" : "待审核",
         isLatest: true,
         authorId: locals.user.id!,
         author: locals.user.name!,

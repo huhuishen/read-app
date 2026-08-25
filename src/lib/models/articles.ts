@@ -53,7 +53,7 @@ export type Article = {
     coverImage: string;
     summary: string;
     tags: string[],
-    status: "草稿" | "待审核" | "上架" | "下架"
+    status: "草稿" | "待审核" | "published" | "下架"
 
     stats: {
         view: number;
@@ -137,7 +137,7 @@ export class ArticleService extends Collection<Article> {
 
     async listByCategory(name: string, page: number, limit = 25, userId: string = "") {
         const data = await Articles.findPage(
-            { categories: name, isLatest: true, status: "上架" },
+            { categories: name, isLatest: true, status: "published" },
             { projection: { _id: 0, content: 0 } },
             { page, limit }
         );
@@ -183,7 +183,7 @@ export class ArticleService extends Collection<Article> {
             return {
                 id: articleId,
                 isLatest: true,
-                status: { $in: ["上架", "待审核", "下架"] }
+                status: { $in: ["published", "pending"] }
             };
         }
 
@@ -191,7 +191,7 @@ export class ArticleService extends Collection<Article> {
             id: articleId,
             isLatest: true,
             $or: [
-                { status: '上架' },
+                { status: 'published' },
                 { authorId: user.id }
             ]
         };

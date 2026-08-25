@@ -143,7 +143,7 @@ export async function seedTestData(opts?: { months?: number; perMonth?: number }
                 id,
                 version: 0,
                 isLatest: true,
-                status: "上架",
+                status: "published",
                 authorId: author.id,
                 author: author.name,
                 title: `《${book}》读后感 · ${info.period} #${i + 1}`,

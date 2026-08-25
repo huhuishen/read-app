@@ -10,7 +10,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 
     const isAdministrator = locals.user?.roles?.includes("administrator");
     const isEditor = locals.user?.roles?.includes("editor");
-    const privilegedStatuses = ["上架", "待审核", "下架"] as const;
+    const privilegedStatuses = ["published", "待审核", "下架"] as const;
 
     const query: Filter<Article> =
         isAdministrator || isEditor
@@ -22,7 +22,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
             : {
                 "category.period": name,
                 isLatest: true,
-                status: "上架" as const,
+                status: "published" as const,
             };
 
     const articles = await Articles.findPage(

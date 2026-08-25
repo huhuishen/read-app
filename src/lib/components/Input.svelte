@@ -59,7 +59,7 @@
 
 <label class={className}>
     {#if label}
-        <div class="label">{label}</div>
+        {label}
     {/if}
 
     <input bind:this={inputEl} {id} {type} bind:value required {placeholder} />

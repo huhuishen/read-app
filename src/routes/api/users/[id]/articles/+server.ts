@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
         {
             authorId: params.id,
             isLatest: true,
-            status: "上架",
+            status: "published",
             "category.voteEnd": { $lte: now }
         },
         { projection: { content: 0 } },

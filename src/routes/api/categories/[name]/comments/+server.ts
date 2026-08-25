@@ -116,7 +116,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
             $match: {
                 "article.category.period": name,
                 "article.isLatest": true,
-                "article.status": "上架",
+                "article.status": "published",
             },
         },
         { $sort: { createdAt: -1 } },

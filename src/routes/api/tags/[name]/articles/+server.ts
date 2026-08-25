@@ -7,7 +7,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
     const limit = Number(url.searchParams.get("limit") ?? 20);
 
     const articles = await Articles.findPage(
-        { tags: params.name, isLatest: true, status: "上架" },
+        { tags: params.name, isLatest: true, status: "published" },
         { projection: { _id: 0, content: 0 } },
         { page, limit, sort: { createdAt: -1 } },
     );

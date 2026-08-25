@@ -48,7 +48,7 @@ export class UnderlineReplyService extends Collection<UnderlineReply> {
         const r = await super.deleteOne({
             _id,
         });
-        console.log(r);
+        // console.log(r);
 
         return r;
     }

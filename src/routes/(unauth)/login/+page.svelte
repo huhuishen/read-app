@@ -34,25 +34,40 @@
             onlogin();
         }
     }
+
+    function quickFill(name: string) {
+        userState.email = name;
+        userState.password = name;
+    }
 </script>
 
 <svelte:document onkeydown={handleKeydown} />
 
 <div class="flex main">
-    <div class="flex g-3">
+    <div class="flex g-3 column start">
         <TextBox
-            className="col-12"
+            // className="w-100"
             label="邮箱"
             bind:value={userState.email}
             autofocus
         ></TextBox>
         <TextBox
-            className="col-12"
+            // className="col-12"
             label="密码"
             type="password"
             bind:value={userState.password}
         ></TextBox>
         <Button styles="mt-3" onclick={onlogin}>登录</Button>
+        <div class="mt-1">
+            <div>演示帐号</div>
+            <div class="flex g-2 mt-1">
+                {#each ["admin", "user", "editor", "1"] as name}
+                    <button class="dim" onclick={() => quickFill(name)}
+                        >{name}</button
+                    >
+                {/each}
+            </div>
+        </div>
     </div>
 </div>
 
@@ -61,5 +76,8 @@
         width: 300px;
         margin: 0 auto;
         height: 100vh;
+    }
+    .dim {
+        /* color: #aaa; */
     }
 </style>

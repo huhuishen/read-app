@@ -92,7 +92,7 @@
     const canTakeDown = $derived(
         (mode === "edit" || mode === "review") &&
             !!article.id &&
-            article.status === "上架" &&
+            article.status === "published" &&
             !isSubmitting,
     );
 
@@ -154,7 +154,9 @@
 
             await api.post(
                 `articles/${id}`,
-                mode === "review" ? { ...payload, status: "上架" } : payload,
+                mode === "review"
+                    ? { ...payload, status: "published" }
+                    : payload,
             );
 
             if (browser) {
@@ -397,7 +399,7 @@
                 {mode === "review"
                     ? isSubmitting
                         ? "发布中..."
-                        : "上架"
+                        : "published"
                     : isSubmitting
                       ? "保存中..."
                       : "保存"}

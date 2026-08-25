@@ -43,6 +43,8 @@
             quote: activeReply?.content ?? undefined,
             replyTo: activeReply?.user ?? undefined,
         };
+        // console.log(activeReply,newReply);
+        
         try {
             const data = await api.post<{ insertedId: string }>(
                 `articles/${articleId}/underline-replies`,
@@ -262,8 +264,8 @@
         margin: 0;
     }
     .drawer-header {
-        /* position: sticky;
-        top: 0; */
+        position: sticky;
+        top: 0;
         display: flex;
         align-items: center;
         gap: 1rem;
@@ -271,7 +273,7 @@
         background-color: var(--main-bg-color);
         height: 60px;
         z-index: 2200;
-        /* border-bottom: 1px solid var(--border-soft); */
+        border-bottom: 1px solid var(--border-soft);
     }
     .comments {
         font-size: 14px;

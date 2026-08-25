@@ -95,10 +95,10 @@
                 try {
                     if (row.status === "下架") {
                         await api.post(`articles/${row.id}`, {
-                            status: "上架",
+                            status: "published",
                         });
-                        row.status = "上架";
-                    } else if (row.status === "上架") {
+                        row.status = "published";
+                    } else if (row.status === "published") {
                         await api.post(`articles/${row.id}`, {
                             status: "下架",
                         });

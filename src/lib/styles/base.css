@@ -609,6 +609,10 @@ a:hover {
     flex-wrap: wrap;
 }
 
+.w-100 {
+    width: 100%;
+}
+
 .col {
     flex: 0 0 100%;
     min-width: 0;
