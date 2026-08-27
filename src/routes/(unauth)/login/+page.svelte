@@ -55,7 +55,7 @@
 <svelte:document onkeydown={handleKeydown} />
 
 <div class="flex main">
-    <div class="flex g-3 column start">
+    <div class="flex g-3 column">
         <TextBox
             // className="w-100"
             label="邮箱"
@@ -68,11 +68,11 @@
             type="password"
             bind:value={userState.password}
         ></TextBox>
-        <Button styles="mt-3" onclick={onlogin}>登录</Button>
-        <Button styles="mt-1" variant="light" onclick={onGuestLogin}
-            >游客登录</Button
-        >
-        <div class="mt-1">
+        <div class="flex sb w-100 mt-3">
+            <Button onclick={onlogin}>登录</Button>
+            <Button variant="light" onclick={onGuestLogin}>游客登录</Button>
+        </div>
+        <!-- <div class="mt-1">
             <div>演示帐号</div>
             <div class="flex g-2 mt-1">
                 {#each ["admin", "user", "editor", "1"] as name}
@@ -81,17 +81,12 @@
                     >
                 {/each}
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 
 <style>
     .main {
-        width: 300px;
-        margin: 0 auto;
         height: 100vh;
-    }
-    .dim {
-        /* color: #aaa; */
     }
 </style>

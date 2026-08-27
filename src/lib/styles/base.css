@@ -586,6 +586,7 @@ a:hover {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
 }
 
 .center {
