@@ -9,7 +9,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
         readMinutes: number;
     }
 
-    const days = await api.get<DayValue[]>(`users/${params.id}/activity?page=1&limit=20`);
+    const days = await api.get<DayValue[]>(`users/${params.id}/activity?limit=365`);
 
     return {days};
 };

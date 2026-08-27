@@ -1,7 +1,8 @@
-﻿import { type Entity } from "$lib/mongolite";
+import { type Entity } from "$lib/mongolite";
 import { Articles } from "./articles";
 import { Collection } from "./db";
 import { Users } from "./users";
+import { UserDailyActivities } from "./userDailyActivity";
 
 export type ArticleStatsAction = "bookmark" | "vote" | "read";
 
@@ -160,67 +161,38 @@ class ArticleReadStateService extends Collection<ArticleReadState> {
             { upsert: true },
         );
 
-        if (result.upsertedCount === 1) {
-            await Articles.updateOne(
-                { id: articleId },
-                {
-                    $inc: {
-                        "stats.view": 1,
-                        "stats.readSeconds": readSeconds,
-                    },
-                },
-            );
-        } else {
-            await Articles.updateOne(
-                { id: articleId },
-                {
-                    $inc: {
-                        "stats.readSeconds": readSeconds,
-                    },
-                },
-            );
-        }
-
-        await Users.updateOne(
-            { id: userId },
-            {
-                $inc: {
-                    readSeconds,
-                },
-            },
-        );
-    }
-
-    async getUserDailyActivity(userId: string) {
-        return super.aggregate([
-            {
-                $match: {
-                    userId,
-                },
-            },
-            {
-                $group: {
-                    _id: {
-                        $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: "$createdAt",
+        const articleUpdate =
+            result.upsertedCount === 1
+                ? Articles.updateOne(
+                    { id: articleId },
+                    {
+                        $inc: {
+                            "stats.view": 1,
+                            "stats.readSeconds": readSeconds,
                         },
                     },
-                    readSeconds: { $sum: "$readSeconds" },
-                },
-            },
-            {
-                $project: {
-                    _id: 0,
-                    date: "$_id",
-                    readMinutes: {
-                        $round: [{ $divide: ["$readSeconds", 60] }, 0],
+                )
+                : Articles.updateOne(
+                    { id: articleId },
+                    {
+                        $inc: {
+                            "stats.readSeconds": readSeconds,
+                        },
                     },
-                },
-            },
-            {
-                $sort: { date: -1 },
-            },
+                );
+
+        // 三处独立的累加并行写
+        await Promise.all([
+            articleUpdate,
+            Users.updateOne(
+                { id: userId },
+                { $inc: { readSeconds } },
+            ),
+            UserDailyActivities.updateDailyActivity(
+                userId,
+                readSeconds * 1000,
+                new Date(),
+            ),
         ]);
     }
 }
@@ -280,10 +252,6 @@ class ArticleUserStatsService {
 
     async voteArticle(userId: string, articleId: string, voted: boolean) {
         return ArticleVoteStats.voteArticle(userId, articleId, voted);
-    }
-
-    async getUserDailyActivity(userId: string) {
-        return ArticleReadStats.getUserDailyActivity(userId);
     }
 }
 

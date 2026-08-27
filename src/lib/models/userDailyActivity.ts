@@ -5,7 +5,8 @@ import { Collection } from "./db";
 export type UserDailyActivity = {
     userId: string
     date: string   // YYYY-MM-DD
-    duration: number
+    readMs: number
+    readMinutes: number
 } & Entity
 
 
@@ -41,6 +42,22 @@ export class UserDailyActivityService extends Collection<UserDailyActivity> {
                 upsert: true
             }
         )
+    }
+
+    // 取最近 limit 天的活跃数据（按日期倒序）
+    async getRecentDays(userId: string, limit = 365) {
+        const docs = await super.find(
+            { userId },
+            { projection: { _id: 0, date: 1, readMinutes: 1 } }
+        )
+            .sort({ date: -1 })
+            .limit(limit)
+            .toArray();
+
+        return docs.map(d => ({
+            date: d.date,
+            readMinutes: Math.round(d.readMinutes ?? 0)
+        }));
     }
 }
 
