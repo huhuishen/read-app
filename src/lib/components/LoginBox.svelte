@@ -2,7 +2,6 @@
     import { goto } from "$app/navigation";
     import LoginModal from "$lib/components/LoginModal.svelte";
     import type { User } from "$lib/models";
-    import { session } from "$lib/stores/session.svelte";
     import { toast } from "$lib/stores/toast.svelte.js";
     import { api } from "$lib/api/client";
     import Avatar from "./Avatar.svelte";
@@ -80,7 +79,6 @@
                 account = "";
                 password = "";
 
-                session.user = r;
                 // console.log($state.snapshot(session.user));
 
                 toast.show("登录成功！", "success");
