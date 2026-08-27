@@ -7,9 +7,18 @@ import {
 } from "$lib/auth/session";
 import { extractClientIp } from "$lib/auth/ip";
 import { cookieOptions } from "$lib/config";
+import { Users } from "$lib/models/users";
 
 export const init: ServerInit = async () => {
     await initDb();
+    try {
+        const res = await Users.cleanupExpiredGuests(7);
+        if (res.deletedCount > 0) {
+            console.log(`[Bootstrap] Cleaned up ${res.deletedCount} expired guest users`);
+        }
+    } catch {
+        /* 清理失败不影响启动 */
+    }
 };
 
 export const handle: Handle = async ({ event, resolve }) => {

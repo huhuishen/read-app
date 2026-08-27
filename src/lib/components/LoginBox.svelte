@@ -34,9 +34,12 @@
 </script>
 
 {#if user}
-    <a class="flex link" href="/users/{user.id}"
-        ><Avatar name={user.name ?? ""}></Avatar>
-    </a>
+    <div class="flex link">
+        <a href="/users/{user.id}"><Avatar name={user.name ?? ""}></Avatar></a>
+        {#if user.roles?.includes("guest")}
+            <a class="upgrade" href="/upgrade">转正</a>
+        {/if}
+    </div>
 {:else}
     <a class="link" href="/login">登录 </a>
 {/if}
@@ -94,5 +97,12 @@
         font-size: 0.9rem;
         text-decoration: none;
         cursor: pointer;
+    }
+    .upgrade {
+        font-size: 0.75rem;
+        color: #6b8cff;
+        text-decoration: none;
+        margin-left: 6px;
+        align-self: center;
     }
 </style>

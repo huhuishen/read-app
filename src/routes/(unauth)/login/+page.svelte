@@ -39,6 +39,17 @@
         userState.email = name;
         userState.password = name;
     }
+
+    async function onGuestLogin() {
+        try {
+            await api.post("users/guest", {});
+            invalidateAll();
+            await goto(data.home ?? "/");
+            toast.show("已以游客身份进入", "success");
+        } catch {
+            /* 错误已自动弹出 */
+        }
+    }
 </script>
 
 <svelte:document onkeydown={handleKeydown} />
@@ -58,6 +69,9 @@
             bind:value={userState.password}
         ></TextBox>
         <Button styles="mt-3" onclick={onlogin}>登录</Button>
+        <Button styles="mt-1" variant="light" onclick={onGuestLogin}
+            >游客登录</Button
+        >
         <div class="mt-1">
             <div>演示帐号</div>
             <div class="flex g-2 mt-1">

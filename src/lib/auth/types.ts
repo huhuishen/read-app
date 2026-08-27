@@ -15,6 +15,7 @@ export interface User {
     title?: string[];
     award?: string[];
     profile?: { theme: string; avatarColor: string };
+    isGuest?: boolean;
 }
 
 export interface Session {

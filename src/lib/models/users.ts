@@ -41,6 +41,7 @@ export const UserSchema = t.object({
 
     bio: t.string(),
     tags: t.string(),
+    isGuest: t.boolean(),
 });
 
 export type User = Infer<typeof UserSchema> & Entity;
@@ -114,12 +115,82 @@ export class UserService extends Collection<User> {
             },
             activated: false,
             activateToken,
-            activateExpireAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+            activateExpireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            isGuest: false,
         };
 
         const res = await this.insertOne(user);
 
         return [res, user];
+    }
+
+    async createGuest(): Promise<[Awaited<ReturnType<Collection<User>["insertOne"]>>, Partial<User>]> {
+        const suffix = nanoid(8);
+        const email = `guest_${suffix}@guest.local`;
+        const name = `游客_${suffix.slice(0, 4)}`;
+        const passwordHash = await bcrypt.hash(nanoid(32), 10);
+
+        const user: Partial<User> = {
+            id: crypto.randomUUID(),
+            email,
+            name,
+            password: passwordHash,
+            roles: ["guest"],
+            profile: { theme: "light", avatarColor: "" },
+            activated: true,
+            activateToken: "",
+            activateExpireAt: new Date(0),
+            readSeconds: 0,
+            underlineCount: 0,
+            underlineReplyCount: 0,
+            commentCount: 0,
+            bio: "",
+            tags: "",
+            title: [],
+            award: [],
+            isGuest: true,
+        };
+
+        const res = await this.insertOne(user);
+        return [res, user];
+    }
+
+    async upgradeGuest(userId: string, email: string, name: string, password: string) {
+        const user = await this.findOne({ id: userId });
+        if (!user) throw new Error("用户不存在");
+        if (!user.isGuest) throw new Error("仅游客账号可转正");
+
+        const exist = await this.findOne({ email });
+        if (exist) throw new Error("邮箱已被占用");
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        await this.updateOne(
+            { id: userId },
+            {
+                $set: {
+                    email,
+                    name,
+                    password: passwordHash,
+                    roles: ["user"],
+                    activated: true,
+                    isGuest: false,
+                },
+            },
+        );
+
+        this.cache.delete(userId);
+
+        return await this.findOne({ id: userId });
+    }
+
+    async cleanupExpiredGuests(days = 7) {
+        const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+        const result = await this.deleteMany({
+            isGuest: true,
+            createdAt: { $lt: cutoff },
+        } as any);
+        return result;
     }
 }
 
