@@ -37,3 +37,13 @@ Content-Type: application/json
     "password": "1",
     "name": "11111"
 }
+
+###
+POST {{host}}/users/register
+Content-Type: application/json
+
+{
+    "email": "editor1",
+    "password": "editor",
+    "name": "editor1"
+}
